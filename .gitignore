@@ -1,2 +1,5 @@
 .ENV
 venv/
+archive/
+Viz History/
+__pycache__/
