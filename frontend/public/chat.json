@@ -3,10 +3,14 @@
         "date": "01/01/2021",
         "chat": [
             {
-                "title": "hello world"
+                "title": "hello world (click this)",
+                "content": "hello world",
+                "chatID": "1"
             },
             {
-                "title": "world said hello"
+                "title": "world said hello (click this)",
+                "content": "world said hello",
+                "chatID": "2"
             }
         ]
     },
@@ -14,7 +18,7 @@
         "date": "02/10/2023",
         "chat": [
             {
-                "title": "hello friends"
+                "title": "this and below doesn't have chat history yet"
             },
             {
                 "title": "friends said hello"
@@ -22,7 +26,7 @@
         ]
     },
     {
-        "date": "02/10/2024",
+        "date": "02/11/2024",
         "chat": [
             {
                 "title": "hello friends"
@@ -39,7 +43,7 @@
         ]
     },
     {
-        "date": "02/10/2027",
+        "date": "02/12/2027",
         "chat": [
             {
                 "title": "hello friends"
