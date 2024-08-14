@@ -1,35 +1,51 @@
 import React, { useState, useEffect } from "react";
+import { AiOutlineArrowRight } from 'react-icons/ai';
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official"; 
 
-// Define an interface for the chat history data structure
 interface ChatHistory {
-    // Date of the chat session, formatted as a string
     date: string;
-    // An array of chat objects, each containing a title string
     chat: { title: string }[];
 }
 
 const ChatBot: React.FC = () => {
-    // State variable to store the chat messages
-    const [messages, setMessages] = useState<
-        { sender: string; text: string }[]
-    >([]);
-
-    // State variable to store the user input
+    const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
     const [input, setInput] = useState("");
-
-    // State variable to store the chat history
     const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-    // Function to handle sending messages
+    const [chartOptions, setChartOptions] = useState({
+        title: {
+            text: 'Dummy Data Chart'
+        },
+        series: [
+            {
+                name: 'Dummy Series',
+                data: [1, 2, 3, 4, 5]
+            }
+        ]
+    });
+
     const handleSend = () => {
-        // Check if the input is not empty
         if (input.trim()) {
-            // Add the user message to the messages array
             setMessages([...messages, { sender: "user", text: input }]);
-            // Clear the input field
             setInput("");
 
-            // Simulate a response from the model
+            if (input.toLowerCase() === "show chart") {
+                setChartOptions({
+                    title: {
+                        text: 'Updated Chart Data'
+                    },
+                    series: [
+                        {
+                            name: 'Updated Series',
+                            data: [10, 20, 30, 40, 50]
+                        }
+                    ]
+                });
+            }
+
             setTimeout(() => {
                 setMessages((prevMessages) => [
                     ...prevMessages,
@@ -39,15 +55,9 @@ const ChatBot: React.FC = () => {
         }
     };
 
-    // Function to format date
     const formatDate = (dateString: string): string => {
-        // Split the input date based on / separator
         const [day, month, year] = dateString.split("/");
-
-        // Create a new Date object using the year, month, and day
         const date = new Date(`${year}-${month}-${day}`);
-
-        // Format the date "DD Month YYYY"
         return date.toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "long",
@@ -55,56 +65,62 @@ const ChatBot: React.FC = () => {
         });
     };
 
-    // Fetch chat history from the JSON file
     useEffect(() => {
-        // Fetch chat history
         const fetchChatHistory = async () => {
             try {
-                // Fetch chat history from the JSON file
                 const response = await fetch("/chat.json");
-                // Parse the JSON response
                 const data = await response.json();
-                // Update chat history with the fetched data
                 setChatHistory(data);
             } catch (error) {
                 console.error("Error fetching chat history:", error);
             }
         };
-
-        // Call the fetchChatHistory function
         fetchChatHistory();
     }, []);
 
-    // Return
+    const toggleSidebar = () => {
+        setIsSidebarOpen(prevState => !prevState);
+    };
+
+    const handleClearChat = () => {
+        setMessages([]);
+    };
+
     return (
-        // container for sidebar and chat area
-        <div className="grid w-screen h-screen grid-cols-12 gap-4 p-4 bg-primary">
-            {/* sidebar */}
-            <div className="flex flex-col col-span-2 gap-10 p-4 rounded-lg shadow-lg bg-sidebar">
-                {/* title */}
-                <div className="text-5xl font-bold text-white">PoliQ Chat</div>
-                {/* chat history */}
-                <div className="flex flex-col gap-3 text-white">
-                    {chatHistory.map((session, index) => (
-                        <div key={index} className="flex flex-col gap-1 mb-4">
-                            <div className="text-2xl font-semibold">
-                                {formatDate(session.date)}
-                            </div>
-                            {session.chat.map((chat, idx) => (
-                                <div key={idx} className="ml-5 text-xl">
-                                    {chat.title}
+        <div className="relative w-screen h-screen bg-grey">
+            {/* Sidebar */}
+            <div
+                className={`fixed top-0 left-0 h-full transition-transform duration-300 ${
+                    isSidebarOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full"
+                }`}
+                style={{ zIndex: 1000, overflowX: 'hidden' }}
+            >
+                <div className="flex flex-col h-full gap-10 p-4 rounded-lg shadow-lg bg-sidebar">
+                    {/* Title */}
+                    <div className="flex items-center text-5xl text-white">
+                        <span className={`mr-2 ${isSidebarOpen ? "block" : "hidden"}`}>PoliQ Chat</span>
+                    </div>
+                    {/* Chat history */}
+                    <div className="flex flex-col gap-3 text-white">
+                        {chatHistory.map((session, index) => (
+                            <div key={index} className="flex flex-col gap-1 mb-4">
+                                <div className="text-2xl font-semibold">
+                                    {formatDate(session.date)}
                                 </div>
-                            ))}
-                        </div>
-                    ))}
+                                {session.chat.map((chat, idx) => (
+                                    <div key={idx} className="ml-5 text-xl">
+                                        {chat.title}
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
-
-            {/* chat area */}
-            <div className="flex flex-col col-span-10">
-                {/* container for the query and response */}
-                <div className="flex-grow p-4 overflow-y-auto text-2xl rounded-lg shadow-lg">
-                    {/* iterate over the messages array and display the messages */}
+            
+            {/* Chat area */}
+            <div className={`flex flex-col h-full transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-0"}`}>
+                <div className="relative flex-grow p-4 overflow-y-auto text-2xl rounded-lg shadow-lg">
                     {messages.map((msg, index) => (
                         <div
                             key={index}
@@ -125,24 +141,47 @@ const ChatBot: React.FC = () => {
                             </div>
                         </div>
                     ))}
+
+                    {/* Display Chart */}
+                    {messages.some(msg => msg.text.toLowerCase() === "show chart") && (
+                        <HighchartsReact highcharts={Highcharts} options={chartOptions} />
+                    )}
                 </div>
-                {/* container for message field and send button */}
-                <div className="flex mt-4 text-xl">
+
+                {/* Input area */}
+                <div className="relative flex mt-4 mx-auto w-full max-w-md">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyUp={(e) => e.key === "Enter" && handleSend()}
-                        className="flex-grow p-3 mr-2 border border-gray-300 rounded-full"
+                        className="flex-grow p-3 pr-24 border border-white border-gray-300 bg-grey text-white rounded-full text-sm"
                         placeholder="Type your message..."
                     />
-                    <button
-                        onClick={handleSend}
-                        className="px-4 py-2 text-white bg-blue-500 rounded-lg"
-                    >
-                        Send
-                    </button>
+                     <button
+                    onClick={handleSend}
+                    className="absolute right-0 top-0 bottom-0 flex items-center justify-center px-4 py-2 text-white bg-grey-400 rounded-full"
+                    style={{ width: '6rem' }}
+                >
+                    <AiOutlineArrowRight className="text-2xl text-grey" />
+                </button>
                 </div>
+
+                {/* Clear Chat Button */}
+                <button
+                    onClick={handleClearChat}
+                    className="fixed bottom-4 right-4 p-3 bg-red-500 text-white rounded-full shadow-lg z-50"
+                >
+                    Clear Chat
+                </button>
+
+                {/* Toggle Sidebar Button */}
+                <button
+                    onClick={toggleSidebar}
+                    className="fixed top-4 right-4 p-3 bg-white text-black rounded-full shadow-lg z-50"
+                >
+                    {isSidebarOpen ? <HiChevronLeft /> : <HiChevronRight />}
+                </button>
             </div>
         </div>
     );
