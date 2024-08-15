@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { BiChevronLeftCircle } from "react-icons/bi";
+import { BiChevronRightCircle } from "react-icons/bi";
 
 // Define an interface for the chat history data structure
 interface ChatHistory {
@@ -32,7 +34,7 @@ const ChatBot: React.FC = () => {
     const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
     const [detailedMessages, setConvMessages] = useState<MessageHistory[]>([]);
     const [selectedChatID, setSelectedChatID] = useState<string | null>(null);
-
+    const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     // Function to handle sending messages
     const handleSend = () => {
         // Check if the input is not empty
@@ -109,41 +111,72 @@ const ChatBot: React.FC = () => {
         }
     }, [selectedChatID]);
 
+    // Function to toggle sidebar visibility
+    const toggleSidebar = () => {
+        setIsSidebarVisible(!isSidebarVisible);
+    };
+
     // Return
     return (
         // container for sidebar and chat area
-        <div className="grid grid-cols-12 gap-4 p-4 w-screen h-screen bg-primary">
-            {/* sidebar */}
-            <div className="flex flex-col col-span-2 gap-10 p-4 rounded-lg shadow-lg bg-sidebar">
-                {/* title */}
-                <div className="text-5xl font-bold text-white">PoliQ Chat</div>
-                {/* chat history */}
-                <div className="flex flex-col gap-3 text-white">
-                    {chatHistory.map((session, index) => (
-                        <div key={index} className="flex flex-col gap-1 mb-4">
-                            <div className="text-2xl font-semibold">
-                                {formatDate(session.date)}
-                            </div>
-                            {session.chat.map((chat, idx) => (
+        <div className="flex p-4 w-screen h-screen bg-primary">
+            {/* Sidebar with transition */}
+            <div
+                className="flex flex-col gap-10 p-4 rounded-lg shadow-lg transition-all duration-300 ease-in-out bg-sidebar"
+                style={{
+                    maxWidth: isSidebarVisible ? "16.666%" : "0",
+                    minWidth: isSidebarVisible ? "16.666%" : "0",
+                }}
+            >
+                {isSidebarVisible && (
+                    <>
+                        <div className="text-5xl font-bold text-white">
+                            PoliQ Chat
+                        </div>
+                        <div className="flex overflow-auto flex-col gap-3 text-white">
+                            {chatHistory.map((session, index) => (
                                 <div
-                                    key={idx}
-                                    className="py-1 pl-5 ml-3 text-xl rounded-full hover:bg-zinc-500 hover:cursor-pointer"
-                                    onClick={() =>
-                                        setSelectedChatID(chat.chatID)
-                                    }
+                                    key={index}
+                                    className="flex flex-col gap-1 mb-4"
                                 >
-                                    {chat.title}
+                                    <div className="text-2xl font-semibold">
+                                        {formatDate(session.date)}
+                                    </div>
+                                    {session.chat.map((chat, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="py-1 pl-5 ml-3 text-xl truncate rounded-full hover:bg-zinc-500 hover:cursor-pointer"
+                                            onClick={() =>
+                                                setSelectedChatID(chat.chatID)
+                                            }
+                                        >
+                                            {chat.title}
+                                        </div>
+                                    ))}
                                 </div>
                             ))}
                         </div>
-                    ))}
-                </div>
+                    </>
+                )}
             </div>
 
+            {/* Toggle button */}
+            <div className="content-center">
+                <button
+                    className="text-4xl text-white bg-primary"
+                    onClick={toggleSidebar}
+                >
+                    {isSidebarVisible ? (
+                        <BiChevronLeftCircle />
+                    ) : (
+                        <BiChevronRightCircle />
+                    )}
+                </button>
+            </div>
             {/* chat area */}
-            <div className="flex flex-col col-span-10">
+            <div className="flex flex-col mx-auto w-1/2">
                 {/* container for the query and response */}
-                <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg shadow-lg">
+                <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
                     {selectedChatID
                         ? detailedMessages.map((msg, index) => (
                               <div
