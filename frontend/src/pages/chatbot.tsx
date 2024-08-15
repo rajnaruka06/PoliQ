@@ -54,6 +54,10 @@ const ChatBot: React.FC = () => {
         }
     };
 
+    const handleClear = () => {
+        setInput("");
+    };
+
     // Function to format date
     const formatDate = (dateString: string): string => {
         // Split the input date based on / separator
@@ -174,7 +178,7 @@ const ChatBot: React.FC = () => {
                 </button>
             </div>
             {/* chat area */}
-            <div className="flex flex-col mx-auto w-1/2">
+            <div className="flex flex-col mx-auto w-3/5">
                 {/* container for the query and response */}
                 <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
                     {selectedChatID
@@ -223,7 +227,7 @@ const ChatBot: React.FC = () => {
                           ))}
                 </div>
                 {/* container for message field and send button */}
-                <div className="flex mt-4 text-xl">
+                <div className="flex gap-2 mt-4 text-xl">
                     <input
                         type="text"
                         value={input}
@@ -237,6 +241,13 @@ const ChatBot: React.FC = () => {
                         className="px-4 py-2 text-white bg-blue-500 rounded-lg"
                     >
                         Send
+                    </button>
+                    {/* clear button */}
+                    <button
+                        onClick={handleClear}
+                        className="px-4 py-2 text-white bg-red-500 rounded-lg"
+                    >
+                        Clear
                     </button>
                 </div>
             </div>
