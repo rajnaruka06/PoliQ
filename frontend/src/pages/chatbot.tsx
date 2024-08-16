@@ -32,9 +32,14 @@ const ChatBot: React.FC = () => {
 
     // State variable to store the chat history
     const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
+    const [filteredChatHistory, setFilteredChatHistory] = useState<
+        ChatHistory[]
+    >([]);
     const [detailedMessages, setConvMessages] = useState<MessageHistory[]>([]);
     const [selectedChatID, setSelectedChatID] = useState<string | null>(null);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+
     // Function to handle sending messages
     const handleSend = () => {
         // Check if the input is not empty
@@ -83,6 +88,7 @@ const ChatBot: React.FC = () => {
             const data = await response.json();
             // Update chat history with the fetched data
             setChatHistory(data);
+            setFilteredChatHistory(data);
         } catch (error) {
             console.error("Error fetching chat history:", error);
         }
@@ -120,6 +126,25 @@ const ChatBot: React.FC = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
 
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+
+        if (value === "") {
+            setFilteredChatHistory(chatHistory);
+        } else {
+            const filtered = chatHistory
+                .map((session) => ({
+                    ...session,
+                    chat: session.chat.filter((chat) =>
+                        chat.title.toLowerCase().includes(value.toLowerCase())
+                    ),
+                }))
+                .filter((session) => session.chat.length > 0);
+            setFilteredChatHistory(filtered);
+        }
+    };
+
     // Return
     return (
         // container for sidebar and chat area
@@ -137,8 +162,14 @@ const ChatBot: React.FC = () => {
                         <div className="text-5xl font-bold text-white">
                             PoliQ Chat
                         </div>
+                        <input
+                            className="px-4 py-2 text-2xl rounded-full bg-zinc-500"
+                            placeholder="search chat..."
+                            value={searchTerm}
+                            onChange={handleSearch}
+                        ></input>
                         <div className="flex overflow-auto flex-col gap-3 text-white">
-                            {chatHistory.map((session, index) => (
+                            {filteredChatHistory.map((session, index) => (
                                 <div
                                     key={index}
                                     className="flex flex-col gap-1 mb-4"
