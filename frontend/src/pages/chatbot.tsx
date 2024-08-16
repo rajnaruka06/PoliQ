@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { BiChevronLeftCircle } from "react-icons/bi";
-import { BiChevronRightCircle } from "react-icons/bi";
+import { BiChevronLeftCircle, BiChevronRightCircle } from "react-icons/bi";
+import { AiFillSetting } from "react-icons/ai";
 
 // Define an interface for the chat history data structure
 interface ChatHistory {
-    // Date of the chat session, formatted as a string
     date: string;
-    // An array of chat objects, each containing a title string
     chat: { title: string; chatID: string }[];
 }
 
 interface MessageCurrent {
     sender: string;
     text: string;
+    user: string;
 }
 
 interface MessageHistory {
@@ -24,13 +23,8 @@ interface MessageHistory {
 }
 
 const ChatBot: React.FC = () => {
-    // State variable to store the chat messages
     const [messages, setMessages] = useState<MessageCurrent[]>([]);
-
-    // State variable to store the user input
     const [input, setInput] = useState("");
-
-    // State variable to store the chat history
     const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
     const [filteredChatHistory, setFilteredChatHistory] = useState<
         ChatHistory[]
@@ -39,39 +33,39 @@ const ChatBot: React.FC = () => {
     const [selectedChatID, setSelectedChatID] = useState<string | null>(null);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
     // Function to handle sending messages
     const handleSend = () => {
-        // Check if the input is not empty
         if (input.trim()) {
-            // Add the user message to the messages array
-            setMessages([...messages, { sender: "user", text: input }]);
-            // Clear the input field
+            setMessages([
+                ...messages,
+                { sender: "user", text: input, user: "user" },
+            ]);
             setInput("");
 
-            // Simulate a response from the model
             setTimeout(() => {
                 setMessages((prevMessages) => [
                     ...prevMessages,
-                    { sender: "bot", text: "This is a response from the bot." },
+                    {
+                        sender: "bot",
+                        text: "This is a response from the bot.",
+                        user: "bot",
+                    },
                 ]);
             }, 500);
         }
     };
 
+    // Function to clear the input
     const handleClear = () => {
         setInput("");
     };
 
     // Function to format date
     const formatDate = (dateString: string): string => {
-        // Split the input date based on / separator
         const [day, month, year] = dateString.split("/");
-
-        // Create a new Date object using the year, month, and day
         const date = new Date(`${year}-${month}-${day}`);
-
-        // Format the date "DD Month YYYY"
         return date.toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "long",
@@ -79,14 +73,11 @@ const ChatBot: React.FC = () => {
         });
     };
 
-    // Fetch chat history
+    // Function to fetch chat history
     const fetchChatHistory = async () => {
         try {
-            // Fetch chat history from the JSON file
             const response = await fetch("/chat.json");
-            // Parse the JSON response
             const data = await response.json();
-            // Update chat history with the fetched data
             setChatHistory(data);
             setFilteredChatHistory(data);
         } catch (error) {
@@ -94,7 +85,7 @@ const ChatBot: React.FC = () => {
         }
     };
 
-    // Fetch messages from the selected chat ID
+    // Function to fetch messages
     const fetchMessages = async (chatID: string) => {
         try {
             const response = await fetch(`${chatID}.json`);
@@ -105,12 +96,11 @@ const ChatBot: React.FC = () => {
         }
     };
 
-    // Fetch chat history from the JSON file
     useEffect(() => {
         fetchChatHistory();
     }, []);
 
-    // If has chatID, fetch messages
+    // Function to fetch messages
     useEffect(() => {
         if (selectedChatID) {
             fetchMessages(selectedChatID);
@@ -121,11 +111,12 @@ const ChatBot: React.FC = () => {
         }
     }, [selectedChatID]);
 
-    // Function to toggle sidebar visibility
+    // Function to toggle sidebar
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
 
+    // Function to handle search
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setSearchTerm(value);
@@ -145,13 +136,32 @@ const ChatBot: React.FC = () => {
         }
     };
 
-    // Return
+    // Function to render feedback button
+    const FeedbackButton = () => {
+        return (
+            <div className="flex gap-1 p-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <button className="px-1 py-1 text-xs text-white bg-blue-500 rounded-full">
+                    Action 1
+                </button>
+                <button className="px-1 py-1 text-xs text-white bg-green-500 rounded-full">
+                    Action 2
+                </button>
+                <button className="px-1 py-1 text-xs text-white bg-red-500 rounded-full">
+                    Action 3
+                </button>
+            </div>
+        );
+    };
+
+    const toggleOverlay = () => {
+        setIsOverlayVisible(!isOverlayVisible);
+    };
+
     return (
-        // container for sidebar and chat area
         <div className="flex p-4 w-screen h-screen bg-primary">
             {/* Sidebar with transition */}
             <div
-                className="flex flex-col gap-10 p-4 rounded-lg shadow-lg transition-all duration-300 ease-in-out bg-sidebar"
+                className="flex flex-col p-4 rounded-lg shadow-lg transition-all duration-300 ease-in-out bg-sidebar"
                 style={{
                     maxWidth: isSidebarVisible ? "16.666%" : "0",
                     minWidth: isSidebarVisible ? "16.666%" : "0",
@@ -159,15 +169,19 @@ const ChatBot: React.FC = () => {
             >
                 {isSidebarVisible && (
                     <>
-                        <div className="text-5xl font-bold text-white">
-                            PoliQ Chat
+                        <div className="mb-10 text-5xl font-bold text-white">
+                            <a href="/" className="text-white hover:text-white">
+                                PoliQ Chat
+                            </a>
                         </div>
+                        {/* Search bar */}
                         <input
-                            className="px-4 py-2 text-2xl rounded-full bg-zinc-500"
+                            className="px-4 py-2 mb-10 text-2xl rounded-full bg-zinc-500"
                             placeholder="search chat..."
                             value={searchTerm}
                             onChange={handleSearch}
                         ></input>
+                        {/* Chat history */}
                         <div className="flex overflow-auto flex-col gap-3 text-white">
                             {filteredChatHistory.map((session, index) => (
                                 <div
@@ -191,6 +205,18 @@ const ChatBot: React.FC = () => {
                                 </div>
                             ))}
                         </div>
+
+                        <div className="flex justify-between items-center text-3xl">
+                            {/* User name */}
+                            <div className="flex-grow text-left">John Doe</div>
+                            {/* Settings button */}
+                            <button
+                                className="text-3xl"
+                                onClick={toggleOverlay}
+                            >
+                                <AiFillSetting />
+                            </button>
+                        </div>
                     </>
                 )}
             </div>
@@ -208,19 +234,20 @@ const ChatBot: React.FC = () => {
                     )}
                 </button>
             </div>
-            {/* chat area */}
+
+            {/* Chat area */}
             <div className="flex flex-col mx-auto w-3/5">
-                {/* container for the query and response */}
                 <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
+                    {/* Messages */}
                     {selectedChatID
                         ? detailedMessages.map((msg, index) => (
                               <div
                                   key={index}
-                                  className={`mb-4 ${
+                                  className={`mb-4 relative ${
                                       msg.user === "user"
                                           ? "text-right"
                                           : "text-left"
-                                  }`}
+                                  } group`}
                               >
                                   <div
                                       className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
@@ -234,6 +261,14 @@ const ChatBot: React.FC = () => {
                                           {msg.date} {msg.time}
                                       </div>
                                   </div>
+                                  {/* Feedback Button (Incomplete) */}
+                                  {msg.user !== "user" && (
+                                      <div className="relative">
+                                          <div className="absolute left-0 top-full mt-2">
+                                              <FeedbackButton />
+                                          </div>
+                                      </div>
+                                  )}
                               </div>
                           ))
                         : messages.map((msg, index) => (
@@ -254,11 +289,20 @@ const ChatBot: React.FC = () => {
                                   >
                                       {msg.text}
                                   </div>
+                                  {/* Feedback Button */}
+                                  {msg.user !== "user" && (
+                                      <div className="relative">
+                                          <div className="absolute left-0 top-full mt-2">
+                                              <FeedbackButton />
+                                          </div>
+                                      </div>
+                                  )}
                               </div>
                           ))}
                 </div>
-                {/* container for message field and send button */}
+                {/* Input bar */}
                 <div className="flex gap-2 mt-4 text-xl">
+                    {/* Input box */}
                     <input
                         type="text"
                         value={input}
@@ -267,13 +311,14 @@ const ChatBot: React.FC = () => {
                         className="flex-grow p-3 mr-2 rounded-full border border-gray-300"
                         placeholder="Type your message..."
                     />
+                    {/* Send button */}
                     <button
                         onClick={handleSend}
                         className="px-4 py-2 text-white bg-blue-500 rounded-lg"
                     >
                         Send
                     </button>
-                    {/* clear button */}
+                    {/* Clear button */}
                     <button
                         onClick={handleClear}
                         className="px-4 py-2 text-white bg-red-500 rounded-lg"
@@ -282,6 +327,13 @@ const ChatBot: React.FC = () => {
                     </button>
                 </div>
             </div>
+
+            {/* Overlay with menus (Incomplete) */}
+            {isOverlayVisible && (
+                <div>
+                    <h1>Overlay</h1>
+                </div>
+            )}
         </div>
     );
 };
