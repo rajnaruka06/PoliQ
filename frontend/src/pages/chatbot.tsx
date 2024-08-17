@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BiChevronLeftCircle, BiChevronRightCircle } from "react-icons/bi";
 import { AiFillSetting } from "react-icons/ai";
+import { BiSun } from "react-icons/bi";
 
 // Define an interface for the chat history data structure
 interface ChatHistory {
@@ -182,7 +183,7 @@ const ChatBot: React.FC = () => {
                             onChange={handleSearch}
                         ></input>
                         {/* Chat history */}
-                        <div className="flex overflow-auto flex-col gap-3 text-white">
+                        <div className="flex overflow-auto flex-col flex-grow gap-3 text-white">
                             {filteredChatHistory.map((session, index) => (
                                 <div
                                     key={index}
@@ -206,7 +207,7 @@ const ChatBot: React.FC = () => {
                             ))}
                         </div>
 
-                        <div className="flex justify-between items-center text-3xl">
+                        <div className="flex justify-between items-center text-3xl bg-sidebar">
                             {/* User name */}
                             <div className="flex-grow text-left">John Doe</div>
                             {/* Settings button */}
@@ -328,12 +329,44 @@ const ChatBot: React.FC = () => {
                 </div>
             </div>
 
-            {/* Overlay with menus (Incomplete) */}
+            {/* Overlay with menus */}
             {isOverlayVisible && (
-                <div>
-                    <h1>Overlay</h1>
+                // Overlay content on bottom left corner
+                <div
+                    className="absolute bottom-0 left-0 w-full h-full bg-black/70"
+                    onClick={toggleOverlay}
+                >
+                    <div
+                        className="flex flex-col pr-2 pb-8 pl-8 w-1/6 h-screen rounded-t-lg shadow-lg"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="mb-auto"></div>
+
+                        <ul className="flex flex-col gap-5 content-end p-5 text-lg rounded-lg bg-sidebar">
+                            <button className="text-2xl font-semibold">
+                                Menu 1
+                            </button>
+                            <button className="text-2xl font-semibold">
+                                Menu 2
+                            </button>
+                            <button className="text-2xl font-semibold">
+                                Menu 3
+                            </button>
+                        </ul>
+                        <div className="flex justify-end">
+                            <button
+                                className="text-3xl"
+                                onClick={toggleOverlay}
+                            >
+                                <AiFillSetting />
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
+            <div className="text-4xl text-end">
+                <BiSun />
+            </div>
         </div>
     );
 };
