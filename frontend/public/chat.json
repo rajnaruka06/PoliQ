@@ -18,10 +18,12 @@
         "date": "02/10/2023",
         "chat": [
             {
-                "title": "this and below doesn't have chat history yet"
+                "title": "this and below doesn't have chat history yet",
+                "chatID": "3"
             },
             {
-                "title": "friends said hello"
+                "title": "friends said hello",
+                "chatID": "4"
             }
         ]
     },
@@ -29,99 +31,8 @@
         "date": "02/11/2024",
         "chat": [
             {
-                "title": "hello friends"
-            },
-            {
-                "title": "friends said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            }
-        ]
-    },
-    {
-        "date": "02/12/2027",
-        "chat": [
-            {
-                "title": "hello friends"
-            },
-            {
-                "title": "friends said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
-            },
-            {
-                "title": "hello world"
-            },
-            {
-                "title": "world said hello"
+                "title": "hello friends",
+                "chatID": "5"
             }
         ]
     }

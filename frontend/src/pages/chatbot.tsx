@@ -12,6 +12,8 @@ import {
     BiGridSmall,
     BiPin,
     BiSolidPin,
+    BiTrash, // Add this for delete
+    BiArchive, // Add this for archive
 } from "react-icons/bi";
 
 import { AiFillSetting } from "react-icons/ai";
@@ -162,6 +164,39 @@ const ChatBot: React.FC = () => {
             setPinnedChats([...pinnedChats, chatID]); // Pin the chat
         }
     };
+    // Function to handle deleting a chat
+    // Function to handle deleting a chat
+    const handleDeleteChat = (chatID: string) => {
+        // Confirm before deleting
+        if (window.confirm("Are you sure you want to delete this chat?")) {
+            // Filter out the chat from chatHistory and filteredChatHistory
+            const updatedChatHistory = chatHistory.filter((session) =>
+                session.chat.every((chat) => chat.chatID !== chatID)
+            );
+            const updatedFilteredChatHistory = filteredChatHistory.filter(
+                (session) =>
+                    session.chat.every((chat) => chat.chatID !== chatID)
+            );
+
+            // Update state
+            setChatHistory(updatedChatHistory);
+            setFilteredChatHistory(updatedFilteredChatHistory);
+
+            // Remove from pinnedChats if present
+            setPinnedChats(pinnedChats.filter((id) => id !== chatID));
+
+            // Clear selectedChatID if it's the one being deleted
+            if (selectedChatID === chatID) {
+                setSelectedChatID(null);
+            }
+        }
+    };
+
+    // Function to handle archiving a chat
+    const handleArchiveChat = (chatID: string) => {
+        // Archive logic here (e.g., move to archived chats list)
+        console.log(`Archived chat with ID: ${chatID}`);
+    };
 
     // Function to render feedback button
     // CHANGE: Added icons for what user can do to interact with the response
@@ -311,7 +346,7 @@ const ChatBot: React.FC = () => {
                         )}
 
                         {/* CHANGE: Chat history amended with exclusion of pinned chats */}
-                        <div className="flex overflow-auto flex-col gap-3 text-white">
+                        <div className="flex overflow-auto flex-col flex-grow gap-3 text-white">
                             {filteredChatHistory.map((session, index) => (
                                 <div
                                     key={index}
@@ -386,6 +421,28 @@ const ChatBot: React.FC = () => {
                                                                 </>
                                                             )}
                                                         </button>
+                                                        <button
+                                                            className="flex gap-2 items-center mt-2"
+                                                            onClick={() =>
+                                                                handleDeleteChat(
+                                                                    chat.chatID
+                                                                )
+                                                            }
+                                                        >
+                                                            <BiTrash />
+                                                            <span>Delete</span>
+                                                        </button>
+                                                        <button
+                                                            className="flex gap-2 items-center mt-2"
+                                                            onClick={() =>
+                                                                handleArchiveChat(
+                                                                    chat.chatID
+                                                                )
+                                                            }
+                                                        >
+                                                            <BiArchive />
+                                                            <span>Archive</span>
+                                                        </button>
                                                     </div>
                                                 )}
                                             </div>
@@ -405,7 +462,7 @@ const ChatBot: React.FC = () => {
                                 <AiFillSetting />
                             </button>
                         </div>
-                </>
+                    </>
                 )}
             </div>
 
@@ -479,7 +536,6 @@ const ChatBot: React.FC = () => {
                                   </div>
                               </div>
                           ))}
-                          
                 </div>
                 {/* Input bar */}
                 <div className="flex gap-2 mt-4 text-xl">
