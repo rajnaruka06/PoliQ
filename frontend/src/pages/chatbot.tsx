@@ -14,9 +14,7 @@ import {
     BiSolidPin,
 } from "react-icons/bi";
 
-// QUESTION: Is this to be used later on?
 import { AiFillSetting } from "react-icons/ai";
-import { BiSun } from "react-icons/bi";
 
 // Define an interface for the chat history data structure
 interface ChatHistory {
@@ -546,9 +544,6 @@ const ChatBot: React.FC = () => {
                     </div>
                 </div>
             )}
-            <div className="text-4xl text-end">
-                <BiSun />
-            </div>
         </div>
     );
 };
