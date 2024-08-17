@@ -12,6 +12,8 @@ import {
     BiGridSmall,
     BiPin,
     BiSolidPin,
+    BiTrash,        // Add this for delete
+    BiArchive       // Add this for archive
 } from "react-icons/bi";
 
 import { AiFillSetting } from "react-icons/ai";
@@ -134,6 +136,8 @@ const ChatBot: React.FC = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
 
+    
+
     // Function to handle search
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -161,6 +165,39 @@ const ChatBot: React.FC = () => {
         } else {
             setPinnedChats([...pinnedChats, chatID]); // Pin the chat
         }
+    };
+    // Function to handle deleting a chat
+    // Function to handle deleting a chat
+const handleDeleteChat = (chatID: string) => {
+    // Confirm before deleting
+    if (window.confirm("Are you sure you want to delete this chat?")) {
+        // Filter out the chat from chatHistory and filteredChatHistory
+        const updatedChatHistory = chatHistory.filter((session) =>
+            session.chat.every((chat) => chat.chatID !== chatID)
+        );
+        const updatedFilteredChatHistory = filteredChatHistory.filter((session) =>
+            session.chat.every((chat) => chat.chatID !== chatID)
+        );
+
+        // Update state
+        setChatHistory(updatedChatHistory);
+        setFilteredChatHistory(updatedFilteredChatHistory);
+
+        // Remove from pinnedChats if present
+        setPinnedChats(pinnedChats.filter((id) => id !== chatID));
+
+        // Clear selectedChatID if it's the one being deleted
+        if (selectedChatID === chatID) {
+            setSelectedChatID(null);
+        }
+    }
+};
+
+
+    // Function to handle archiving a chat
+    const handleArchiveChat = (chatID: string) => {
+        // Archive logic here (e.g., move to archived chats list)
+        console.log(`Archived chat with ID: ${chatID}`);
     };
 
     // Function to render feedback button
@@ -243,6 +280,7 @@ const ChatBot: React.FC = () => {
                                             .map((chat, idx) => (
                                                 <div
                                                     key={idx}
+                                                    
                                                     className={`py-1 pl-5 ml-3 text-xl truncate rounded-full hover:bg-zinc-500 hover:cursor-pointer ${
                                                         selectedChatID ===
                                                         chat.chatID
@@ -260,6 +298,7 @@ const ChatBot: React.FC = () => {
                                                             {chat.title}
                                                         </span>
                                                         <BiGridSmall
+                                                        
                                                             onClick={(e) => {
                                                                 e.stopPropagation(); // Prevents triggering the chat selection
                                                                 setShowOptionsMenu(
@@ -345,6 +384,7 @@ const ChatBot: React.FC = () => {
                                                 <div className="flex justify-between items-center">
                                                     <span>{chat.title}</span>
                                                     <BiGridSmall
+                                                    
                                                         onClick={(e) => {
                                                             e.stopPropagation(); // Prevents triggering the chat selection
                                                             setShowOptionsMenu(
@@ -386,6 +426,20 @@ const ChatBot: React.FC = () => {
                                                                 </>
                                                             )}
                                                         </button>
+                                                        <button
+            className="flex gap-2 items-center mt-2"
+            onClick={() => handleDeleteChat(chat.chatID)}
+        >
+            <BiTrash />
+            <span>Delete</span>
+        </button>
+        <button
+            className="flex gap-2 items-center mt-2"
+            onClick={() => handleArchiveChat(chat.chatID)}
+        >
+            <BiArchive />
+            <span>Archive</span>
+        </button>
                                                     </div>
                                                 )}
                                             </div>
