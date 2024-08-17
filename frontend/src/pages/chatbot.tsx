@@ -396,6 +396,17 @@ const ChatBot: React.FC = () => {
                         </div>
                     </>
                 )}
+                                        <div className="flex justify-between items-center text-3xl">
+                            {/* User name */}
+                            <div className="flex-grow text-left">John Doe</div>
+                            {/* Settings button */}
+                            <button
+                                className="text-3xl"
+                                onClick={toggleOverlay}
+                            >
+                                <AiFillSetting />
+                            </button>
+                        </div>
             </div>
 
             {/* Toggle button */}
@@ -468,6 +479,7 @@ const ChatBot: React.FC = () => {
                                   </div>
                               </div>
                           ))}
+                          
                 </div>
                 {/* Input bar */}
                 <div className="flex gap-2 mt-4 text-xl">
@@ -496,6 +508,7 @@ const ChatBot: React.FC = () => {
                     </button>
                 </div>
             </div>
+
 
             {/* Overlay with menus (Incomplete) */}
             {isOverlayVisible && (
