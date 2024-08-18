@@ -198,6 +198,8 @@ const ChatBot: React.FC = () => {
         console.log(`Archived chat with ID: ${chatID}`);
     };
 
+    const [hoveredChatID, setHoveredChatID] = useState<string | null>(null);
+
     // Function to render feedback button
     // CHANGE: Added icons for what user can do to interact with the response
     const FeedbackButton = () => {
@@ -371,6 +373,8 @@ const ChatBot: React.FC = () => {
                                                         ? "bg-blue-600 text-white"
                                                         : "bg-transparent"
                                                 }`}
+                                                onMouseEnter={() => setHoveredChatID(chat.chatID)}
+                                                onMouseLeave={() => setHoveredChatID(null)}
                                                 onClick={() =>
                                                     setSelectedChatID(
                                                         chat.chatID
@@ -379,6 +383,9 @@ const ChatBot: React.FC = () => {
                                             >
                                                 <div className="flex justify-between items-center">
                                                     <span>{chat.title}</span>
+                                                {/* Three-dot menu */}
+                                                {(hoveredChatID === chat.chatID || selectedChatID === chat.chatID) && (
+
                                                     <BiGridSmall
                                                         onClick={(e) => {
                                                             e.stopPropagation(); // Prevents triggering the chat selection
@@ -389,7 +396,7 @@ const ChatBot: React.FC = () => {
                                                                     : chat.chatID
                                                             );
                                                         }}
-                                                    />
+                                                    />)}
                                                 </div>
                                                 {/* Options menu for pinning/unpinning */}
                                                 {showOptionsMenu ===
