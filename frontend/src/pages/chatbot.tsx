@@ -238,44 +238,6 @@ const ChatBot: React.FC = () => {
         setIsOverlayVisible(!isOverlayVisible);
     };
 
-    // Function to render the options menu
-    const renderOptionsMenu = (chatID: string) => (
-        <div
-            ref={showOptionsMenu}
-            className="flex absolute right-0 top-full z-10 flex-col items-end p-2 mt-2 text-white rounded-lg shadow-lg bg-primary"
-        >
-            <button
-                className="flex gap-2 items-center p-2 rounded bg-primary"
-                onClick={() => handlePinChat(chatID)}
-            >
-                {pinnedChats.includes(chatID) ? (
-                    <>
-                        <BiSolidPin />
-                        <span>Unpin</span>
-                    </>
-                ) : (
-                    <>
-                        <BiPin />
-                        <span>Pin</span>
-                    </>
-                )}
-            </button>
-            <button
-                className="flex gap-2 items-center p-2 mt-2 rounded bg-primary"
-                onClick={() => handleArchiveChat(chatID)}
-            >
-                <BiArchive />
-                <span>Archive</span>
-            </button>
-            <button
-                className="flex gap-2 items-center p-2 mt-2 rounded bg-primary"
-                onClick={() => handleDeleteChat(chatID)}
-            >
-                <BiTrash />
-                <span>Delete</span>
-            </button>
-        </div>
-    );
     return (
         <div className="flex p-4 w-screen h-screen bg-primary">
             {/* Sidebar with transition */}
@@ -330,12 +292,6 @@ const ChatBot: React.FC = () => {
                                                         )
                                                     }
                                                 >
-                                                    {/* CHANGE: Options menu for pinning/unpinning when pinned */}
-                                                    {showOptionsMenu ===
-                                                        chat.chatID &&
-                                                        renderOptionsMenu(
-                                                            chat.chatID
-                                                        )}
                                                     <div className="flex justify-between items-center">
                                                         <span>
                                                             {chat.title}
@@ -352,6 +308,38 @@ const ChatBot: React.FC = () => {
                                                             }}
                                                         />
                                                     </div>
+                                                    {/* CHANGE: Options menu for pinning/unpinning when pinned */}
+                                                    {showOptionsMenu ===
+                                                        chat.chatID && (
+                                                        <div className="absolute p-2 text-white bg-black rounded shadow-lg">
+                                                            <button
+                                                                className="flex gap-2 items-center"
+                                                                onClick={() =>
+                                                                    handlePinChat(
+                                                                        chat.chatID
+                                                                    )
+                                                                }
+                                                            >
+                                                                {pinnedChats.includes(
+                                                                    chat.chatID
+                                                                ) ? (
+                                                                    <>
+                                                                        <BiSolidPin />
+                                                                        <span>
+                                                                            Unpin
+                                                                        </span>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <BiPin />
+                                                                        <span>
+                                                                            Pin
+                                                                        </span>
+                                                                    </>
+                                                                )}
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ))
                                     )}
@@ -379,20 +367,14 @@ const ChatBot: React.FC = () => {
                                         .map((chat, idx) => (
                                             <div
                                                 key={idx}
-                                                className={`flex flex-col py-1 pl-5 ml-3 text-xl truncate rounded-full hover:bg-zinc-500 hover:cursor-pointer ${
+                                                className={`py-1 pl-5 ml-3 text-xl truncate rounded-full hover:bg-zinc-500 hover:cursor-pointer ${
                                                     selectedChatID ===
                                                     chat.chatID
                                                         ? "bg-blue-600 text-white"
                                                         : "bg-transparent"
                                                 }`}
-                                                onMouseEnter={() =>
-                                                    setHoveredChatID(
-                                                        chat.chatID
-                                                    )
-                                                }
-                                                onMouseLeave={() =>
-                                                    setHoveredChatID(null)
-                                                }
+                                                onMouseEnter={() => setHoveredChatID(chat.chatID)}
+                                                onMouseLeave={() => setHoveredChatID(null)}
                                                 onClick={() =>
                                                     setSelectedChatID(
                                                         chat.chatID
@@ -401,30 +383,75 @@ const ChatBot: React.FC = () => {
                                             >
                                                 <div className="flex justify-between items-center">
                                                     <span>{chat.title}</span>
-                                                    {/* Three-dot menu */}
-                                                    {(hoveredChatID ===
-                                                        chat.chatID ||
-                                                        selectedChatID ===
-                                                            chat.chatID) && (
-                                                        <BiGridSmall
-                                                            onClick={(e) => {
-                                                                e.stopPropagation(); // Prevents triggering the chat selection
-                                                                setShowOptionsMenu(
-                                                                    showOptionsMenu ===
-                                                                        chat.chatID
-                                                                        ? null
-                                                                        : chat.chatID
-                                                                );
-                                                            }}
-                                                        />
-                                                    )}
+                                                {/* Three-dot menu */}
+                                                {(hoveredChatID === chat.chatID || selectedChatID === chat.chatID) && (
+
+                                                    <BiGridSmall
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Prevents triggering the chat selection
+                                                            setShowOptionsMenu(
+                                                                showOptionsMenu ===
+                                                                    chat.chatID
+                                                                    ? null
+                                                                    : chat.chatID
+                                                            );
+                                                        }}
+                                                    />)}
                                                 </div>
                                                 {/* Options menu for pinning/unpinning */}
                                                 {showOptionsMenu ===
-                                                    chat.chatID &&
-                                                    renderOptionsMenu(
-                                                        chat.chatID
-                                                    )}
+                                                    chat.chatID && (
+                                                    <div className="absolute p-2 text-white bg-black rounded shadow-lg">
+                                                        <button
+                                                            className="flex gap-2 items-center"
+                                                            onClick={() =>
+                                                                handlePinChat(
+                                                                    chat.chatID
+                                                                )
+                                                            }
+                                                        >
+                                                            {pinnedChats.includes(
+                                                                chat.chatID
+                                                            ) ? (
+                                                                <>
+                                                                    <BiSolidPin />
+                                                                    <span>
+                                                                        Unpin
+                                                                    </span>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <BiPin />
+                                                                    <span>
+                                                                        Pin
+                                                                    </span>
+                                                                </>
+                                                            )}
+                                                        </button>
+                                                        <button
+                                                            className="flex gap-2 items-center mt-2"
+                                                            onClick={() =>
+                                                                handleDeleteChat(
+                                                                    chat.chatID
+                                                                )
+                                                            }
+                                                        >
+                                                            <BiTrash />
+                                                            <span>Delete</span>
+                                                        </button>
+                                                        <button
+                                                            className="flex gap-2 items-center mt-2"
+                                                            onClick={() =>
+                                                                handleArchiveChat(
+                                                                    chat.chatID
+                                                                )
+                                                            }
+                                                        >
+                                                            <BiArchive />
+                                                            <span>Archive</span>
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
                                 </div>
