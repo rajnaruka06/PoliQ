@@ -3,3 +3,7 @@ venv/
 archive/
 Viz History/
 __pycache__/
+Backend/test.ipynb
+Backend/AI_Stuff/__pycache__/
+Backend/AI_Stuff/schema_info.json
+Backend/ChatHistory/
