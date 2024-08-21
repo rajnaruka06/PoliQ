@@ -14,8 +14,10 @@ from decimal import Decimal
 import datetime
 import json
 
+env_path = os.path.join(os.path.dirname(__file__), '.ENV')
+load_dotenv(dotenv_path=env_path)
+
 def load_polimap_postgres() -> SQLDatabase:
-    load_dotenv()
     user = os.environ.get('POSTGRES_USER')
     password = os.environ.get('POSTGRES_PASSWORD')
     host = os.environ.get('POSTGRES_HOST')
@@ -27,7 +29,6 @@ def load_polimap_postgres() -> SQLDatabase:
     return db
 
 def load_elecdata_postgres() -> SQLDatabase:
-    load_dotenv()
     user = os.environ.get('POSTGRES_USER')
     password = os.environ.get('POSTGRES_PASSWORD')
     host = os.environ.get('POSTGRES_HOST')
@@ -120,7 +121,8 @@ class SQLCoder:
             if res == '':
                 raise NoDataFoundException
             # res = ast.literal_eval(res)
-            res = eval(res)
+            ## Not safe
+            res = eval(res) ## Has to be updated 
             columns = self.get_cols(query)
             if columns == []: columns = range(len(res[0]))
             res = pd.DataFrame.from_records(data=res, columns=columns)

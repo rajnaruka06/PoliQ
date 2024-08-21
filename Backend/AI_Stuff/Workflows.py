@@ -1,8 +1,16 @@
 ##Workflows.py
 
-from Agent_Helpers import load_elecdata_postgres, clean_sql_query, SQLCoder, DDLCommandException, ChatHistory
-from CustomAgents import SQLExpert, ResponseSummarizer
+from AI_Stuff.Agent_Helpers import load_elecdata_postgres, clean_sql_query, SQLCoder, DDLCommandException, ChatHistory
+from AI_Stuff.CustomAgents import SQLExpert, ResponseSummarizer
 from langchain_openai import ChatOpenAI
+import os
+from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+env_path = os.path.join(os.path.dirname(__file__), '.ENV')
+load_dotenv(dotenv_path=env_path)
 
 class elecdataworkflow:
     def __init__(self):
@@ -39,13 +47,16 @@ class elecdataworkflow:
     
     def run(self, user_query: str) -> str:
         sql_query = self._generate_query(user_query)
+        # logger.info(f"Generated SQL Query: {sql_query}")
         if sql_query == "Invalid User Query - Not related to the Database":
             return sql_query
         try:
             data = self._execute_sql_query(sql_query)
+            # logger.info(f"Data fetched: {data}")
             response = self.response_summarizer_agent.summarize(user_query=user_query, dataframe=data)
+            # logger.info(f"Response: {response}")
             chat = f"""User Query: {user_query}\nResponse: {response}"""
-            self.history.append(chat)
+            self.history.add(chat)
             return response
         except Exception as e:
             return str(e)
