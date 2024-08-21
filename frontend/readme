@@ -1,0 +1,11 @@
+install node package:
+npm install
+
+useful vscode extension:
+tailwind intellisense, prettier
+
+running the app, type in the root:
+npm run dev
+
+chatbot page is in /frontend/src/pages/chatbot.tsx
+chat history json is in /frontend/public/chat.json

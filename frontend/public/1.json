@@ -1,0 +1,23 @@
+[
+    {
+        "messageID": "1a",
+        "user": "user",
+        "content": "hello world",
+        "date": "02/10/2023",
+        "time": "12:00"
+    },
+    {
+        "messageID": "1b",
+        "user": "bot",
+        "content": "Lorem Ipsum",
+        "date": "02/10/2023",
+        "time": "12:01"
+    },
+    {
+        "messageID": "1c",
+        "user": "user",
+        "content": "Dolor sit amet",
+        "date": "02/10/2023",
+        "time": "12:02"
+    }
+]
