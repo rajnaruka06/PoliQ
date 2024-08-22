@@ -13,7 +13,7 @@ import json
 from pymongo import MongoClient, TEXT
 from bson import ObjectId
 
-env_path = os.path.join(os.path.dirname(__file__), '.ENV')
+env_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path=env_path)
 
 def load_polimap_postgres() -> SQLDatabase:
@@ -28,15 +28,31 @@ def load_polimap_postgres() -> SQLDatabase:
     return db
 
 def load_elecdata_postgres() -> SQLDatabase:
+    # user = os.environ.get('POSTGRES_USER')
+    # password = os.environ.get('POSTGRES_PASSWORD')
+    # host = os.environ.get('POSTGRES_HOST')
+    # port = os.environ.get('POSTGRES_PORT')
+    # dbname = os.environ.get('ELECDATA_DB_NAME')
+    # uri = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
+    # db = SQLDatabase.from_uri(uri)
     user = os.environ.get('POSTGRES_USER')
     password = os.environ.get('POSTGRES_PASSWORD')
     host = os.environ.get('POSTGRES_HOST')
     port = os.environ.get('POSTGRES_PORT')
     dbname = os.environ.get('ELECDATA_DB_NAME')
+    # Construct the URI from components
     uri = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
+    # Print the URI for debugging
+    print(f"Constructed URI: {uri}")
     db = SQLDatabase.from_uri(uri)
+    print(f"POSTGRES_USER: {os.environ.get('POSTGRES_USER')}")
+    print(f"POSTGRES_PASSWORD: {os.environ.get('POSTGRES_PASSWORD')}")
+    print(f"POSTGRES_HOST: {os.environ.get('POSTGRES_HOST')}")
+    print(f"POSTGRES_PORT: {os.environ.get('POSTGRES_PORT')}")
+    print(f"ELECDATA_DB_NAME: {os.environ.get('ELECDATA_DB_NAME')}")
 
     return db
+
 
 def clean_sql_query(sql_query: str) -> str:
     sql_query = sql_query.replace('`', '').strip()

@@ -5,12 +5,14 @@
             {
                 "title": "hello world (click this)",
                 "content": "hello world",
-                "chatID": "1"
+                "chatID": "1",
+                "pinned": true
             },
             {
                 "title": "world said hello (click this)",
                 "content": "world said hello",
-                "chatID": "2"
+                "chatID": "2",
+                "pinned": true
             }
         ]
     },
@@ -19,11 +21,13 @@
         "chat": [
             {
                 "title": "this and below doesn't have chat history yet",
-                "chatID": "3"
+                "chatID": "3",
+                "pinned": false
             },
             {
                 "title": "friends said hello",
-                "chatID": "4"
+                "chatID": "4",
+                "pinned": false
             }
         ]
     },
@@ -32,7 +36,8 @@
         "chat": [
             {
                 "title": "hello friends",
-                "chatID": "5"
+                "chatID": "5",
+                "pinned": false
             }
         ]
     }
