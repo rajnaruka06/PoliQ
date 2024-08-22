@@ -70,7 +70,7 @@ async def handle_pin_chat(chat_id: str = Path(...), user_id: str = Query(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put("/api/chats/{chat_id}/unpin")
-async def handle_pin_chat(chat_id: str = Path(...), user_id: str = Query(...)):
+async def handle_unpin_chat(chat_id: str = Path(...), user_id: str = Query(...)):
     try:
         chat_history = ChatHistory(user_id=user_id)
         chat_history.unpin_chat(chat_id)
