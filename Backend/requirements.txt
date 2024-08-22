@@ -1,0 +1,9 @@
+langchain 
+langchain-community 
+python-dotenv 
+numpy 
+pandas 
+plotly 
+fastapi 
+pydantic
+psycopg2-binary

@@ -29,25 +29,51 @@ const ChatBot: React.FC = () => {
     const [detailedMessages, setConvMessages] = useState<MessageHistory[]>([]);
     const [selectedChatID, setSelectedChatID] = useState<string | null>(null);
 
-    // Function to handle sending messages
-    const handleSend = () => {
+    // PMJ 22/8/2024: new handleSend to call up try1.py API and print status to console
+    // PMJ: This requires CORS middleware in the backend
+    const handleSend = async () => {
         if (input.trim()) {
             setMessages([
                 ...messages,
                 { sender: "user", text: input, user: "user" },
             ]);
-            setInput("");
+            try {
+                // This calls the FastAPI backend - "/run" - directly on port 8000
+                const response = await fetch("http://localhost:8000/run", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        user_query: input,
+                    }),
+                });
 
-            setTimeout(() => {
+                if (!response.ok) {
+                    throw new Error("API call failed");
+                }
+
+                const data = await response.json();
+
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    { sender: "bot", text: data.response, user: "bot" },
+                ]);
+                // This prints API call status to console for testing
+                console.log("API call was successful!");
+            } catch (error) {
+                console.error("Error sending message:", error);
                 setMessages((prevMessages) => [
                     ...prevMessages,
                     {
                         sender: "bot",
-                        text: "This is a response from the bot.",
+                        text: "Sorry, there was an error processing your request.",
                         user: "bot",
                     },
                 ]);
-            }, 500);
+            }
+
+            setInput("");
         }
     };
 
