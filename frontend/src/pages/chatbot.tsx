@@ -93,7 +93,7 @@ const ChatBot: React.FC = () => {
         });
     };
 
-    // Function to fetch chat history
+    // Function to fetch chat history (sidebar)
     const fetchChatHistory = async () => {
         try {
             const response = await fetch("/chat.json");
@@ -104,9 +104,12 @@ const ChatBot: React.FC = () => {
             console.error("Error fetching chat history:", error);
         }
     };
+    useEffect(() => {
+        fetchChatHistory();
+    }, []);
 
-    // Function to fetch messages
-    const fetchMessages = async (chatID: string) => {
+    // Function to fetch messages (right side)
+    const fetchChatMessages = async (chatID: string) => {
         try {
             const response = await fetch(`${chatID}.json`);
             const data = await response.json();
@@ -116,16 +119,12 @@ const ChatBot: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        fetchChatHistory();
-    }, []);
-
     // Function to fetch messages
     useEffect(() => {
         if (selectedChatID) {
-            fetchMessages(selectedChatID);
+            fetchChatMessages(selectedChatID);
             const interval = setInterval(() => {
-                fetchMessages(selectedChatID);
+                fetchChatMessages(selectedChatID);
             }, 1000);
             return () => clearInterval(interval);
         }
@@ -134,6 +133,11 @@ const ChatBot: React.FC = () => {
     // Function to toggle sidebar
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
+    };
+
+    // Function to toggle Settings overlay
+    const toggleOverlay = () => {
+        setIsOverlayVisible(!isOverlayVisible);
     };
 
     // Function to handle search
@@ -156,6 +160,7 @@ const ChatBot: React.FC = () => {
         }
     };
 
+    // WAITING FOR API
     // CHANGE: Function to handle the pinning and unpinning of chats
     const handlePinChat = (chatID: string) => {
         if (pinnedChats.includes(chatID)) {
@@ -164,7 +169,8 @@ const ChatBot: React.FC = () => {
             setPinnedChats([...pinnedChats, chatID]); // Pin the chat
         }
     };
-    // Function to handle deleting a chat
+
+    // WAITING FOR API
     // Function to handle deleting a chat
     const handleDeleteChat = (chatID: string) => {
         // Confirm before deleting
@@ -192,13 +198,12 @@ const ChatBot: React.FC = () => {
         }
     };
 
+    // WAITING FOR API
     // Function to handle archiving a chat
     const handleArchiveChat = (chatID: string) => {
         // Archive logic here (e.g., move to archived chats list)
         console.log(`Archived chat with ID: ${chatID}`);
     };
-
-    const [hoveredChatID, setHoveredChatID] = useState<string | null>(null);
 
     // Function to render feedback button
     // CHANGE: Added icons for what user can do to interact with the response
@@ -233,10 +238,69 @@ const ChatBot: React.FC = () => {
             </div>
         );
     };
-    // QUESTION: not sure what this is for?
-    const toggleOverlay = () => {
-        setIsOverlayVisible(!isOverlayVisible);
+
+    const threeDotsMenu = (chat: { chatID: string; title: string }) => {
+        return (
+            <div className="absolute p-2 text-white bg-black rounded shadow-lg">
+                <button
+                    className="flex gap-2 items-center"
+                    onClick={() => handlePinChat(chat.chatID)}
+                >
+                    {pinnedChats.includes(chat.chatID) ? (
+                        <>
+                            <BiSolidPin />
+                            <span>Unpin</span>
+                        </>
+                    ) : (
+                        <>
+                            <BiPin />
+                            <span>Pin</span>
+                        </>
+                    )}
+                </button>
+                <button
+                    className="flex gap-2 items-center mt-2"
+                    onClick={() => handleDeleteChat(chat.chatID)}
+                >
+                    <BiTrash />
+                    <span>Delete</span>
+                </button>
+                <button
+                    className="flex gap-2 items-center mt-2"
+                    onClick={() => handleArchiveChat(chat.chatID)}
+                >
+                    <BiArchive />
+                    <span>Archive</span>
+                </button>
+            </div>
+        );
     };
+
+    const overlayMenu = isOverlayVisible && (
+        // Overlay content on bottom left corner
+        <div
+            className="absolute bottom-0 left-0 w-full h-full bg-black/70"
+            onClick={toggleOverlay}
+        >
+            <div
+                className="flex flex-col pr-2 pb-8 pl-8 w-1/6 h-screen rounded-t-lg shadow-lg"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="mb-auto"></div>
+
+                <ul className="flex flex-col gap-5 content-end p-5 text-lg rounded-lg bg-sidebar">
+                    <button className="text-2xl font-semibold">Menu 1</button>
+                    <button className="text-2xl font-semibold">Menu 2</button>
+                    <button className="text-2xl font-semibold">Menu 3</button>
+                </ul>
+                <div className="flex justify-end">
+                    <button className="text-3xl" onClick={toggleOverlay}>
+                        <AiFillSetting />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
 
     return (
         <div className="flex p-4 w-screen h-screen bg-primary">
@@ -262,90 +326,6 @@ const ChatBot: React.FC = () => {
                             value={searchTerm}
                             onChange={handleSearch}
                         ></input>
-
-                        {/* CHANGE: Pinned chat area */}
-                        {pinnedChats.length > 0 && (
-                            <div className="mb-5 text-white">
-                                <h3 className="text-2xl font-semibold">
-                                    Pinned Chats
-                                </h3>
-                                <div className="flex overflow-auto flex-col gap-3">
-                                    {filteredChatHistory.map((session) =>
-                                        session.chat
-                                            .filter((chat) =>
-                                                pinnedChats.includes(
-                                                    chat.chatID
-                                                )
-                                            )
-                                            .map((chat, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className={`py-1 pl-5 ml-3 text-xl truncate rounded-full hover:bg-zinc-500 hover:cursor-pointer ${
-                                                        selectedChatID ===
-                                                        chat.chatID
-                                                            ? "bg-blue-600 text-white"
-                                                            : "bg-transparent"
-                                                    }`}
-                                                    onClick={() =>
-                                                        setSelectedChatID(
-                                                            chat.chatID
-                                                        )
-                                                    }
-                                                >
-                                                    <div className="flex justify-between items-center">
-                                                        <span>
-                                                            {chat.title}
-                                                        </span>
-                                                        <BiGridSmall
-                                                            onClick={(e) => {
-                                                                e.stopPropagation(); // Prevents triggering the chat selection
-                                                                setShowOptionsMenu(
-                                                                    showOptionsMenu ===
-                                                                        chat.chatID
-                                                                        ? null
-                                                                        : chat.chatID
-                                                                );
-                                                            }}
-                                                        />
-                                                    </div>
-                                                    {/* CHANGE: Options menu for pinning/unpinning when pinned */}
-                                                    {showOptionsMenu ===
-                                                        chat.chatID && (
-                                                        <div className="absolute p-2 text-white bg-black rounded shadow-lg">
-                                                            <button
-                                                                className="flex gap-2 items-center"
-                                                                onClick={() =>
-                                                                    handlePinChat(
-                                                                        chat.chatID
-                                                                    )
-                                                                }
-                                                            >
-                                                                {pinnedChats.includes(
-                                                                    chat.chatID
-                                                                ) ? (
-                                                                    <>
-                                                                        <BiSolidPin />
-                                                                        <span>
-                                                                            Unpin
-                                                                        </span>
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <BiPin />
-                                                                        <span>
-                                                                            Pin
-                                                                        </span>
-                                                                    </>
-                                                                )}
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ))
-                                    )}
-                                </div>
-                            </div>
-                        )}
 
                         {/* CHANGE: Chat history amended with exclusion of pinned chats */}
                         <div className="flex overflow-auto flex-col flex-grow gap-3 text-white">
@@ -373,8 +353,6 @@ const ChatBot: React.FC = () => {
                                                         ? "bg-blue-600 text-white"
                                                         : "bg-transparent"
                                                 }`}
-                                                onMouseEnter={() => setHoveredChatID(chat.chatID)}
-                                                onMouseLeave={() => setHoveredChatID(null)}
                                                 onClick={() =>
                                                     setSelectedChatID(
                                                         chat.chatID
@@ -383,9 +361,6 @@ const ChatBot: React.FC = () => {
                                             >
                                                 <div className="flex justify-between items-center">
                                                     <span>{chat.title}</span>
-                                                {/* Three-dot menu */}
-                                                {(hoveredChatID === chat.chatID || selectedChatID === chat.chatID) && (
-
                                                     <BiGridSmall
                                                         onClick={(e) => {
                                                             e.stopPropagation(); // Prevents triggering the chat selection
@@ -396,62 +371,11 @@ const ChatBot: React.FC = () => {
                                                                     : chat.chatID
                                                             );
                                                         }}
-                                                    />)}
+                                                    />
                                                 </div>
-                                                {/* Options menu for pinning/unpinning */}
                                                 {showOptionsMenu ===
-                                                    chat.chatID && (
-                                                    <div className="absolute p-2 text-white bg-black rounded shadow-lg">
-                                                        <button
-                                                            className="flex gap-2 items-center"
-                                                            onClick={() =>
-                                                                handlePinChat(
-                                                                    chat.chatID
-                                                                )
-                                                            }
-                                                        >
-                                                            {pinnedChats.includes(
-                                                                chat.chatID
-                                                            ) ? (
-                                                                <>
-                                                                    <BiSolidPin />
-                                                                    <span>
-                                                                        Unpin
-                                                                    </span>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <BiPin />
-                                                                    <span>
-                                                                        Pin
-                                                                    </span>
-                                                                </>
-                                                            )}
-                                                        </button>
-                                                        <button
-                                                            className="flex gap-2 items-center mt-2"
-                                                            onClick={() =>
-                                                                handleDeleteChat(
-                                                                    chat.chatID
-                                                                )
-                                                            }
-                                                        >
-                                                            <BiTrash />
-                                                            <span>Delete</span>
-                                                        </button>
-                                                        <button
-                                                            className="flex gap-2 items-center mt-2"
-                                                            onClick={() =>
-                                                                handleArchiveChat(
-                                                                    chat.chatID
-                                                                )
-                                                            }
-                                                        >
-                                                            <BiArchive />
-                                                            <span>Archive</span>
-                                                        </button>
-                                                    </div>
-                                                )}
+                                                    chat.chatID &&
+                                                    threeDotsMenu(chat)}
                                             </div>
                                         ))}
                                 </div>
@@ -572,41 +496,7 @@ const ChatBot: React.FC = () => {
                 </div>
             </div>
 
-            {/* Overlay with menus  */}
-            {isOverlayVisible && (
-                // Overlay content on bottom left corner
-                <div
-                    className="absolute bottom-0 left-0 w-full h-full bg-black/70"
-                    onClick={toggleOverlay}
-                >
-                    <div
-                        className="flex flex-col pr-2 pb-8 pl-8 w-1/6 h-screen rounded-t-lg shadow-lg"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <div className="mb-auto"></div>
-
-                        <ul className="flex flex-col gap-5 content-end p-5 text-lg rounded-lg bg-sidebar">
-                            <button className="text-2xl font-semibold">
-                                Menu 1
-                            </button>
-                            <button className="text-2xl font-semibold">
-                                Menu 2
-                            </button>
-                            <button className="text-2xl font-semibold">
-                                Menu 3
-                            </button>
-                        </ul>
-                        <div className="flex justify-end">
-                            <button
-                                className="text-3xl"
-                                onClick={toggleOverlay}
-                            >
-                                <AiFillSetting />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {overlayMenu}
         </div>
     );
 };
