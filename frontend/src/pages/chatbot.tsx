@@ -7,8 +7,7 @@ import {
     BiBarChartSquare,
 } from "react-icons/bi";
 import Sidebar from "./sidebar";
-
-// Define an interface for the chat history data structure
+import { AiOutlineArrowUp, AiOutlineClose } from "react-icons/ai";
 
 interface MessageCurrent {
     sender: string;
@@ -75,7 +74,6 @@ const ChatBot: React.FC = () => {
     }, [selectedChatID]);
 
     // Function to render feedback button
-    // CHANGE: Added icons for what user can do to interact with the response
     const FeedbackButton = () => {
         return (
             <div className="flex gap-1 p-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
@@ -118,6 +116,7 @@ const ChatBot: React.FC = () => {
             {/* Chat area */}
             <div className="flex flex-col mx-auto w-3/5">
                 <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
+                    {/* TASK: need to refactor */}
                     {/* Messages */}
                     {selectedChatID
                         ? detailedMessages.map((msg, index) => (
@@ -132,8 +131,8 @@ const ChatBot: React.FC = () => {
                                   <div
                                       className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
                                           msg.user === "user"
-                                              ? "bg-zinc-500 text-white"
-                                              : "bg-zinc-700 text-white"
+                                              ? "bg-zinc-700 text-white"
+                                              : " text-white"
                                       }`}
                                   >
                                       {msg.content}
@@ -163,8 +162,8 @@ const ChatBot: React.FC = () => {
                                   <div
                                       className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
                                           msg.sender === "user"
-                                              ? "bg-zinc-500 text-white"
-                                              : "bg-zinc-700 text-white"
+                                              ? "bg-zinc-700 text-white"
+                                              : " text-white"
                                       }`}
                                   >
                                       {msg.text}
@@ -186,16 +185,16 @@ const ChatBot: React.FC = () => {
                     {/* Send button */}
                     <button
                         onClick={handleSend}
-                        className="px-4 py-2 text-white bg-blue-500 rounded-lg"
+                        className="px-4 py-2 font-extrabold text-white rounded-full"
                     >
-                        Send
+                        <AiOutlineArrowUp />
                     </button>
                     {/* Clear button */}
                     <button
                         onClick={() => setInput("")}
-                        className="px-4 py-2 text-white bg-red-500 rounded-lg"
+                        className="px-4 py-2 text-white rounded-full"
                     >
-                        Clear
+                        <AiOutlineClose />
                     </button>
                 </div>
             </div>
