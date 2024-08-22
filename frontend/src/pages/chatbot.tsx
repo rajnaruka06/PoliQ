@@ -15,7 +15,6 @@ import {
     BiTrash, // Add this for delete
     BiArchive, // Add this for archive
 } from "react-icons/bi";
-
 import { AiFillSetting } from "react-icons/ai";
 
 // Define an interface for the chat history data structure
@@ -42,9 +41,7 @@ const ChatBot: React.FC = () => {
     const [messages, setMessages] = useState<MessageCurrent[]>([]);
     const [input, setInput] = useState("");
     const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
-    const [filteredChatHistory, setFilteredChatHistory] = useState<
-        ChatHistory[]
-    >([]);
+    const [filteredChatHistory, setFilteredChatHistory] = useState<ChatHistory[]>([]);
     const [detailedMessages, setConvMessages] = useState<MessageHistory[]>([]);
     const [selectedChatID, setSelectedChatID] = useState<string | null>(null);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -55,27 +52,67 @@ const ChatBot: React.FC = () => {
     // CHANGE: State to manage the visibility of the options menu for each chat
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null);
 
-    // Function to handle sending messages
-    const handleSend = () => {
+    // PMJ 22/8/2024: new handleSend to call up try1.py API and print status to console
+    // PMJ: This requires CORS middleware in the backend 
+    const handleSend = async () => {
         if (input.trim()) {
-            setMessages([
-                ...messages,
-                { sender: "user", text: input, user: "user" },
-            ]);
-            setInput("");
-
-            setTimeout(() => {
+            setMessages([...messages, { sender: "user", text: input, user: "user" }]);
+            try {
+                // This calls the FastAPI backend - "/run" - directly on port 8000
+                const response = await fetch("http://localhost:8000/run", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        user_query: input,
+                    }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error("API call failed");
+                }
+    
+                const data = await response.json();
+    
                 setMessages((prevMessages) => [
                     ...prevMessages,
-                    {
-                        sender: "bot",
-                        text: "This is a response from the bot.",
-                        user: "bot",
-                    },
+                    { sender: "bot", text: data.response, user: "bot" },
                 ]);
-            }, 500);
+                // This prints API call status to console for testing
+                console.log("API call was successful!");
+            } catch (error) {
+                console.error("Error sending message:", error);
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    { sender: "bot", text: "Sorry, there was an error processing your request.", user: "bot" }
+                ]);
+            }
+    
+            setInput("");
         }
     };
+    // Function to handle sending messages
+    // const handleSend = () => {
+    //     if (input.trim()) {
+    //         setMessages([
+    //             ...messages,
+    //             { sender: "user", text: input, user: "user" },
+    //         ]);
+    //         setInput("");
+
+    //         setTimeout(() => {
+    //             setMessages((prevMessages) => [
+    //                 ...prevMessages,
+    //                 {
+    //                     sender: "bot",
+    //                     text: "This is a response from the bot.",
+    //                     user: "bot",
+    //                 },
+    //             ]);
+    //         }, 500);
+    //     }
+    // };
 
     // Function to clear the input
     const handleClear = () => {

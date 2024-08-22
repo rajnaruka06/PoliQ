@@ -2,7 +2,7 @@
 
 from AI_Stuff.Agent_Helpers import load_elecdata_postgres, clean_sql_query, SQLCoder, DDLCommandException, ChatHistory
 from AI_Stuff.CustomAgents import SQLExpert, ResponseSummarizer
-from langchain_openai import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 import os
 from dotenv import load_dotenv
 import logging
