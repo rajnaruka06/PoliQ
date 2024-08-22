@@ -4,15 +4,14 @@ from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
 from langchain_community.utilities import SQLDatabase
 import os
 from dotenv import load_dotenv
-import numpy as np
 import pandas as pd
-import plotly.graph_objects as go
-import ast
 import re
-from collections import deque
+import ast
 from decimal import Decimal
 import datetime
 import json
+from pymongo import MongoClient, TEXT
+from bson import ObjectId
 
 env_path = os.path.join(os.path.dirname(__file__), '.ENV')
 load_dotenv(dotenv_path=env_path)
@@ -113,22 +112,67 @@ class SQLCoder:
         self.db = db
         self.query_runner = QuerySQLDataBaseTool(db=db)
 
+    def _parse_decimal(self, match):
+        value = match.group(1)
+        return f"'{Decimal(value)}'"
+
+    def _parse_datetime(self, match):
+        date_args = list(map(int, match.group(1).split(',')))
+        if 'tzinfo' in match.group(2):
+            dt = datetime.datetime(*date_args, tzinfo=datetime.timezone.utc)
+        else:
+            dt = datetime.datetime(*date_args)
+        return f"'{dt.isoformat()}'"
+    
+    def _custom_parser(self, res_str: str):
+        res_str = re.sub(
+            r"Decimal\('([^']+)'\)"
+            , self._parse_decimal
+            , res_str
+        )
+        res_str = re.sub(
+            r"datetime\.datetime\(([\d, ]+)(, tzinfo=datetime\.timezone\.utc)?\)"
+            , self._parse_datetime
+            , res_str
+        )
+        res_str = re.sub(
+            r"datetime\.datetime\(([\d, ]+)\)"
+            , lambda m: f"'{datetime.datetime(*map(int, m.group(1).split(','))).isoformat()}'"
+            , res_str
+        )
+        
+        return ast.literal_eval(res_str)
+        
     def execute_query(self, query: str) -> pd.DataFrame:
-        ## IF gets too complex, use eval instead, import datetime and decimal.Decimal
         try:
             res = self.query_runner.invoke(query)
-            # res = res.replace('Decimal', '')
             if res == '':
                 raise NoDataFoundException
-            # res = ast.literal_eval(res)
-            ## Not safe
-            res = eval(res) ## Has to be updated 
+            res = self._custom_parser(res)
             columns = self.get_cols(query)
             if columns == []: columns = range(len(res[0]))
             res = pd.DataFrame.from_records(data=res, columns=columns)
             return res
         except Exception as e:
             raise e
+
+    # def execute_query(self, query: str) -> pd.DataFrame:
+    #     ## IF gets too complex, use eval instead, import datetime and decimal.Decimal
+    #     try:
+    #         res = self.query_runner.invoke(query)
+    #         # res = res.replace('Decimal', '')
+    #         if res == '':
+    #             raise NoDataFoundException
+    #         # res = ast.literal_eval(res)
+    #         ## Not safe
+    #         res = eval(res) ## Has to be updated 
+    #         columns = self.get_cols(query)
+    #         if columns == []: columns = range(len(res[0]))
+    #         res = pd.DataFrame.from_records(data=res, columns=columns)
+    #         return res
+    #     except Exception as e:
+    #         raise e
+
 
     def get_cols(self, sql_query: str) -> list:
         select_regex = re.compile(r'SELECT\s+(.+?)\s+FROM', re.IGNORECASE | re.DOTALL)
@@ -139,32 +183,139 @@ class SQLCoder:
         return columns
 
 class ChatHistory:
-    def __init__(self, lim = 3, user_id = 1, chat_id = 1, base_dir = 'ChatHistory'):
-        self.lim = lim
+    """
+    ChatHistory Class
+    
+    This class manages chat history for users, storing and retrieving data from a MongoDB database.
+    
+    MongoDB Database Structure:
+    - Database: ChatHistoryDB
+    - Collection: <user_id> (Each user has a dedicated collection named after their user_id)
+    - Document Structure:
+      {
+        "chat_id": <str>,             # Unique identifier for the chat session
+        "date": <str>,                # Date the chat was created (YYYY-MM-DD format)
+        "title": <str>,               # Short title for the chat (first 30 characters of the first message)
+        "pinned": <bool>,             # Indicates if the chat is pinned
+        "archived": <bool>,           # Indicates if the chat is archived
+        "last_updated": <datetime>,   # Timestamp of the last update to the chat
+        "messages": [                 # Array of message objects
+          {
+            "messageID": <str>,       # Unique identifier for the message
+            "user": <str>,            # "user" or "bot" to indicate the sender
+            "content": <str>,         # The message content
+            "date": <str>,            # Date the message was sent (YYYY-MM-DD format)
+            "time": <str>             # Time the message was sent (HH:MM:SS format)
+          },
+          ...
+        ]
+      }
+    
+    Key Features:
+    - Each user's chat history is stored in a separate collection, identified by `user_id`.
+    - Each chat session is represented by a document, identified by `chat_id`.
+    - The `messages` field in the document contains an array of chat messages.
+    - Supports operations like adding messages, retrieving chat history, pinning/unpinning chats,
+      archiving chats, and searching through chat history.
+    """
+
+    def __init__(self, user_id="default_user", chat_id=None, mongo_uri="mongodb://localhost:27017/", db_name="ChatHistoryDB"):
         self.user_id = user_id
         self.chat_id = chat_id
-        self.chat_history_dir = os.path.join(base_dir, str(self.user_id))
-        self.chat_history_file = os.path.join(self.chat_history_dir, f"{self.chat_id}.json")
-        self._init_chat_history()
+        self.client = MongoClient(mongo_uri)
+        self.db = self.client[db_name]
+        self.collection = self.db[str(self.user_id)]
+        self._ensure_text_index()
 
-    def _init_chat_history(self):
-        os.makedirs(self.chat_history_dir, exist_ok=True)
-        if os.path.exists(self.chat_history_file):
-            self.chat_history = deque(self._load_chat_history(), maxlen=self.lim)
-        else:
-            self.chat_history = deque([], maxlen=self.lim)
+    def _ensure_text_index(self):
+        indexes = self.collection.list_indexes()
+        index_names = [index['name'] for index in indexes]
 
-    def _load_chat_history(self):
-        with open(self.chat_history_file, 'r') as f:
-            return json.load(f)
+        index_name = "messages_content_text_index"
+        fields_to_index = [("messages.content", TEXT)]
 
-    def _save_chat_history(self):
-        with open(self.chat_history_file, 'w') as f:
-            json.dump(list(self.chat_history), f)
+        if index_name not in index_names:
+            self.collection.create_index(fields_to_index, name=index_name)
 
-    def add(self, chat):
-        self.chat_history.append(chat)
-        self._save_chat_history()
+    def _convert_objectid(self, data):
+        if isinstance(data, dict):
+            for key, value in data.items():
+                if isinstance(value, ObjectId):
+                    data[key] = str(value)
+                elif isinstance(value, list):
+                    data[key] = [self._convert_objectid(item) for item in value]
+                elif isinstance(value, dict):
+                    data[key] = self._convert_objectid(value)
+        return data
 
-    def get(self):
-        return '\n---\n'.join(self.chat_history)
+    def get_all_chats(self):
+        chats = self.collection.find({}, {"messages": 0})
+        # return list(chats)
+        return [self._convert_objectid(chat) for chat in chats]
+
+    def get_messages(self, chat_id):
+        chat = self.collection.find_one({"chat_id": chat_id}, {"messages": 1})
+        return chat["messages"] if chat else []
+
+    def get_recent_messages(self, chat_id, limit=5):
+        chat = self.collection.find_one({"chat_id": chat_id})
+        if chat and "messages" in chat:
+            return chat["messages"][-limit:]
+        return []
+
+    def add_message(self, chat_id, content, is_user=True):
+        if not chat_id:
+            chat_id = str(ObjectId())
+        
+        message = {
+            "messageID": str(ObjectId()),
+            "user": "user" if is_user else "bot",
+            "content": content,
+            "date": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "time": datetime.datetime.now().strftime("%H:%M:%S")
+        }
+        
+        self.collection.update_one(
+            {"chat_id": chat_id},
+            {
+                "$push": {"messages": message},
+                "$setOnInsert": {
+                    "date": datetime.datetime.now().strftime("%Y-%m-%d"),
+                    "title": content[:30],
+                    "pinned": False,
+                    "archived": False
+                },
+                "$set": {"last_updated": datetime.datetime.now()}
+            },
+            upsert=True
+        )
+        return chat_id
+
+    def delete_chat(self, chat_id):
+        self.collection.delete_one({"chat_id": chat_id})
+
+    def archive_chat(self, chat_id):
+        self.collection.update_one(
+            {"chat_id": chat_id},
+            {"$set": {"archived": True}}
+        )
+
+    def pin_chat(self, chat_id):
+        self.collection.update_one(
+            {"chat_id": chat_id},
+            {"$set": {"pinned": True}}
+        )
+
+    def unpin_chat(self, chat_id):
+        self.collection.update_one(
+            {"chat_id": chat_id},
+            {"$set": {"pinned": False}}
+        )
+
+    def search_chats(self, term):
+        results = list(self.collection.find(
+            {"$text": {"$search": term}},
+            {"score": {"$meta": "textScore"}, "messages": 0}
+        ).sort([("score", {"$meta": "textScore"})]))
+        
+        return [self._convert_objectid(result) for result in results]

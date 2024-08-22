@@ -1,6 +1,6 @@
 ##Workflows.py
 
-from AI_Stuff.Agent_Helpers import load_elecdata_postgres, clean_sql_query, SQLCoder, DDLCommandException, ChatHistory
+from AI_Stuff.Agent_Helpers import load_elecdata_postgres, clean_sql_query, SQLCoder, DDLCommandException
 from AI_Stuff.CustomAgents import SQLExpert, ResponseSummarizer
 from langchain_openai import ChatOpenAI
 import os
@@ -27,14 +27,13 @@ class elecdataworkflow:
         self.sql_coder_agent = SQLExpert(llm = self.llm)
         self.sql_query_tool = SQLCoder(db=self.db)
         self.response_summarizer_agent = ResponseSummarizer(llm=self.llm)
-        self.history = ChatHistory()
 
-    def _generate_query(self, user_query: str) -> str:
+    def _generate_query(self, user_query: str, chat_history: str = '') -> str:
         sql_query = self.sql_coder_agent.generate_query(
             user_query = user_query
             , dialect=self.dialect
             , table_info=self.schema_info
-            , chat_history=self.history.get()
+            , chat_history=chat_history
         )
         sql_query = clean_sql_query(sql_query)
         return sql_query
@@ -45,18 +44,13 @@ class elecdataworkflow:
         data = self.sql_query_tool.execute_query(sql_query)
         return data
     
-    def run(self, user_query: str) -> str:
-        sql_query = self._generate_query(user_query)
-        # logger.info(f"Generated SQL Query: {sql_query}")
+    def run(self, user_query: str, chat_history: str = '') -> str:
+        sql_query = self._generate_query(user_query, chat_history)
         if sql_query == "Invalid User Query - Not related to the Database":
             return sql_query
         try:
             data = self._execute_sql_query(sql_query)
-            # logger.info(f"Data fetched: {data}")
             response = self.response_summarizer_agent.summarize(user_query=user_query, dataframe=data)
-            # logger.info(f"Response: {response}")
-            chat = f"""User Query: {user_query}\nResponse: {response}"""
-            self.history.add(chat)
             return response
         except Exception as e:
-            return str(e)
+            return f"Please try again, an error occured: {str(e)}"

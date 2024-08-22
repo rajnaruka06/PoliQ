@@ -115,22 +115,17 @@ class ResponseSummarizer:
         self.llm = llm
 
     def summarize(self, user_query: str, dataframe) -> str:
-        summary_agent_template = """You are a data analyst. Given a user query and a pandas DataFrame, summarize the data in a user-readable format.
-        Describe the key insights, trends, and any notable observations from the data that answer the user query.
-        Make sure to include statistics, comparisons, and any relevant details that provide a clear understanding of the data.
+        summary_agent_template = """As a data analyst, provide a concise chat-like response to the user's query based on the given DataFrame. Focus on key insights and trends that directly answer the query. Use natural language and keep it brief.
 
-        User Query: {user_query}
-        DataFrame:
-        {dataframe}
-        Summary:
-        """
+        User: {user_query}
+        DataFrame: {dataframe}
+
+        Assistant: """
         summary_agent_prompt = PromptTemplate.from_template(summary_agent_template)
         summary_chain = summary_agent_prompt | self.llm
         summary = summary_chain.invoke({"dataframe": dataframe.to_dict(), "user_query": user_query}).content.strip()
 
         summary = self.iterative_refinement(user_query, summary)
-
-        # print("\n--- Final Summary ---\n", summary)
         return summary
 
     def iterative_refinement(self, user_query: str, summary: str, max_iterations = 3) -> str:
@@ -142,13 +137,12 @@ class ResponseSummarizer:
         return summary
 
     def self_reflect(self, user_query: str, summary: str) -> str:
-        reflection_template = """You are a data analyst. Given a user query and a generated summary, evaluate the summary to ensure it is concise and answers the user query in natural language.
-        If the summary is already good and no improvements are needed, your response should just be one word: "All good". Otherwise, provide feedback and suggest improvements. Do not include an improved summary.
+        reflection_template = """Evaluate this chat response for conciseness and relevance to the user's query. If it's good, just say "All good". Otherwise, suggest brief improvements.
 
-        User Query: {user_query}
-        Generated Summary: {summary}
-        Reflection:
-        """
+        User: {user_query}
+        Assistant: {summary}
+
+        Reflection: """
         reflection_prompt = PromptTemplate.from_template(reflection_template)
         reflection_chain = reflection_prompt | self.llm
         reflection_result = reflection_chain.invoke({"user_query": user_query, "summary": summary}).content.strip()
@@ -156,22 +150,81 @@ class ResponseSummarizer:
         return reflection_result
 
     def adjust_summary(self, user_query: str, summary: str, reflection: str) -> str:
-        adjustment_template = """You are a data analyst. Given a user query, a generated summary, and reflection feedback, adjust the summary to make it more concise and better answer the user query.
+        adjustment_template = """Adjust this chat response to be more concise and relevant to the user's query, based on the given feedback.
 
-        User Query: {user_query}
-        Generated Summary: {summary}
-        Reflection Feedback: {reflection}
-        Adjusted Summary:
-        """
+        User: {user_query}
+        Previous response: {summary}
+        Feedback: {reflection}
+
+        Improved response: """
         adjustment_prompt = PromptTemplate.from_template(adjustment_template)
         adjustment_chain = adjustment_prompt | self.llm
         adjusted_summary = adjustment_chain.invoke({"user_query": user_query, "summary": summary, "reflection": reflection}).content.strip()
 
-
-        if adjusted_summary.startswith('### Adjusted Summary:'):
-            adjusted_summary = adjusted_summary[len('### Adjusted Summary:'):].strip()
-
         return adjusted_summary
+
+# class ResponseSummarizer:
+#     def __init__(self, llm):
+#         self.llm = llm
+
+#     def summarize(self, user_query: str, dataframe) -> str:
+#         summary_agent_template = """You are a data analyst. Given a user query and a pandas DataFrame, summarize the data in a user-readable format.
+#         Describe the key insights, trends, and any notable observations from the data that answer the user query.
+#         Make sure to include statistics, comparisons, and any relevant details that provide a clear understanding of the data.
+
+#         User Query: {user_query}
+#         DataFrame:
+#         {dataframe}
+#         Summary:
+#         """
+#         summary_agent_prompt = PromptTemplate.from_template(summary_agent_template)
+#         summary_chain = summary_agent_prompt | self.llm
+#         summary = summary_chain.invoke({"dataframe": dataframe.to_dict(), "user_query": user_query}).content.strip()
+
+#         summary = self.iterative_refinement(user_query, summary)
+
+#         # print("\n--- Final Summary ---\n", summary)
+#         return summary
+
+#     def iterative_refinement(self, user_query: str, summary: str, max_iterations = 3) -> str:
+#         for _ in range(max_iterations):
+#             reflection_result = self.self_reflect(user_query, summary)
+#             if reflection_result.lower().strip() == "all good":
+#                 break
+#             summary = self.adjust_summary(user_query, summary, reflection_result)
+#         return summary
+
+#     def self_reflect(self, user_query: str, summary: str) -> str:
+#         reflection_template = """You are a data analyst. Given a user query and a generated summary, evaluate the summary to ensure it is concise and answers the user query in natural language.
+#         If the summary is already good and no improvements are needed, your response should just be one word: "All good". Otherwise, provide feedback and suggest improvements. Do not include an improved summary.
+
+#         User Query: {user_query}
+#         Generated Summary: {summary}
+#         Reflection:
+#         """
+#         reflection_prompt = PromptTemplate.from_template(reflection_template)
+#         reflection_chain = reflection_prompt | self.llm
+#         reflection_result = reflection_chain.invoke({"user_query": user_query, "summary": summary}).content.strip()
+
+#         return reflection_result
+
+#     def adjust_summary(self, user_query: str, summary: str, reflection: str) -> str:
+#         adjustment_template = """You are a data analyst. Given a user query, a generated summary, and reflection feedback, adjust the summary to make it more concise and better answer the user user query.
+
+#         User Query: {user_query}
+#         Generated Summary: {summary}
+#         Reflection Feedback: {reflection}
+#         Adjusted Summary:
+#         """
+#         adjustment_prompt = PromptTemplate.from_template(adjustment_template)
+#         adjustment_chain = adjustment_prompt | self.llm
+#         adjusted_summary = adjustment_chain.invoke({"user_query": user_query, "summary": summary, "reflection": reflection}).content.strip()
+
+
+#         if adjusted_summary.startswith('### Adjusted Summary:'):
+#             adjusted_summary = adjusted_summary[len('### Adjusted Summary:'):].strip()
+
+#         return adjusted_summary
 
 class SQLExpertMultiDB:
     def __init__(self, llm, schema_file_path):
