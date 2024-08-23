@@ -8,6 +8,12 @@ import {
 } from "react-icons/bi";
 import Sidebar from "./sidebar";
 import { AiOutlineArrowUp, AiOutlineClose } from "react-icons/ai";
+// PMJ 23/8/2024: importing useHandleSend() from handleSend.tsx
+//import { useHandleSend } from "../hooks/handleSend";
+// PMJ 23/8/2024: importing useSendMessage.tsx and useFetchMessages.tsx
+import { useSendMessage } from "../hooks/useSendMessage";
+import { useFetchMessages } from "../hooks/useFetchMessages";
+
 
 interface MessageCurrent {
     sender: string;
@@ -28,76 +34,55 @@ const ChatBot: React.FC = () => {
     const [input, setInput] = useState("");
     const [detailedMessages, setConvMessages] = useState<MessageHistory[]>([]);
     const [selectedChatID, setSelectedChatID] = useState<string | null>(null);
+//PMJ 23/8/2024: const for user_id
+const user_id = "example_user_id"; // Update later with a user details hook
 
-    // PMJ 22/8/2024: new handleSend to call up try1.py API and print status to console
-    // PMJ: This requires CORS middleware in the backend
-    const handleSend = async () => {
-        if (input.trim()) {
-            setMessages([
-                ...messages,
-                { sender: "user", text: input, user: "user" },
-            ]);
-            try {
-                // This calls the FastAPI backend - "/run" - directly on port 8000
-                const response = await fetch("http://localhost:8000/run", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        user_query: input,
-                    }),
-                });
+// PMJ 23/8/2024: Using useFetchMessages to fetch messages for the selected chat
+const { messages: fetchedMessages, loading, error } = useFetchMessages(selectedChatID, user_id);
 
-                if (!response.ok) {
-                    throw new Error("API call failed");
-                }
+// PMJ 23/8/2024: Using useSendMessage to send messages
+const { sendMessage, loading: sending, error: sendError } = useSendMessage(user_id);
 
-                const data = await response.json();
+const handleSend = async () => {
+    if (input.trim()) {
+        // Optimistically update the UI before sending the message
+        setMessages([...messages, { sender: "user", text: input, user: "user" }]);
 
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    { sender: "bot", text: data.response, user: "bot" },
-                ]);
-                // This prints API call status to console for testing
-                console.log("API call was successful!");
-            } catch (error) {
-                console.error("Error sending message:", error);
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    {
-                        sender: "bot",
-                        text: "Sorry, there was an error processing your request.",
-                        user: "bot",
-                    },
-                ]);
-            }
+        // Send the message using the hook and await the response
+        await sendMessage({ chat_id: selectedChatID, content: input });
 
-            setInput("");
-        }
-    };
+        // Clear the input after sending
+        setInput(""); 
+    }
+};
 
-    // Function to fetch messages (right side)
-    const fetchChatMessages = async (chatID: string) => {
-        try {
-            const response = await fetch(`${chatID}.json`);
-            const data = await response.json();
-            setConvMessages(data);
-        } catch (error) {
-            console.error("Error fetching messages:", error);
-        }
-    };
+// Effect to update conversation messages when new messages are fetched
+useEffect(() => {
+    if (selectedChatID && fetchedMessages) {
+        setConvMessages(fetchedMessages);
+    }
+}, [selectedChatID, fetchedMessages]);
+    // // Function to fetch messages (right side)
+    // const fetchChatMessages = async (chatID: string) => {
+    //     try {
+    //         const response = await fetch(`${chatID}.json`);
+    //         const data = await response.json();
+    //         setConvMessages(data);
+    //     } catch (error) {
+    //         console.error("Error fetching messages:", error);
+    //     }
+    // };
 
-    // Function to fetch messages
-    useEffect(() => {
-        if (selectedChatID) {
-            fetchChatMessages(selectedChatID);
-            const interval = setInterval(() => {
-                fetchChatMessages(selectedChatID);
-            }, 1000);
-            return () => clearInterval(interval);
-        }
-    }, [selectedChatID]);
+    // // Function to fetch messages
+    // useEffect(() => {
+    //     if (selectedChatID) {
+    //         fetchChatMessages(selectedChatID);
+    //         const interval = setInterval(() => {
+    //             fetchChatMessages(selectedChatID);
+    //         }, 1000);
+    //         return () => clearInterval(interval);
+    //     }
+    // }, [selectedChatID]);
 
     // Function to render feedback button
     const FeedbackButton = () => {

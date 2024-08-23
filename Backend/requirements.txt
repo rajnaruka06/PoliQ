@@ -7,3 +7,5 @@ plotly
 fastapi 
 pydantic
 psycopg2-binary
+pymongo
+bson 

@@ -28,13 +28,6 @@ def load_polimap_postgres() -> SQLDatabase:
     return db
 
 def load_elecdata_postgres() -> SQLDatabase:
-    # user = os.environ.get('POSTGRES_USER')
-    # password = os.environ.get('POSTGRES_PASSWORD')
-    # host = os.environ.get('POSTGRES_HOST')
-    # port = os.environ.get('POSTGRES_PORT')
-    # dbname = os.environ.get('ELECDATA_DB_NAME')
-    # uri = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
-    # db = SQLDatabase.from_uri(uri)
     user = os.environ.get('POSTGRES_USER')
     password = os.environ.get('POSTGRES_PASSWORD')
     host = os.environ.get('POSTGRES_HOST')
@@ -45,6 +38,7 @@ def load_elecdata_postgres() -> SQLDatabase:
     # Print the URI for debugging
     print(f"Constructed URI: {uri}")
     db = SQLDatabase.from_uri(uri)
+    # debugging
     print(f"POSTGRES_USER: {os.environ.get('POSTGRES_USER')}")
     print(f"POSTGRES_PASSWORD: {os.environ.get('POSTGRES_PASSWORD')}")
     print(f"POSTGRES_HOST: {os.environ.get('POSTGRES_HOST')}")
@@ -199,6 +193,24 @@ class SQLCoder:
         return columns
 
 class ChatHistory:
+    # PMJ 23/8/2024: added the mongodb details
+    def __init__(self, user_id="default_user", chat_id=None):
+    # Read MongoDB connection details from environment variables
+        mongo_user = os.environ.get('MONGO_USER')
+        mongo_password = os.environ.get('MONGO_PASSWORD')
+        mongo_host = os.environ.get('MONGO_HOST', 'localhost')
+        mongo_port = os.environ.get('MONGO_PORT', '27017')
+        mongo_db = os.environ.get('MONGO_DB', 'ChatHistoryDB')
+
+        # Construct the MongoDB URI
+        mongo_uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}/{mongo_db}"
+
+        self.user_id = user_id
+        self.chat_id = chat_id
+        self.client = MongoClient(mongo_uri)
+        self.db = self.client[mongo_db]
+        self.collection = self.db[str(self.user_id)]
+        self._ensure_text_index()
     """
     ChatHistory Class
     
