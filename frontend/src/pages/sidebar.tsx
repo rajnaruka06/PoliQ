@@ -7,12 +7,15 @@ import {
     BiTrash,
     BiArchive,
 } from "react-icons/bi";
-// PMJ 23/8/2024: import useFetchChatHistory hook
+import { AiFillSetting, AiOutlineMore, AiOutlineSearch } from "react-icons/ai";
+//PMJ 23/8/2024: import hooks
 import { useFetchChatHistory } from "../hooks/useFetchChatHistory";
-import { AiFillSetting, AiOutlineMore } from "react-icons/ai";
-//PMJ 23/8/2024: import pin and unpin chat hooks
 import { usePinChat } from "../hooks/usePinChat";
 import { useUnpinChat } from "../hooks/useUnpinChat";
+import { useDeleteChat } from "../hooks/useDeleteChat"; 
+import { useArchiveChat } from "../hooks/useArchiveChat";
+import { useSearchChats } from "../hooks/useSearchChats";
+
 // PMJ 23/8/2024: changed the interface format to accept the json format that returns to the UI
 interface ChatHistory {
     chat_id: string;
@@ -32,8 +35,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
     const user_id = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
 
-    // Fetch chat history using the useFetchChatHistory hook
+    //PMJ Fetch chat history using the useFetchChatHistory hook
     const { chatHistory, loading, error } = useFetchChatHistory(user_id);
+    //PMJ 24/8/2024: Delete chat using useDeleteChat hook
+    const { deleteChat, loading: deleteLoading, error: deleteError } = useDeleteChat(user_id);
+    //PMJ 24/8/2024: Use the useArchiveChat hook
+    const { archiveChat, loading: archiveLoading, error: archiveError } = useArchiveChat(user_id);
     // Use the pin and unpin chat hooks
     const { pinChat, loading: pinLoading, error: pinError } = usePinChat(user_id);
     const { unpinChat, loading: unpinLoading, error: unpinError } = useUnpinChat(user_id);
@@ -42,49 +49,30 @@ const Sidebar: React.FC<SidebarProps> = ({
     const [filteredChatHistory, setFilteredChatHistory] = useState<ChatHistory[]>([]);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    // PMJ 25/8/2024: define search results using useSearchChats
+    const { searchResults, loading: searchLoading, error: searchError } = useSearchChats(user_id, searchTerm); 
     const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [isSettingsOverlayVisible, setIsSettingsOverlayVisible] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
 
-    // Effect to update filtered chat history when chat history is fetched or search term changes
+    //PMJ 25/8/2024: Effect to determine whether to use serach results or the full chat history
+    // Function to handle search -> changed again to use hook
     useEffect(() => {
         if (searchTerm === "") {
-            setFilteredChatHistory(chatHistory); // Show the full chat history if there's no search term
+            setFilteredChatHistory(chatHistory); // Show full chat history if no search term
         } else {
-            const filtered = chatHistory
-                .filter((chat) => chat.title.toLowerCase().includes(searchTerm.toLowerCase()));
-            setFilteredChatHistory(filtered); // Update the filtered chat history based on the search term
+            setFilteredChatHistory(searchResults); // Show search results if there is a search term
         }
-    }, [chatHistory, searchTerm]); // The effect runs when either chat history or search term changes
+    }, [chatHistory, searchResults, searchTerm]);
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+    };
  
     // Function to toggle sidebar
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
-
-    // Function to handle search -> changed
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setSearchTerm(value);
-    };
-    // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const value = e.target.value;
-    //     setSearchTerm(value);
-
-    //     if (value === "") {
-    //         setFilteredChatHistory(chatHistory);
-    //     } else {
-    //         const filtered = chatHistory
-    //             .map((session) => ({
-    //                 ...session,
-    //                 chat: session.chat.filter((chat) =>
-    //                     chat.title.toLowerCase().includes(value.toLowerCase())
-    //                 ),
-    //             }))
-    //             .filter((session) => session.chat.length > 0);
-    //         setFilteredChatHistory(filtered);
-    //     }
-    // };
 
     // Function to format date
     const formatDate = (dateString: string): string => {
@@ -98,32 +86,23 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     // WAITING FOR API
-    // PMJ 23/8/2024: updated function to pin or unpin based on chat's current state
-    const handlePinChat = async (chatID: string) => {
+    // PMJ 25/8/2024: updated function to pin or unpin based on chat's current state
+    const handlePinChat = async (chatID: string, isPinned: boolean) => {
         try {
-            if (pinnedChats.includes(chatID)) {
+            if (isPinned) {
                 // Unpin the chat
-                await unpinChat(chatID); // Call the API
-                setPinnedChats((prev) => prev.filter((id) => id !== chatID)); // Remove from pinned chats
-    
-                // Update the chat history to reflect the unpinned status
-                setFilteredChatHistory((prevHistory) =>
-                    prevHistory.map((chat) =>
-                        chat.chat_id === chatID ? { ...chat, pinned: false } : chat
-                    )
-                );
+                await unpinChat(chatID); // Call the API to unpin
             } else {
                 // Pin the chat
-                await pinChat(chatID); // Call the API
-                setPinnedChats((prev) => [...prev, chatID]); // Add to pinned chats
-    
-                // Update the chat history to reflect the pinned status
-                setFilteredChatHistory((prevHistory) =>
-                    prevHistory.map((chat) =>
-                        chat.chat_id === chatID ? { ...chat, pinned: true } : chat
-                    )
-                );
+                await pinChat(chatID); // Call the API to pin
             }
+    
+            // Optionally, update the local chat history state if needed
+            setFilteredChatHistory((prevHistory) =>
+                prevHistory.map((chat) =>
+                    chat.chat_id === chatID ? { ...chat, pinned: !isPinned } : chat
+                )
+            );
         } catch (error) {
             console.error("Error pinning/unpinning chat:", error);
         }
@@ -131,64 +110,51 @@ const Sidebar: React.FC<SidebarProps> = ({
     
     
     
+    
 
     // WAITING FOR API -> API is here now, modified
-    // Function to handle deleting a chat
-    const handleDeleteChat = (chatID: string) => {
+    // PMJ 24/8/2024: Function to handle deleting a chat
+    const handleDeleteChat = async (chatID: string) => {
         if (window.confirm("Are you sure you want to delete this chat?")) {
-            const updatedChatHistory = chatHistory.filter((chat) => chat.chat_id !== chatID);
-            const updatedFilteredChatHistory = filteredChatHistory.filter((chat) => chat.chat_id !== chatID);
+            await deleteChat(chatID); // Call the deleteChat function from the hook
 
-            setFilteredChatHistory(updatedFilteredChatHistory);
-            setPinnedChats(pinnedChats.filter((id) => id !== chatID)); // Remove from pinnedChats if present
+            // Update the chat history locally
+            setFilteredChatHistory((prevHistory) =>
+                prevHistory.filter((chat) => chat.chat_id !== chatID)
+            );
+            setPinnedChats((prev) => prev.filter((id) => id !== chatID)); // Remove from pinned chats if necessary
 
             if (selectedChatID === chatID) {
                 setSelectedChatID(null);
             }
         }
     };
-    // const handleDeleteChat = (chatID: string) => {
-    //     // Confirm before deleting
-    //     if (window.confirm("Are you sure you want to delete this chat?")) {
-    //         // Filter out the chat from chatHistory and filteredChatHistory
-    //         const updatedChatHistory = chatHistory.filter((session) =>
-    //             session.chat.every((chat) => chat.chatID !== chatID)
-    //         );
-    //         const updatedFilteredChatHistory = filteredChatHistory.filter(
-    //             (session) =>
-    //                 session.chat.every((chat) => chat.chatID !== chatID)
-    //         );
-
-    //         // Update state
-    //         setChatHistory(updatedChatHistory);
-    //         setFilteredChatHistory(updatedFilteredChatHistory);
-
-    //         // Remove from pinnedChats if present
-    //         setPinnedChats(pinnedChats.filter((id) => id !== chatID));
-
-    //         // Clear selectedChatID if it's the one being deleted
-    //         if (selectedChatID === chatID) {
-    //             setSelectedChatID(null);
-    //         }
-    //     }
-    // };
 
     // WAITING FOR API
-    // Function to handle archiving a chat
-    const handleArchiveChat = (chatID: string) => {
-        // Archive logic here (e.g., move to archived chats list)
-        console.log(`Archived chat with ID: ${chatID}`);
+    // PMJ 24/8/2024: Function to handle archiving a chat
+    const handleArchiveChat = async (chatID: string) => {
+        try {
+            await archiveChat(chatID);
+            // Update chat history or UI state to reflect the archived status
+            setFilteredChatHistory((prevHistory) =>
+                prevHistory.map((chat) =>
+                    chat.chat_id === chatID ? { ...chat, archived: true } : chat
+                )
+            );
+        } catch (error) {
+            console.error("Error archiving chat:", error);
+        }
     };
 
     // Function to handle the three dots menu
-    const threeDotsMenu = (chat: { chatID: string; title: string }) => {
+    const threeDotsMenu = (chat: { chat_id: string; title: string; pinned: boolean }) => {
         return (
             <div className="flex absolute right-4 z-50 flex-col gap-3 items-end p-3 mt-10 text-white rounded-xl shadow-lg bg-primary">
                 <button
                     className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
-                    onClick={() => handlePinChat(chat.chatID)}
+                    onClick={() => handlePinChat(chat.chat_id, chat.pinned)}
                 >
-                    {pinnedChats.includes(chat.chatID) ? (
+                    {chat.pinned ? (
                         <>
                             <BiSolidPin />
                             <span>Unpin</span>
@@ -202,14 +168,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </button>
                 <button
                     className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
-                    onClick={() => handleDeleteChat(chat.chatID)}
+                    onClick={() => handleDeleteChat(chat.chat_id)}
                 >
                     <BiTrash />
                     <span>Delete</span>
                 </button>
                 <button
                     className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
-                    onClick={() => handleArchiveChat(chat.chatID)}
+                    onClick={() => handleArchiveChat(chat.chat_id)}
                 >
                     <BiArchive />
                     <span>Archive</span>
@@ -217,6 +183,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
         );
     };
+    
 
     // Function to toggle Settings overlay
     const toggleSettingsOverlay = () => {
@@ -255,6 +222,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     // PMJ 23/8/2024: API is here
     // Populate chat history - changed in a big way to include pin and unpin and group by date
     const loadChatHistory = () => {
+        
         // Separate pinned and regular chats based on the actual chat data
         const pinnedChatHistory = filteredChatHistory.filter((chat) => chat.pinned);
         const regularChatHistory = filteredChatHistory.filter((chat) => !chat.pinned);
@@ -327,10 +295,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
         );
     };
-    
-    
-    
-    
 
     return (
         <div
@@ -345,12 +309,27 @@ const Sidebar: React.FC<SidebarProps> = ({
                             PoliQ Chat
                         </a>
                     </div>
-                    <input
-                        className="px-4 py-2 mb-10 text-2xl rounded-full bg-zinc-700"
-                        placeholder="search chat..."
-                        value={searchTerm}
-                        onChange={handleSearch}
-                    ></input>
+                    {/* Priya 25/8/2024: Adding new chat button which clears the current chat and calls up a new one */}
+                    <button
+                             className="mb-2 px-4 py-2 bg-black-500 text-black rounded-full"
+                             onClick={() => {
+                             setSelectedChatID(null); // Clear the selected chat
+                     }}
+                    >
+                    New Chat
+                    </button>
+                    {/* Priya 25/8/2024: Search bar with icon */}
+                    
+                    {/* Search bar with icon */}
+                    <div className="relative mb-10">
+                        <input
+                            className="px-4 py-2 text-white rounded-full bg-zinc-700 pl-10"
+                            placeholder="Search..."
+                            value={searchTerm}
+                            onChange={handleSearch}
+                        />
+                        <AiOutlineSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-2xl" />
+                    </div>
 
                     {loading && <p>Loading...</p>}
                     {error && <p>Error: {error}</p>}
@@ -385,113 +364,3 @@ const Sidebar: React.FC<SidebarProps> = ({
 };
 
 export default Sidebar;
-//     const loadChatHistory = () => {
-//         return (
-//             <div className="flex overflow-auto flex-col flex-grow gap-3 text-white">
-//                 {filteredChatHistory.map((session, index) => (
-//                     <div
-//                         key={index}
-//                         className="flex relative flex-col gap-1 mb-4"
-//                     >
-//                         <div className="text-2xl font-semibold">
-//                             {formatDate(session.date)}
-//                         </div>
-//                         {session.chat
-//                             .filter(
-//                                 (chat) => !pinnedChats.includes(chat.chatID)
-//                             ) // Exclude pinned chats
-//                             .map((chat, idx) => (
-//                                 <div
-//                                     key={idx}
-//                                     className={`flex flex-col py-1 pl-5 ml-3 text-xl truncate hover:bg-zinc-500 hover:cursor-pointer ${
-//                                         selectedChatID === chat.chatID
-//                                             ? "bg-blue-600 text-white"
-//                                             : "bg-transparent"
-//                                     }`}
-//                                     onClick={() =>
-//                                         setSelectedChatID(chat.chatID)
-//                                     }
-//                                 >
-//                                     {/* Chat HIstory Area */}
-//                                     <div className="flex justify-between group">
-//                                         <span className="truncate">
-//                                             {chat.title}
-//                                         </span>
-//                                         <AiOutlineMore
-//                                             onClick={(e) => {
-//                                                 e.stopPropagation(); // Prevents triggering the chat selection
-//                                                 setShowOptionsMenu(
-//                                                     showOptionsMenu ===
-//                                                         chat.chatID
-//                                                         ? null
-//                                                         : chat.chatID
-//                                                 );
-//                                             }}
-//                                             className="pr-2 text-3xl"
-//                                         />
-//                                     </div>
-//                                     {/* Three dots menu */}
-//                                     {showOptionsMenu === chat.chatID &&
-//                                         threeDotsMenu(chat)}
-//                                 </div>
-//                             ))}
-//                     </div>
-//                 ))}
-//             </div>
-//         );
-//     };
-
-//     return (
-//         <div
-//             className={`flex flex-col relative rounded-lg shadow-lg transition-all duration-300 ease-in-out bg-sidebar ${isSidebarVisible ? "p-4 w-1/6" : "w-0"}`}
-//         >
-//             {isSidebarVisible && (
-//                 <>
-//                     <div className="mb-10 text-5xl font-bold text-white">
-//                         <a href="/" className="text-white hover:text-white">
-//                             PoliQ Chat
-//                         </a>
-//                     </div>
-//                     {/* Search bar */}
-//                     <input
-//                         className="px-4 py-2 mb-10 text-2xl rounded-full bg-zinc-700"
-//                         placeholder="search chat..."
-//                         value={searchTerm}
-//                         onChange={handleSearch}
-//                     ></input>
-
-//                     {/* CHANGE: Chat history amended with exclusion of pinned chats */}
-//                     {loadChatHistory()}
-//                     {overlaySettings}
-//                     <div className="flex justify-between items-center text-3xl bg-sidebar">
-//                         {/* User name */}
-//                         <div className="flex-grow text-left">John Doe</div>
-//                         {/* Settings button */}
-//                         <button
-//                             className="text-3xl"
-//                             onClick={toggleSettingsOverlay}
-//                         >
-//                             <AiFillSetting />
-//                         </button>
-//                     </div>
-//                 </>
-//             )}
-//             <div
-//                 className={`absolute top-1/2 ${isSidebarVisible ? "-right-20" : "-right-15"}`}
-//             >
-//                 <button
-//                     className="text-3xl text-white rounded-full bg-sidebar"
-//                     onClick={toggleSidebar}
-//                 >
-//                     {isSidebarVisible ? (
-//                         <BiChevronLeftCircle />
-//                     ) : (
-//                         <BiChevronRightCircle />
-//                     )}
-//                 </button>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Sidebar;
