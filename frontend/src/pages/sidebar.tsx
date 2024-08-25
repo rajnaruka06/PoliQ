@@ -77,6 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const [isSettingsOverlayVisible, setIsSettingsOverlayVisible] =
         useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
+    const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
 
     //PMJ 25/8/2024: Effect to determine whether to use serach results or the full chat history
     // Function to handle search -> changed again to use hook
@@ -168,6 +169,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     // Function to handle the three dots menu
+    // FIXME: click anywhere to close
     const threeDotsMenu = (chat: {
         chat_id: string;
         title: string;
@@ -182,12 +184,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {chat.pinned ? (
                         <>
                             <BiSolidPin />
-                            <span>Unpin</span>
+                            {/* <span>Unpin</span> */}
                         </>
                     ) : (
                         <>
                             <BiPin />
-                            <span>Pin</span>
+                            {/* <span>Pin</span> */}
                         </>
                     )}
                 </button>
@@ -196,14 +198,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                     onClick={() => handleDeleteChat(chat.chat_id)}
                 >
                     <BiTrash />
-                    <span>Delete</span>
+                    {/* <span>Delete</span> */}
                 </button>
                 <button
                     className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
                     onClick={() => handleArchiveChat(chat.chat_id)}
                 >
                     <BiArchive />
-                    <span>Archive</span>
+                    {/* <span>Archive</span> */}
                 </button>
             </div>
         );
@@ -244,7 +246,42 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
     );
 
-    // Populate chat history - changed in a big way to include pin and unpin and group by date
+    const loadChatHistoryComponent = (chat: ChatHistory, idx: number) => {
+        return (
+            <div
+                key={idx}
+                className={`flex flex-col py-1 pl-5 ml-3 rounded-xl text-xl truncate hover:bg-zinc-500 hover:cursor-pointer ${
+                    selectedChatID === chat.chat_id
+                        ? "bg-blue-600 text-white"
+                        : "bg-transparent"
+                }`}
+                onClick={() => setSelectedChatID(chat.chat_id)}
+                onMouseEnter={() => setHoveredChatID(chat.chat_id)} // Set hovered chat on mouse enter
+                onMouseLeave={() => setHoveredChatID(null)} // Reset hovered chat on mouse leave
+            >
+                <div className="flex justify-between group">
+                    <span className="truncate">{chat.title}</span>
+                    {hoveredChatID === chat.chat_id && ( // Show icon only if hovered
+                        <AiOutlineMore
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowOptionsMenu(
+                                    showOptionsMenu === chat.chat_id
+                                        ? null
+                                        : chat.chat_id
+                                );
+                            }}
+                            className="pr-2 text-3xl"
+                        />
+                    )}
+                </div>
+
+                {showOptionsMenu === chat.chat_id && threeDotsMenu(chat)}
+            </div>
+        );
+    };
+
+    // Populate chat history - changed to group unpinned chats by date
     const loadChatHistory = () => {
         // Separate pinned and regular chats based on the actual chat data
         const pinnedChatHistory = filteredChatHistory.filter(
@@ -254,72 +291,40 @@ const Sidebar: React.FC<SidebarProps> = ({
             (chat) => !chat.pinned
         );
 
+        // Group regular chats by date
+        const groupedByDate: { [key: string]: ChatHistory[] } = {};
+        regularChatHistory.forEach((chat) => {
+            const date = formatDate(chat.date); // Format the date
+            if (!groupedByDate[date]) {
+                groupedByDate[date] = [];
+            }
+            groupedByDate[date].push(chat);
+        });
+
+        // Sort dates from newest to oldest
+        const sortedDates = Object.keys(groupedByDate).sort(
+            (a, b) => new Date(b).getTime() - new Date(a).getTime()
+        );
+
         return (
             <div className="flex overflow-auto flex-col flex-grow gap-3 text-white">
                 {/* Pinned Chats */}
                 {pinnedChatHistory.length > 0 && (
                     <div className="mb-4">
                         <div className="text-2xl font-semibold">Pinned</div>
-                        {pinnedChatHistory.map((chat, idx) => (
-                            <div
-                                key={idx}
-                                className={`flex flex-col py-1 pl-5 ml-3 text-xl truncate hover:bg-zinc-500 hover:cursor-pointer ${
-                                    selectedChatID === chat.chat_id
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-transparent"
-                                }`}
-                                onClick={() => setSelectedChatID(chat.chat_id)}
-                            >
-                                <div className="flex justify-between group">
-                                    <span className="truncate">
-                                        {chat.title}
-                                    </span>
-                                    <AiOutlineMore
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setShowOptionsMenu(
-                                                showOptionsMenu === chat.chat_id
-                                                    ? null
-                                                    : chat.chat_id
-                                            );
-                                        }}
-                                        className="pr-2 text-3xl"
-                                    />
-                                </div>
-                                {showOptionsMenu === chat.chat_id &&
-                                    threeDotsMenu(chat)}
-                            </div>
-                        ))}
+                        {pinnedChatHistory.map((chat, idx) =>
+                            loadChatHistoryComponent(chat, idx)
+                        )}
                     </div>
                 )}
 
-                {/* Regular Chats */}
-                {regularChatHistory.map((chat, idx) => (
-                    <div
-                        key={idx}
-                        className={`flex flex-col py-1 pl-5 ml-3 text-xl truncate hover:bg-zinc-500 hover:cursor-pointer ${
-                            selectedChatID === chat.chat_id
-                                ? "bg-blue-600 text-white"
-                                : "bg-transparent"
-                        }`}
-                        onClick={() => setSelectedChatID(chat.chat_id)}
-                    >
-                        <div className="flex justify-between group">
-                            <span className="truncate">{chat.title}</span>
-                            <AiOutlineMore
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowOptionsMenu(
-                                        showOptionsMenu === chat.chat_id
-                                            ? null
-                                            : chat.chat_id
-                                    );
-                                }}
-                                className="pr-2 text-3xl"
-                            />
-                        </div>
-                        {showOptionsMenu === chat.chat_id &&
-                            threeDotsMenu(chat)}
+                {/* Regular Chats grouped by date */}
+                {sortedDates.map((date) => (
+                    <div key={date} className="mb-4">
+                        <div className="text-xl font-semibold">{date}</div>
+                        {groupedByDate[date].map((chat, idx) =>
+                            loadChatHistoryComponent(chat, idx)
+                        )}
                     </div>
                 ))}
             </div>

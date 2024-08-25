@@ -7,16 +7,13 @@ import {
     BiBarChartSquare,
 } from "react-icons/bi";
 import Sidebar from "./sidebar";
-//Priya 25/8/2024
 import {
     AiOutlineArrowUp,
     AiOutlineClose,
     AiOutlinePaperClip,
     AiOutlineUpload,
 } from "react-icons/ai";
-// PMJ 23/8/2024: importing useHandleSend() from handleSend.tsx
-//import { useHandleSend } from "../hooks/handleSend";
-// PMJ 23/8/2024: importing useSendMessage.tsx and useFetchMessages.tsx
+
 import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
 
@@ -39,9 +36,7 @@ const ChatBot: React.FC = () => {
     const [input, setInput] = useState("");
     const [detailedMessages, setConvMessages] = useState<MessageHistory[]>([]);
     const [selectedChatID, setSelectedChatID] = useState<string | null>(null);
-    // Priya 25/8/2024: Adding const for upload popup
     const [showPopup, setShowPopup] = useState(false); // adds state for popup visibility
-    //PMJ 23/8/2024: const for user_id
     const user_id = "example_user_id"; // Update later with a user details hook
 
     // PMJ 23/8/2024: Using useFetchMessages to fetch messages for the selected chat
@@ -80,27 +75,6 @@ const ChatBot: React.FC = () => {
             setConvMessages(fetchedMessages);
         }
     }, [selectedChatID, fetchedMessages]);
-    // // Function to fetch messages (right side)
-    // const fetchChatMessages = async (chatID: string) => {
-    //     try {
-    //         const response = await fetch(`${chatID}.json`);
-    //         const data = await response.json();
-    //         setConvMessages(data);
-    //     } catch (error) {
-    //         console.error("Error fetching messages:", error);
-    //     }
-    // };
-
-    // // Function to fetch messages
-    // useEffect(() => {
-    //     if (selectedChatID) {
-    //         fetchChatMessages(selectedChatID);
-    //         const interval = setInterval(() => {
-    //             fetchChatMessages(selectedChatID);
-    //         }, 1000);
-    //         return () => clearInterval(interval);
-    //     }
-    // }, [selectedChatID]);
 
     // Function to render feedback button
     const FeedbackButton = () => {
@@ -135,6 +109,20 @@ const ChatBot: React.FC = () => {
         );
     };
 
+    const hero = () => {
+        return (
+            <div className="flex flex-col flex-grow justify-center items-center h-full">
+                <div className="text-5xl">Hello World</div>
+                <div className="flex gap-3 mt-4">
+                    <button className="text-2xl">Opt 1</button>
+                    <button className="text-2xl">Opt 2</button>
+                    <button className="text-2xl">Opt 3</button>
+                    <button className="text-2xl">Opt 4</button>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="flex p-4 w-screen h-screen bg-primary">
             {/* sidebar.tsx */}
@@ -146,17 +134,11 @@ const ChatBot: React.FC = () => {
             {/* Chat area */}
             <div className="flex flex-col mx-auto w-3/5">
                 {/* hero */}
-                <div className="flex flex-col flex-grow justify-center items-center h-full">
-                    <div className="text-5xl">Hello World</div>
-                    <div className="flex gap-3 mt-4">
-                        <button className="text-2xl">Opt 1</button>
-                        <button className="text-2xl">Opt 2</button>
-                        <button className="text-2xl">Opt 3</button>
-                        <button className="text-2xl">Opt 4</button>
-                    </div>
-                </div>
+
+                {!selectedChatID && hero()}
                 <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
-                    {/* TASK: need to refactor */}
+                    {/* TODO: need to refactor */}
+                    {/* FIXME: rounded bug if message too long */}
                     {/* Messages */}
                     {selectedChatID
                         ? detailedMessages.map((msg, index) => (
@@ -216,6 +198,10 @@ const ChatBot: React.FC = () => {
                     {/* Input box */}
                     <div className="relative flex-grow">
                         {showPopup && ( // Conditional rendering for the popup
+                            // TODO: Update visualisation
+                            // TODO: Highlight when hover
+                            // FIXME: if click icon again, close
+                            // FIXME: if click anywhere, close
                             <div className="absolute bottom-full z-10 p-2 mb-2 w-80 bg-white rounded border shadow-lg">
                                 <button
                                     onClick={() => setShowPopup(false)}
