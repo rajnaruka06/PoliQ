@@ -142,8 +142,19 @@ const ChatBot: React.FC = () => {
                 selectedChatID={selectedChatID}
                 setSelectedChatID={setSelectedChatID}
             />
+
             {/* Chat area */}
             <div className="flex flex-col mx-auto w-3/5">
+                {/* hero */}
+                <div className="flex flex-col flex-grow justify-center items-center h-full">
+                    <div className="text-5xl">Hello World</div>
+                    <div className="flex gap-3 mt-4">
+                        <button className="text-2xl">Opt 1</button>
+                        <button className="text-2xl">Opt 2</button>
+                        <button className="text-2xl">Opt 3</button>
+                        <button className="text-2xl">Opt 4</button>
+                    </div>
+                </div>
                 <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
                     {/* TASK: need to refactor */}
                     {/* Messages */}
