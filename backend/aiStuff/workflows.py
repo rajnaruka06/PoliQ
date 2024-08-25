@@ -1,0 +1,100 @@
+## workflows.py
+
+from .agentHelpers import loadPostgresDatabase, cleanSqlQuery, cleanSummaryResponse, QuerySQLTool, InvalidUserQueryException, NoDataFoundException, loadLLM
+from .customAgents import SqlExpert, ResponseSummarizer
+import sys
+import os
+from dotenv import load_dotenv
+import logging
+
+sys.path.append(os.path.dirname(__file__))
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+env_path = os.path.join(os.path.dirname(__file__), '../resources/.ENV')
+load_dotenv(dotenv_path=env_path)
+
+class ElecDataWorkflow:
+    """
+    This class handles electoral data queries.
+
+    Attributes:
+        dbName (str): The name of the database containing electoral data.
+        llm: The large language model used for generating queries and summaries.
+        sqlCoderAgent (SqlExpert): The agent responsible for generating and refining SQL queries.
+        sqlQueryTool (QuerySQLTool): The tool used for executing SQL queries.
+        responseSummarizerAgent (ResponseSummarizer): The agent responsible for summarizing the results of SQL queries.
+    """    
+    def __init__(self):
+        self.dbName = os.getenv("ELECDATA_DB_NAME")
+        self.llm = loadLLM()
+        self.sqlCoderAgent = SqlExpert(llm=self.llm)
+        self.sqlQueryTool = QuerySQLTool(dbName=self.dbName)
+        self.responseSummarizerAgent = ResponseSummarizer(llm=self.llm)
+        self.tableInfo = None
+        self.dialect = None
+        self._setTableInfo()
+        self._setDialect()
+
+    def _setTableInfo(self):
+        with loadPostgresDatabase(self.dbName) as db:
+            self.tableInfo = db.get_table_info()
+    
+    def _setDialect(self):
+        with loadPostgresDatabase(self.dbName) as db:
+            self.dialect = db.dialect
+
+    def _generateQuery(self, userQuery: str, chatHistory: str = '') -> str:
+        
+        try:
+            sqlQuery = self.sqlCoderAgent.generateAndRefineQuery(
+                userQuery=userQuery,
+                dialect=self.dialect,
+                tableInfo=self.tableInfo,
+                chatHistory=chatHistory
+            )
+            sqlQuery = cleanSqlQuery(sqlQuery)
+            return sqlQuery
+        except Exception as e:
+            logger.exception(f"Error generating SQL query: {str(e)}")
+            raise
+
+    def _executeSqlQuery(self, sqlQuery):
+        try:
+            data = self.sqlQueryTool.executeQuery(sqlQuery)
+            return data
+        except Exception as e:
+            logger.exception(f"Error executing SQL query: {str(e)}")
+            raise
+
+    def processUserQuery(self, userQuery: str, chatHistory: str = '') -> str:
+        """
+        Process user's query --> generate a SQL query, execute it, and summarize the results.
+
+        Args:
+            userQuery (str): The user's query.
+            chatHistory (str, optional): The chat history. Defaults to an empty string.
+
+        Returns:
+            str: The summary of the results.
+
+        Raises:
+            InvalidUserQueryException: If the user's query is invalid.
+            NoDataFoundException: If no data is found for the user's query.
+            Exception: If an error occurs while processing the user's query.
+        """
+        try:
+            sqlQuery = self._generateQuery(userQuery, chatHistory)
+            data = self._executeSqlQuery(sqlQuery)
+            response = self.responseSummarizerAgent.generateSummaryWithReflection(response=data.to_string(), userQuery=userQuery)
+            response = cleanSummaryResponse(response)
+            return response
+        except InvalidUserQueryException as e:
+            logger.exception(f"Invalid user query: {str(e)}")
+            return str(e)
+        except NoDataFoundException as e:
+            logger.exception(f"No data found: {str(e)}")
+            return str(e)
+        except Exception as e:
+            logger.exception(f"An error occurred: {str(e)}")
+            return f"An error occurred: {str(e)}"
+        

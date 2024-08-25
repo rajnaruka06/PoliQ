@@ -1,9 +1,6 @@
 .ENV
 venv/
-archive/
-Viz History/
-__pycache__/
-Backend/test.ipynb
-Backend/AI_Stuff/__pycache__/
-Backend/AI_Stuff/schema_info.json
-Backend/ChatHistory/
+backend/test.ipynb
+backend/aiStuff/__pycache__/
+backend/aiStuff/schemaInfo.json
+backend/api/__pycache__/
