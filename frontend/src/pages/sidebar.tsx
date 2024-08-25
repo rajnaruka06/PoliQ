@@ -12,7 +12,7 @@ import { AiFillSetting, AiOutlineMore, AiOutlineSearch } from "react-icons/ai";
 import { useFetchChatHistory } from "../hooks/useFetchChatHistory";
 import { usePinChat } from "../hooks/usePinChat";
 import { useUnpinChat } from "../hooks/useUnpinChat";
-import { useDeleteChat } from "../hooks/useDeleteChat"; 
+import { useDeleteChat } from "../hooks/useDeleteChat";
 import { useArchiveChat } from "../hooks/useArchiveChat";
 import { useSearchChats } from "../hooks/useSearchChats";
 
@@ -38,21 +38,44 @@ const Sidebar: React.FC<SidebarProps> = ({
     //PMJ Fetch chat history using the useFetchChatHistory hook
     const { chatHistory, loading, error } = useFetchChatHistory(user_id);
     //PMJ 24/8/2024: Delete chat using useDeleteChat hook
-    const { deleteChat, loading: deleteLoading, error: deleteError } = useDeleteChat(user_id);
+    const {
+        deleteChat,
+        loading: deleteLoading,
+        error: deleteError,
+    } = useDeleteChat(user_id);
     //PMJ 24/8/2024: Use the useArchiveChat hook
-    const { archiveChat, loading: archiveLoading, error: archiveError } = useArchiveChat(user_id);
+    const {
+        archiveChat,
+        loading: archiveLoading,
+        error: archiveError,
+    } = useArchiveChat(user_id);
     // Use the pin and unpin chat hooks
-    const { pinChat, loading: pinLoading, error: pinError } = usePinChat(user_id);
-    const { unpinChat, loading: unpinLoading, error: unpinError } = useUnpinChat(user_id);
+    const {
+        pinChat,
+        loading: pinLoading,
+        error: pinError,
+    } = usePinChat(user_id);
+    const {
+        unpinChat,
+        loading: unpinLoading,
+        error: unpinError,
+    } = useUnpinChat(user_id);
 
     // State to manage filtered chat history
-    const [filteredChatHistory, setFilteredChatHistory] = useState<ChatHistory[]>([]);
+    const [filteredChatHistory, setFilteredChatHistory] = useState<
+        ChatHistory[]
+    >([]);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     // PMJ 25/8/2024: define search results using useSearchChats
-    const { searchResults, loading: searchLoading, error: searchError } = useSearchChats(user_id, searchTerm); 
+    const {
+        searchResults,
+        loading: searchLoading,
+        error: searchError,
+    } = useSearchChats(user_id, searchTerm);
     const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
-    const [isSettingsOverlayVisible, setIsSettingsOverlayVisible] = useState(false);
+    const [isSettingsOverlayVisible, setIsSettingsOverlayVisible] =
+        useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
 
     //PMJ 25/8/2024: Effect to determine whether to use serach results or the full chat history
@@ -68,7 +91,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
     };
- 
+
     // Function to toggle sidebar
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
@@ -96,21 +119,19 @@ const Sidebar: React.FC<SidebarProps> = ({
                 // Pin the chat
                 await pinChat(chatID); // Call the API to pin
             }
-    
+
             // Optionally, update the local chat history state if needed
             setFilteredChatHistory((prevHistory) =>
                 prevHistory.map((chat) =>
-                    chat.chat_id === chatID ? { ...chat, pinned: !isPinned } : chat
+                    chat.chat_id === chatID
+                        ? { ...chat, pinned: !isPinned }
+                        : chat
                 )
             );
         } catch (error) {
             console.error("Error pinning/unpinning chat:", error);
         }
     };
-    
-    
-    
-    
 
     // WAITING FOR API -> API is here now, modified
     // PMJ 24/8/2024: Function to handle deleting a chat
@@ -147,7 +168,11 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     // Function to handle the three dots menu
-    const threeDotsMenu = (chat: { chat_id: string; title: string; pinned: boolean }) => {
+    const threeDotsMenu = (chat: {
+        chat_id: string;
+        title: string;
+        pinned: boolean;
+    }) => {
         return (
             <div className="flex absolute right-4 z-50 flex-col gap-3 items-end p-3 mt-10 text-white rounded-xl shadow-lg bg-primary">
                 <button
@@ -183,7 +208,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
         );
     };
-    
 
     // Function to toggle Settings overlay
     const toggleSettingsOverlay = () => {
@@ -219,14 +243,17 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
         </div>
     );
-    // PMJ 23/8/2024: API is here
+
     // Populate chat history - changed in a big way to include pin and unpin and group by date
     const loadChatHistory = () => {
-        
         // Separate pinned and regular chats based on the actual chat data
-        const pinnedChatHistory = filteredChatHistory.filter((chat) => chat.pinned);
-        const regularChatHistory = filteredChatHistory.filter((chat) => !chat.pinned);
-    
+        const pinnedChatHistory = filteredChatHistory.filter(
+            (chat) => chat.pinned
+        );
+        const regularChatHistory = filteredChatHistory.filter(
+            (chat) => !chat.pinned
+        );
+
         return (
             <div className="flex overflow-auto flex-col flex-grow gap-3 text-white">
                 {/* Pinned Chats */}
@@ -244,7 +271,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 onClick={() => setSelectedChatID(chat.chat_id)}
                             >
                                 <div className="flex justify-between group">
-                                    <span className="truncate">{chat.title}</span>
+                                    <span className="truncate">
+                                        {chat.title}
+                                    </span>
                                     <AiOutlineMore
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -263,7 +292,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         ))}
                     </div>
                 )}
-    
+
                 {/* Regular Chats */}
                 {regularChatHistory.map((chat, idx) => (
                     <div
@@ -289,7 +318,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 className="pr-2 text-3xl"
                             />
                         </div>
-                        {showOptionsMenu === chat.chat_id && threeDotsMenu(chat)}
+                        {showOptionsMenu === chat.chat_id &&
+                            threeDotsMenu(chat)}
                     </div>
                 ))}
             </div>
@@ -309,26 +339,26 @@ const Sidebar: React.FC<SidebarProps> = ({
                             PoliQ Chat
                         </a>
                     </div>
-                    {/* Priya 25/8/2024: Adding new chat button which clears the current chat and calls up a new one */}
+
+                    {/* Adding new chat button which clears the current chat and calls up a new one */}
                     <button
-                             className="mb-2 px-4 py-2 bg-black-500 text-black rounded-full"
-                             onClick={() => {
-                             setSelectedChatID(null); // Clear the selected chat
-                     }}
+                        className="px-4 py-2 mb-4 text-white rounded-full bg-zinc-700"
+                        onClick={() => {
+                            setSelectedChatID(null); // Clear the selected chat
+                        }}
                     >
-                    New Chat
+                        New Chat
                     </button>
-                    {/* Priya 25/8/2024: Search bar with icon */}
-                    
+
                     {/* Search bar with icon */}
                     <div className="relative mb-10">
                         <input
-                            className="px-4 py-2 text-white rounded-full bg-zinc-700 pl-10"
+                            className="px-4 py-2 pl-10 w-full text-white rounded-full bg-zinc-700"
                             placeholder="Search..."
                             value={searchTerm}
                             onChange={handleSearch}
                         />
-                        <AiOutlineSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-2xl" />
+                        <AiOutlineSearch className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2" />
                     </div>
 
                     {loading && <p>Loading...</p>}
@@ -337,7 +367,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {overlaySettings}
                     <div className="flex justify-between items-center text-3xl bg-sidebar">
                         <div className="flex-grow text-left">John Doe</div>
-                        <button className="text-3xl" onClick={toggleSettingsOverlay}>
+                        <button
+                            className="text-3xl"
+                            onClick={toggleSettingsOverlay}
+                        >
                             <AiFillSetting />
                         </button>
                     </div>

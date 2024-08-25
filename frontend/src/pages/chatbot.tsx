@@ -8,13 +8,17 @@ import {
 } from "react-icons/bi";
 import Sidebar from "./sidebar";
 //Priya 25/8/2024
-import { AiOutlineArrowUp, AiOutlineClose, AiOutlinePaperClip, AiOutlineUpload } from "react-icons/ai";
+import {
+    AiOutlineArrowUp,
+    AiOutlineClose,
+    AiOutlinePaperClip,
+    AiOutlineUpload,
+} from "react-icons/ai";
 // PMJ 23/8/2024: importing useHandleSend() from handleSend.tsx
 //import { useHandleSend } from "../hooks/handleSend";
 // PMJ 23/8/2024: importing useSendMessage.tsx and useFetchMessages.tsx
 import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
-
 
 interface MessageCurrent {
     sender: string;
@@ -37,34 +41,45 @@ const ChatBot: React.FC = () => {
     const [selectedChatID, setSelectedChatID] = useState<string | null>(null);
     // Priya 25/8/2024: Adding const for upload popup
     const [showPopup, setShowPopup] = useState(false); // adds state for popup visibility
-//PMJ 23/8/2024: const for user_id
-const user_id = "example_user_id"; // Update later with a user details hook
+    //PMJ 23/8/2024: const for user_id
+    const user_id = "example_user_id"; // Update later with a user details hook
 
-// PMJ 23/8/2024: Using useFetchMessages to fetch messages for the selected chat
-const { messages: fetchedMessages, loading, error } = useFetchMessages(selectedChatID, user_id);
+    // PMJ 23/8/2024: Using useFetchMessages to fetch messages for the selected chat
+    const {
+        messages: fetchedMessages,
+        loading,
+        error,
+    } = useFetchMessages(selectedChatID, user_id);
 
-// PMJ 23/8/2024: Using useSendMessage to send messages
-const { sendMessage, loading: sending, error: sendError } = useSendMessage(user_id);
+    // PMJ 23/8/2024: Using useSendMessage to send messages
+    const {
+        sendMessage,
+        loading: sending,
+        error: sendError,
+    } = useSendMessage(user_id);
 
-const handleSend = async () => {
-    if (input.trim()) {
-        // Optimistically update the UI before sending the message
-        setMessages([...messages, { sender: "user", text: input, user: "user" }]);
+    const handleSend = async () => {
+        if (input.trim()) {
+            // Optimistically update the UI before sending the message
+            setMessages([
+                ...messages,
+                { sender: "user", text: input, user: "user" },
+            ]);
 
-        // Send the message using the hook and await the response
-        await sendMessage({ chat_id: selectedChatID, content: input });
+            // Send the message using the hook and await the response
+            await sendMessage({ chat_id: selectedChatID, content: input });
 
-        // Clear the input after sending
-        setInput(""); 
-    }
-};
+            // Clear the input after sending
+            setInput("");
+        }
+    };
 
-// Effect to update conversation messages when new messages are fetched
-useEffect(() => {
-    if (selectedChatID && fetchedMessages) {
-        setConvMessages(fetchedMessages);
-    }
-}, [selectedChatID, fetchedMessages]);
+    // Effect to update conversation messages when new messages are fetched
+    useEffect(() => {
+        if (selectedChatID && fetchedMessages) {
+            setConvMessages(fetchedMessages);
+        }
+    }, [selectedChatID, fetchedMessages]);
     // // Function to fetch messages (right side)
     // const fetchChatMessages = async (chatID: string) => {
     //     try {
@@ -187,44 +202,61 @@ useEffect(() => {
                 </div>
                 {/* Input bar */}
                 <div className="flex gap-2 mt-4 text-xl">
-                     {/* Input box */}
-                     <div className="relative flex-grow">
+                    {/* Input box */}
+                    <div className="relative flex-grow">
                         {showPopup && ( // Conditional rendering for the popup
-                        <div className="absolute z-10 bg-white border rounded shadow-lg p-2 bottom-full mb-2 w-80">
-                        <button onClick={() => setShowPopup(false)} className="text-gray-300 text-sm absolute right-2 top-2">
-                        <AiOutlineClose className="text-sm" /> {/* Cross icon to close the popup */}
-                        </button>
-                        <button
-                                className="flex items-center font-bold text-sm"
-                                onClick={() => document.getElementById('fileInput')?.click()} // Trigger file input click
-                        >
-                         <AiOutlineUpload className="mr-1" /> {/* Upload icon with margin */}
-                         Upload Dataset
-                        </button>
-                        <input type="file" id="fileInput" className="hidden" onChange={(e) => {
-                        // Handle file selection here
-                        const file = e.target.files?.[0];
-                        if (file) {
-                        console.log("Selected file:", file.name);
-                        // Add further processing for the selected file
-                    }
-                }}
-            />
-            </div>
-                )}
-                <AiOutlinePaperClip
-                                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-3xl cursor-pointer"
-                                    onClick={() => setShowPopup(true)} // Show popup on click of the paperclip icon
-                /> {/* Add the icon */}
-                <input
+                            <div className="absolute bottom-full z-10 p-2 mb-2 w-80 bg-white rounded border shadow-lg">
+                                <button
+                                    onClick={() => setShowPopup(false)}
+                                    className="absolute top-2 right-2 text-sm text-gray-300"
+                                >
+                                    <AiOutlineClose className="text-sm" />{" "}
+                                    {/* Cross icon to close the popup */}
+                                </button>
+                                <button
+                                    className="flex items-center text-sm font-bold"
+                                    onClick={() =>
+                                        document
+                                            .getElementById("fileInput")
+                                            ?.click()
+                                    } // Trigger file input click
+                                >
+                                    <AiOutlineUpload className="mr-1" />{" "}
+                                    {/* Upload icon with margin */}
+                                    Upload Dataset
+                                </button>
+                                <input
+                                    type="file"
+                                    id="fileInput"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        // Handle file selection here
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            console.log(
+                                                "Selected file:",
+                                                file.name
+                                            );
+                                            // Add further processing for the selected file
+                                        }
+                                    }}
+                                />
+                            </div>
+                        )}
+                        <AiOutlinePaperClip
+                            className="absolute left-3 top-1/2 text-3xl text-gray-500 transform -translate-y-1/2 cursor-pointer"
+                            onClick={() => setShowPopup(true)} // Show popup on click of the paperclip icon
+                        />{" "}
+                        {/* Add the icon */}
+                        <input
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)} // Update input state on change
                             onKeyUp={(e) => e.key === "Enter" && handleSend()} // Send message on Enter key press
-                            className="flex-grow w-full p-3 pl-10 pr-3 rounded-full border border-gray-300" // Set width to increase length
+                            className="flex-grow p-3 pr-3 pl-10 w-full rounded-full border border-gray-300" // Set width to increase length
                             placeholder="Type your message..." // Placeholder text for the input
-                />
-                </div>
+                        />
+                    </div>
                     {/* Send button */}
                     <button
                         onClick={handleSend}
