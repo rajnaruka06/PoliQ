@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
     BiChevronLeftCircle,
     BiChevronRightCircle,
@@ -34,7 +34,23 @@ const Sidebar: React.FC<SidebarProps> = ({
     setSelectedChatID,
 }) => {
     const user_id = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
+    const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setShowOptionsMenu(null); // Close the menu if clicked outside
+            }
+        };
+    
+        document.addEventListener("mousedown", handleClickOutside);
+    
+        // Cleanup event listener when component unmounts
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [menuRef]);
+    
     //PMJ Fetch chat history using the useFetchChatHistory hook
     const { chatHistory, loading, error } = useFetchChatHistory(user_id);
     //PMJ 24/8/2024: Delete chat using useDeleteChat hook
@@ -176,7 +192,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         pinned: boolean;
     }) => {
         return (
-            <div className="flex absolute right-4 z-50 flex-col gap-3 items-end p-3 mt-10 text-white rounded-xl shadow-lg bg-primary">
+            <div ref={menuRef} className="flex absolute right-4 z-50 flex-col gap-3 items-end p-3 mt-10 text-white rounded-xl shadow-lg bg-primary">
                 <button
                     className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
                     onClick={() => handlePinChat(chat.chat_id, chat.pinned)}
