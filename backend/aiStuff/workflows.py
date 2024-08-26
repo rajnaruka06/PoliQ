@@ -1,7 +1,7 @@
 ## workflows.py
 
 from .agentHelpers import loadPostgresDatabase, cleanSqlQuery, cleanSummaryResponse, QuerySQLTool, InvalidUserQueryException, NoDataFoundException, loadLLM
-from .customAgents import SqlExpert, ResponseSummarizer
+from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent
 import sys
 import os
 from dotenv import load_dotenv
@@ -27,6 +27,8 @@ class ElecDataWorkflow:
     def __init__(self):
         self.dbName = os.getenv("ELECDATA_DB_NAME")
         self.llm = loadLLM()
+        self.routerAgent = RouterAgent(llm=self.llm)
+        self.chatAgent = ChatAgent(llm=self.llm)
         self.sqlCoderAgent = SqlExpert(llm=self.llm)
         self.sqlQueryTool = QuerySQLTool(dbName=self.dbName)
         self.responseSummarizerAgent = ResponseSummarizer(llm=self.llm)
@@ -83,10 +85,17 @@ class ElecDataWorkflow:
             Exception: If an error occurs while processing the user's query.
         """
         try:
-            sqlQuery = self._generateQuery(userQuery, chatHistory)
-            data = self._executeSqlQuery(sqlQuery)
-            response = self.responseSummarizerAgent.generateSummaryWithReflection(response=data.to_string(), userQuery=userQuery)
-            response = cleanSummaryResponse(response)
+            queryType = self.routerAgent.determineQueryType(userQuery, chatHistory)
+            if queryType.strip().upper() == "DATABASE":
+                sqlQuery = self._generateQuery(userQuery, chatHistory)
+                data = self._executeSqlQuery(sqlQuery)
+                response = self.responseSummarizerAgent.generateSummaryWithReflection(response=data.to_string(), userQuery=userQuery)
+                response = cleanSummaryResponse(response)
+            elif queryType.strip().upper() == "CHAT":
+                response = self.chatAgent.generateResponse(userQuery, chatHistory)
+            else:
+                raise ValueError(f"Invalid query type determined: {queryType}")
+
             return response
         except InvalidUserQueryException as e:
             logger.exception(f"Invalid user query: {str(e)}")
@@ -97,4 +106,5 @@ class ElecDataWorkflow:
         except Exception as e:
             logger.exception(f"An error occurred: {str(e)}")
             return f"An error occurred: {str(e)}"
-        
+
+

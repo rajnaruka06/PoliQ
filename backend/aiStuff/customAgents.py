@@ -100,4 +100,42 @@ class ResponseSummarizer:
             return chain.invoke(kwargs).content.strip()
         except Exception as e:
             raise RuntimeError(f"Error invoking language model: {str(e)}")
-        
+
+class ChatAgent:
+    def __init__(self, llm: BaseLanguageModel):
+        self.llm = llm
+
+    def generateResponse(self, userQuery: str, chatHistory: str = '') -> str:
+        template = """You are an AI assistant specializing in electoral data and general conversation.
+
+        Chat History: {chatHistory}
+        User Query: {userQuery}
+
+        Provide a helpful and engaging response to the user's query. Do not assume any information. Only provide information from chat history.
+
+        Response:
+        """
+
+        prompt = PromptTemplate.from_template(template)
+        chain = prompt | self.llm
+        return chain.invoke({"userQuery": userQuery, "chatHistory": chatHistory}).content.strip()
+
+class RouterAgent:
+    def __init__(self, llm: BaseLanguageModel):
+        self.llm = llm
+
+    def determineQueryType(self, userQuery: str, chatHistory: str = '') -> str:
+        template = """Determine whether the following user query requires a database query or a general conversation response. You have connection to a database with electoral data.
+
+        Chat History: {chatHistory}
+        User Query: {userQuery}
+
+        Respond with either "DATABASE" if the query requires electoral data from a database, or "CHAT" if it's a general conversation or question that doesn't require specific database access.
+        Your response should just be the word "DATABASE" or "CHAT".
+
+        Query Type:
+        """
+
+        prompt = PromptTemplate.from_template(template)
+        chain = prompt | self.llm
+        return chain.invoke({"userQuery": userQuery, "chatHistory": chatHistory}).content.strip()
