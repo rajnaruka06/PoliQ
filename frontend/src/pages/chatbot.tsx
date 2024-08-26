@@ -205,6 +205,7 @@ const ChatBot: React.FC = () => {
                     {/* Input box */}
                     <div className="relative flex-grow">
                         {UploadPopup}
+                        {/* FIXME: Upload popup when click paperclip can't close */}
                         <AiOutlinePaperClip
                             className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
                             onClick={() => setShowPopup(true)} // Show popup on click of the paperclip icon

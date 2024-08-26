@@ -7,8 +7,13 @@ import {
     BiTrash,
     BiArchive,
 } from "react-icons/bi";
-import { AiFillSetting, AiOutlineMore, AiOutlineSearch } from "react-icons/ai";
-//PMJ 23/8/2024: import hooks
+import {
+    AiOutlineMore,
+    AiOutlineSearch,
+    AiOutlineEllipsis,
+    AiOutlineForm,
+} from "react-icons/ai";
+// Import hooks
 import { useFetchChatHistory } from "../hooks/useFetchChatHistory";
 import { usePinChat } from "../hooks/usePinChat";
 import { useUnpinChat } from "../hooks/useUnpinChat";
@@ -16,7 +21,7 @@ import { useDeleteChat } from "../hooks/useDeleteChat";
 import { useArchiveChat } from "../hooks/useArchiveChat";
 import { useSearchChats } from "../hooks/useSearchChats";
 
-// PMJ 23/8/2024: changed the interface format to accept the json format that returns to the UI
+// changed the interface format to accept the json format that returns to the UI
 interface ChatHistory {
     chat_id: string;
     date: string;
@@ -39,6 +44,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
     const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
+    const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+    const settingsRef = useRef<HTMLDivElement | null>(null);
     const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
     const { chatHistory, loading, error } = useFetchChatHistory(user_id);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -47,8 +54,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     const [filteredChatHistory, setFilteredChatHistory] = useState<
         ChatHistory[]
     >([]);
-    const [isSettingsOverlayVisible, setIsSettingsOverlayVisible] =
-        useState(false);
 
     // Function to toggle sidebar
     const toggleSidebar = () => {
@@ -62,6 +67,13 @@ const Sidebar: React.FC<SidebarProps> = ({
             ) {
                 setShowOptionsMenu(null); // Close the menu if clicked outside
             }
+
+            if (
+                settingsRef.current &&
+                !settingsRef.current.contains(event.target as Node)
+            ) {
+                setShowSettingsMenu(false); // Close the settings menu if clicked outside
+            }
         };
 
         document.addEventListener("mousedown", handleClickOutside);
@@ -70,35 +82,36 @@ const Sidebar: React.FC<SidebarProps> = ({
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [menuRef]);
+    }, [menuRef, settingsRef]);
 
     //Delete chat using useDeleteChat hook
+    //KW 27/08: commented unused because it gives red prompt
     const {
         deleteChat,
-        loading: deleteLoading,
-        error: deleteError,
+        // loading: deleteLoading,
+        // error: deleteError,
     } = useDeleteChat(user_id);
     //Use the useArchiveChat hook
     const {
         archiveChat,
-        loading: archiveLoading,
-        error: archiveError,
+        // loading: archiveLoading,
+        // error: archiveError,
     } = useArchiveChat(user_id);
     // Use the pin and unpin chat hooks
     const {
         pinChat,
-        loading: pinLoading,
-        error: pinError,
+        // loading: pinLoading,
+        // error: pinError,
     } = usePinChat(user_id);
     const {
         unpinChat,
-        loading: unpinLoading,
-        error: unpinError,
+        // loading: unpinLoading,
+        // error: unpinError,
     } = useUnpinChat(user_id);
     const {
         searchResults,
-        loading: searchLoading,
-        error: searchError,
+        // loading: searchLoading,
+        // error: searchError,
     } = useSearchChats(user_id, searchTerm);
 
     // Effect to determine whether to use serach results or the full chat history
@@ -226,41 +239,32 @@ const Sidebar: React.FC<SidebarProps> = ({
         );
     };
 
-    // Function to toggle Settings overlay
-    const toggleSettingsOverlay = () => {
-        setIsSettingsOverlayVisible(!isSettingsOverlayVisible);
-    };
-
-    // Overlay for Settings
-    const overlaySettings = isSettingsOverlayVisible && (
-        // Overlay content on bottom left corner
+    //  Overlay content on bottom left corner
+    const settingsOverlay = showSettingsMenu && (
         <div
-            className="fixed bottom-0 left-0 w-full h-full bg-black/70"
-            onClick={toggleSettingsOverlay}
+            ref={settingsRef}
+            className="absolute right-0 bottom-10 p-2 mb-2 w-full rounded shadow-lg"
         >
-            <div
-                className="flex flex-col pr-2 pb-8 pl-8 w-1/6 h-screen rounded-t-lg shadow-lg"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="mb-auto"></div>
-
-                <ul className="flex flex-col gap-5 content-end p-5 text-lg rounded-lg bg-sidebar">
-                    <button className="text-2xl font-semibold">Menu 1</button>
-                    <button className="text-2xl font-semibold">Menu 2</button>
-                    <button className="text-2xl font-semibold">Menu 3</button>
-                </ul>
-                <div className="flex justify-end">
-                    <button
-                        className="text-3xl"
-                        onClick={toggleSettingsOverlay}
-                    >
-                        <AiFillSetting />
-                    </button>
-                </div>
-            </div>
+            <ul className="flex flex-col gap-5 content-end p-5 text-lg rounded-lg bg-primary">
+                <button className="text-2xl font-semibold bg-primary">
+                    Archived Chats
+                </button>
+                <button className="text-2xl font-semibold bg-primary">
+                    Memory
+                </button>
+                <button className="text-2xl font-semibold bg-primary">
+                    Menu 3
+                </button>
+            </ul>
+            {/* <div className="flex justify-end">
+                <button className="text-3xl" onClick={toggleSettingsOverlay}>
+                    <AiOutlineEllipsis />
+                </button>
+            </div> */}
         </div>
     );
 
+    // components that called inside loadChatHistory
     const loadChatHistoryComponent = (chat: ChatHistory, idx: number) => {
         return (
             <div
@@ -290,7 +294,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         />
                     )}
                 </div>
-
+                {/* FIXME: when threedotsmenu hovered, row size changes */}
                 {showOptionsMenu === chat.chat_id && threeDotsMenu(chat)}
             </div>
         );
@@ -322,7 +326,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         );
 
         return (
-            <div className="flex overflow-auto flex-col flex-grow gap-3 text-white">
+            <div className="flex overflow-auto flex-col flex-grow gap-2 text-white">
                 {/* Pinned Chats */}
                 {pinnedChatHistory.length > 0 && (
                     <div className="mb-4">
@@ -354,64 +358,66 @@ const Sidebar: React.FC<SidebarProps> = ({
         >
             {isSidebarVisible && (
                 <>
-                    <div className="mb-10 text-5xl font-bold text-white">
-                        <a href="/" className="text-white hover:text-white">
-                            PoliQ Chat
-                        </a>
+                    {/* Title Area*/}
+                    <div className="flex relative mb-10">
+                        <div className="text-5xl font-bold text-white">
+                            <a href="/" className="text-white hover:text-white">
+                                PoliQ Chat
+                            </a>
+                        </div>
                     </div>
 
-                    {/* Adding new chat button which clears the current chat and calls up a new one */}
-                    <button
-                        className="px-4 py-2 mb-4 text-white rounded-full bg-zinc-700"
-                        onClick={() => {
-                            setSelectedChatID(null); // Clear the selected chat
-                        }}
-                    >
-                        New Chat
-                    </button>
-
-                    {/* Search bar with icon */}
-                    <div className="relative mb-10">
-                        <input
-                            className="px-4 py-2 pl-10 w-full text-white rounded-full bg-zinc-700"
-                            placeholder="Search..."
-                            value={searchTerm}
-                            onChange={handleSearch}
-                        />
-                        <AiOutlineSearch className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2" />
+                    {/* Chat History Area */}
+                    <div className="flex relative gap-2 mb-8">
+                        {/* Search bar with icon */}
+                        <div className="relative flex-grow">
+                            <input
+                                className="px-4 py-2 pl-10 w-full text-white rounded-full bg-zinc-700"
+                                placeholder="Search..."
+                                value={searchTerm}
+                                onChange={handleSearch}
+                            />
+                            <AiOutlineSearch className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2" />
+                        </div>
+                        {/* New chat button */}
+                        <button
+                            className="px-4 py-2 text-white rounded-full bg-zinc-700"
+                            onClick={() => {
+                                setSelectedChatID(null); // Clear the selected chat
+                            }}
+                        >
+                            <AiOutlineForm />
+                        </button>
                     </div>
-
                     {loading && <p>Loading...</p>}
                     {error && <p>Error: {error}</p>}
                     {!loading && !error && loadChatHistory()}
-                    {overlaySettings}
-                    <div className="flex justify-between items-center text-3xl bg-sidebar">
-                        <div className="flex-grow text-left">John Doe</div>
-                        <button
-                            className="text-3xl"
-                            onClick={toggleSettingsOverlay}
-                        >
-                            <AiFillSetting />
-                        </button>
+
+                    {/* Bottom Sidebar Area */}
+                    <div className="flex relative text-3xl bg-sidebar">
+                        <div className="">John Doe</div>
+                        {/* FIXME: when pressing the button again, it's not closing the menu */}
+                        {settingsOverlay}
+                        <AiOutlineEllipsis
+                            className="absolute right-0 cursor-pointer"
+                            onClick={() => setShowSettingsMenu(true)}
+                        />
                     </div>
                 </>
             )}
-            <div
-                className={`absolute top-1/2 ${
-                    isSidebarVisible ? "-right-20" : "-right-15"
-                }`}
+            {/* Hide/Show Sidebar Button */}
+            <button
+                className={`absolute top-4 ${
+                    isSidebarVisible ? "right-0" : "-right-12"
+                } text-2xl text-white rounded-full bg-sidebar`}
+                onClick={toggleSidebar}
             >
-                <button
-                    className="text-3xl text-white rounded-full bg-sidebar"
-                    onClick={toggleSidebar}
-                >
-                    {isSidebarVisible ? (
-                        <BiChevronLeftCircle />
-                    ) : (
-                        <BiChevronRightCircle />
-                    )}
-                </button>
-            </div>
+                {isSidebarVisible ? (
+                    <BiChevronLeftCircle />
+                ) : (
+                    <BiChevronRightCircle />
+                )}
+            </button>
         </div>
     );
 };
