@@ -611,7 +611,7 @@ class ChatHistory:
 
     def getRecentMessages(self, chatId: str) -> List[Message]:
         """Gets recent messages for a specific chat, limited by token count."""
-        tokenLimit = int(os.environ.get("TOKEN_LIMIT", 4096))
+        tokenLimit = int(os.environ.get("CONTEXT_TOKEN_LIMIT", 4096))
         with self._getDbConnection():
             chat = self.collection.find_one({"chatId": chatId})
             

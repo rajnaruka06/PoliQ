@@ -11,6 +11,7 @@ This directory contains the FastAPI application that serves as the backend API f
 - RESTful API endpoints for:
   - Fetching chat history
   - Sending messages and processing queries
+  - Retrieving latest messages
   - Managing chats (pin, unpin, delete, archive, unarchive)
   - Searching chats
   - Updating chat titles and messages
@@ -19,7 +20,8 @@ This directory contains the FastAPI application that serves as the backend API f
 
 - GET `/api/chats/all`: Fetch all chats for a user
 - GET `/api/chats/{chatId}/messages`: Fetch messages for a specific chat
-- POST `/api/messages/send`: Send a new message and get a response
+- POST `/api/messages/send`: Send a new message and process it
+- GET `/api/chats/{chatId}/latest`: Retrieve the latest messages for a chat
 - PUT `/api/chats/{chatId}/pin`: Pin a chat
 - PUT `/api/chats/{chatId}/unpin`: Unpin a chat
 - DELETE `/api/chats/{chatId}/delete`: Delete a chat
@@ -28,7 +30,17 @@ This directory contains the FastAPI application that serves as the backend API f
 - GET `/api/chats/search`: Search chats
 - PUT `/api/chats/{chatId}/title`: Update chat title
 - GET `/api/chats/{chatId}/messages/{messageId}`: Get a specific message
-- PUT `/api/chats/{chatId}/messages/{messageId}`: Update a specific message
+- PUT `/api/chats/{chatId}/messages/{messageId}`: Update a specific message and generate a new response
+
+## Request Models
+
+- `MessageRequest`: 
+  - `chatId`: Optional[str]
+  - `content`: str
+
+- `QueryRequest`:
+  - `userQuery`: str
+  - `chatId`: Optional[str]
 
 ## Usage
 
@@ -39,3 +51,15 @@ uvicorn api.main:app --reload
 ```
 
 This will start the server, and you can access the API documentation at `http://localhost:8000/docs`.
+
+## Environment Variables
+
+- `CORS_ORIGINS`: A comma-separated list of allowed origins for CORS.
+
+## Dependencies
+
+- FastAPI
+- Pydantic
+- Custom modules:
+  - `aiStuff.workflows.ElecDataWorkflow`
+  - `aiStuff.agentHelpers.ChatHistory`

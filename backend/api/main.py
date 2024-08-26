@@ -66,15 +66,23 @@ async def handleSend(message: MessageRequest, userId: str = Query(...)):
     try:
         chatHistory = ChatHistory(userId=userId)
         chatId = chatHistory.addMessage(message.chatId, message.content)
-        context = ''
         fetchedContext = chatHistory.getRecentMessages(chatId)
-        fetchedContext = fetchedContext[:-1]
-        for hist in fetchedContext:
+        context = ''
+        for hist in fetchedContext[:-1]:
             context += f"{hist['user']}: {hist['content']}\n"
-
         response = workflow.processUserQuery(message.content, context)
-        chatId = chatHistory.addMessage(chatId, response, isUser=False)
-        return {"response": response, "chatId": chatId}
+        _ = chatHistory.addMessage(chatId, response, isUser=False)
+        return {"status": "Message sent and processed", "chatId": chatId}
+    except ChatHistoryError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/api/chats/{chatId}/latest")
+async def getLatestMessages(chatId: str = Path(...), userId: str = Query(...), limit: int = Query(default=2)):
+    try:
+        chatHistory = ChatHistory(userId=userId)
+        messages = chatHistory.getRecentMessages(chatId)
+        messages = messages[-limit:]
+        return {"messages": messages}
     except ChatHistoryError as e:
         raise HTTPException(status_code=500, detail=str(e))
 

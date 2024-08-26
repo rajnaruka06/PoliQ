@@ -17,7 +17,7 @@ The `.ENV` file should contain the following variables:
 - `POSTGRES_PORT`: PostgreSQL port
 - `MONGO_URI`: MongoDB connection URI
 - `MONGO_DB_NAME`: MongoDB database name
-- `TOKEN_LIMIT`: Token limit for recent messages (default: 4096)
+- `CONTEXT_TOKEN_LIMIT`: Token limit for recent messages context (default: 4096)
 - `CORS_ORIGINS`: Comma-separated list of allowed CORS origins
 
 ## Usage
