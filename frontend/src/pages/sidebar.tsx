@@ -33,33 +33,52 @@ const Sidebar: React.FC<SidebarProps> = ({
     selectedChatID,
     setSelectedChatID,
 }) => {
+    // TODO: Proper commenting to explain
+
     const user_id = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
     const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
+    const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
+    const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
+    const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
+    const { chatHistory, loading, error } = useFetchChatHistory(user_id);
+    const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    // State to manage filtered chat history
+    const [filteredChatHistory, setFilteredChatHistory] = useState<
+        ChatHistory[]
+    >([]);
+    const [isSettingsOverlayVisible, setIsSettingsOverlayVisible] =
+        useState(false);
 
+    // Function to toggle sidebar
+    const toggleSidebar = () => {
+        setIsSidebarVisible(!isSidebarVisible);
+    };
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+            if (
+                menuRef.current &&
+                !menuRef.current.contains(event.target as Node)
+            ) {
                 setShowOptionsMenu(null); // Close the menu if clicked outside
             }
         };
-    
+
         document.addEventListener("mousedown", handleClickOutside);
-    
+
         // Cleanup event listener when component unmounts
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [menuRef]);
-    
-    //PMJ Fetch chat history using the useFetchChatHistory hook
-    const { chatHistory, loading, error } = useFetchChatHistory(user_id);
-    //PMJ 24/8/2024: Delete chat using useDeleteChat hook
+
+    //Delete chat using useDeleteChat hook
     const {
         deleteChat,
         loading: deleteLoading,
         error: deleteError,
     } = useDeleteChat(user_id);
-    //PMJ 24/8/2024: Use the useArchiveChat hook
+    //Use the useArchiveChat hook
     const {
         archiveChat,
         loading: archiveLoading,
@@ -76,26 +95,13 @@ const Sidebar: React.FC<SidebarProps> = ({
         loading: unpinLoading,
         error: unpinError,
     } = useUnpinChat(user_id);
-
-    // State to manage filtered chat history
-    const [filteredChatHistory, setFilteredChatHistory] = useState<
-        ChatHistory[]
-    >([]);
-    const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    // PMJ 25/8/2024: define search results using useSearchChats
     const {
         searchResults,
         loading: searchLoading,
         error: searchError,
     } = useSearchChats(user_id, searchTerm);
-    const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
-    const [isSettingsOverlayVisible, setIsSettingsOverlayVisible] =
-        useState(false);
-    const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
-    const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
 
-    //PMJ 25/8/2024: Effect to determine whether to use serach results or the full chat history
+    // Effect to determine whether to use serach results or the full chat history
     // Function to handle search -> changed again to use hook
     useEffect(() => {
         if (searchTerm === "") {
@@ -109,11 +115,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         setSearchTerm(e.target.value);
     };
 
-    // Function to toggle sidebar
-    const toggleSidebar = () => {
-        setIsSidebarVisible(!isSidebarVisible);
-    };
-
     // Function to format date
     const formatDate = (dateString: string): string => {
         const [day, month, year] = dateString.split("/");
@@ -125,8 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         });
     };
 
-    // WAITING FOR API
-    // PMJ 25/8/2024: updated function to pin or unpin based on chat's current state
+    // updated function to pin or unpin based on chat's current state
     const handlePinChat = async (chatID: string, isPinned: boolean) => {
         try {
             if (isPinned) {
@@ -150,26 +150,23 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
     };
 
-    // WAITING FOR API -> API is here now, modified
-    // PMJ 24/8/2024: Function to handle deleting a chat
+    // Function to handle deleting a chat
     const handleDeleteChat = async (chatID: string) => {
         if (window.confirm("Are you sure you want to delete this chat?")) {
             await deleteChat(chatID); // Call the deleteChat function from the hook
-
             // Update the chat history locally
             setFilteredChatHistory((prevHistory) =>
                 prevHistory.filter((chat) => chat.chat_id !== chatID)
             );
             setPinnedChats((prev) => prev.filter((id) => id !== chatID)); // Remove from pinned chats if necessary
-
             if (selectedChatID === chatID) {
                 setSelectedChatID(null);
             }
         }
     };
 
-    // WAITING FOR API
-    // PMJ 24/8/2024: Function to handle archiving a chat
+    //
+    // Function to handle archiving a chat
     const handleArchiveChat = async (chatID: string) => {
         try {
             await archiveChat(chatID);
@@ -185,14 +182,16 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     // Function to handle the three dots menu
-    // FIXME: click anywhere to close
     const threeDotsMenu = (chat: {
         chat_id: string;
         title: string;
         pinned: boolean;
     }) => {
         return (
-            <div ref={menuRef} className="flex absolute right-4 z-50 flex-col gap-3 items-end p-3 mt-10 text-white rounded-xl shadow-lg bg-primary">
+            <div
+                ref={menuRef}
+                className="flex absolute right-4 z-50 flex-col gap-3 items-end p-3 mt-10 text-white rounded-xl shadow-lg bg-primary"
+            >
                 <button
                     className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
                     onClick={() => handlePinChat(chat.chat_id, chat.pinned)}

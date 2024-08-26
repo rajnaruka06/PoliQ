@@ -1,19 +1,13 @@
-import React, { useState, useEffect } from "react";
-import {
-    BiCopy,
-    BiRefresh,
-    BiConfused,
-    BiData,
-    BiBarChartSquare,
-} from "react-icons/bi";
-import Sidebar from "./sidebar";
+import React, { useRef, useState, useEffect } from "react";
+
+import Sidebar from "./sidebar.tsx";
 import {
     AiOutlineArrowUp,
     AiOutlineClose,
     AiOutlinePaperClip,
     AiOutlineUpload,
 } from "react-icons/ai";
-
+import FeedbackButton from "../components/FeedbackButton.tsx";
 import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
 
@@ -38,20 +32,40 @@ const ChatBot: React.FC = () => {
     const [selectedChatID, setSelectedChatID] = useState<string | null>(null);
     const [showPopup, setShowPopup] = useState(false); // adds state for popup visibility
     const user_id = "example_user_id"; // Update later with a user details hook
+    const popupRef = useRef<HTMLDivElement | null>(null); // Reference for the popup
 
-    // PMJ 23/8/2024: Using useFetchMessages to fetch messages for the selected chat
+    // Using useFetchMessages to fetch messages for the selected chat
     const {
         messages: fetchedMessages,
         loading,
         error,
     } = useFetchMessages(selectedChatID, user_id);
 
-    // PMJ 23/8/2024: Using useSendMessage to send messages
+    // Using useSendMessage to send messages
     const {
         sendMessage,
         loading: sending,
         error: sendError,
     } = useSendMessage(user_id);
+
+    // Reference for the popup
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                popupRef.current &&
+                !popupRef.current.contains(event.target as Node) // Check if click is outside the popup
+            ) {
+                setShowPopup(false); // Close the popup if clicked outside
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        // Cleanup event listener when component unmounts
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [popupRef]);
 
     const handleSend = async () => {
         if (input.trim()) {
@@ -60,10 +74,8 @@ const ChatBot: React.FC = () => {
                 ...messages,
                 { sender: "user", text: input, user: "user" },
             ]);
-
             // Send the message using the hook and await the response
             await sendMessage({ chat_id: selectedChatID, content: input });
-
             // Clear the input after sending
             setInput("");
         }
@@ -76,39 +88,7 @@ const ChatBot: React.FC = () => {
         }
     }, [selectedChatID, fetchedMessages]);
 
-    // Function to render feedback button
-    const FeedbackButton = () => {
-        return (
-            <div className="flex gap-1 p-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                {/* Copy Icon */}
-                <button className="px-1 py-1 text-white bg-blue-500 rounded-full">
-                    {/* CHANGE TODO: Allow user to copy response to clipboard */}
-                    <BiCopy className="text-xl" />
-                </button>
-                {/* Refresh Icon */}
-                <button className="px-1 py-1 text-white bg-green-500 rounded-full">
-                    {/* CHANGE TODO: Allow user to regenerate response */}
-                    <BiRefresh className="text-xl" />
-                </button>
-                {/* Confused Icon */}
-                <button className="px-1 py-1 text-white bg-red-500 rounded-full">
-                    {/* CHANGE TODO: Allow user to report bad or confusing response */}
-                    <BiConfused className="text-xl" />
-                </button>
-                {/* Data Icon */}
-                <button className="px-1 py-1 text-white bg-yellow-500 rounded-full">
-                    {/* CHANGE TODO: Allow user to upload data specifically for this response - to regenerate response with new date as new context */}
-                    <BiData className="text-xl" />
-                </button>
-                {/* Bar Chart Icon */}
-                <button className="px-1 py-1 text-white bg-purple-500 rounded-full">
-                    {/* CHANGE TODO: Allow user to generate a visualisation based on this response */}
-                    <BiBarChartSquare className="text-xl" />
-                </button>
-            </div>
-        );
-    };
-
+    // Hero for welcome screen
     const hero = () => {
         return (
             <div className="flex flex-col flex-grow justify-center items-center h-full">
@@ -123,6 +103,86 @@ const ChatBot: React.FC = () => {
         );
     };
 
+    // Chat Area right hand side
+    // TODO: need to change logic
+    // FIXME: rounded bug if message too long
+    const ChatArea = selectedChatID
+        ? detailedMessages.map((msg, index) => (
+              <div
+                  key={index}
+                  className={`mb-4 relative ${
+                      msg.user === "user" ? "text-right" : "text-left"
+                  } group`}
+              >
+                  <div
+                      className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
+                          msg.user === "user"
+                              ? "bg-zinc-700 text-white"
+                              : " text-white"
+                      }`}
+                  >
+                      {msg.content}
+                      <div className="text-sm text-gray-400">
+                          {msg.date} {msg.time}
+                      </div>
+                  </div>
+                  {/* Feedback Button */}
+                  {msg.user !== "user" && <FeedbackButton />}
+              </div>
+          ))
+        : messages.map((msg, index) => (
+              <div
+                  key={index}
+                  className={`mb-4 ${
+                      msg.sender === "user" ? "text-right" : "text-left"
+                  }`}
+              >
+                  <div
+                      className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
+                          msg.sender === "user"
+                              ? "bg-zinc-700 text-white"
+                              : " text-white"
+                      }`}
+                  >
+                      {msg.text}
+                  </div>
+              </div>
+          ));
+
+    // Popup for Upload File
+    const UploadPopup = showPopup && (
+        // TODO: Highlight icon when hover
+        <div
+            ref={popupRef}
+            className="absolute bottom-full z-10 p-2 mb-2 rounded shadow-lg"
+        >
+            {/* Upload Button */}
+            <button
+                className="flex gap-2 items-center text-xl font-bold"
+                onClick={() => document.getElementById("fileInput")?.click()} // Trigger file input click
+            >
+                <AiOutlineUpload />
+                {/* Upload icon with margin */}
+                Upload Dataset
+            </button>
+
+            <input
+                type="file"
+                id="fileInput"
+                className="hidden"
+                onChange={(e) => {
+                    // Handle file selection here
+                    const file = e.target.files?.[0];
+                    if (file) {
+                        console.log("Selected file:", file.name);
+                        // Add further processing for the selected file
+                    }
+                }}
+            />
+        </div>
+    );
+
+    // Return
     return (
         <div className="flex p-4 w-screen h-screen bg-primary">
             {/* sidebar.tsx */}
@@ -133,117 +193,22 @@ const ChatBot: React.FC = () => {
 
             {/* Chat area */}
             <div className="flex flex-col mx-auto w-3/5">
-                {/* hero */}
-
+                {/* Hero for welcoming page */}
                 {!selectedChatID && hero()}
+
                 <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
-                    {/* TODO: need to refactor */}
-                    {/* FIXME: rounded bug if message too long */}
                     {/* Messages */}
-                    {selectedChatID
-                        ? detailedMessages.map((msg, index) => (
-                              <div
-                                  key={index}
-                                  className={`mb-4 relative ${
-                                      msg.user === "user"
-                                          ? "text-right"
-                                          : "text-left"
-                                  } group`}
-                              >
-                                  <div
-                                      className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
-                                          msg.user === "user"
-                                              ? "bg-zinc-700 text-white"
-                                              : " text-white"
-                                      }`}
-                                  >
-                                      {msg.content}
-                                      <div className="text-sm text-gray-400">
-                                          {msg.date} {msg.time}
-                                      </div>
-                                  </div>
-                                  {/* Feedback Button (Incomplete) */}
-                                  {msg.user !== "user" && (
-                                      <div className="relative">
-                                          <div className="absolute left-0 top-full mt-2">
-                                              <FeedbackButton />
-                                          </div>
-                                      </div>
-                                  )}
-                              </div>
-                          ))
-                        : messages.map((msg, index) => (
-                              <div
-                                  key={index}
-                                  className={`mb-4 ${
-                                      msg.sender === "user"
-                                          ? "text-right"
-                                          : "text-left"
-                                  }`}
-                              >
-                                  <div
-                                      className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
-                                          msg.sender === "user"
-                                              ? "bg-zinc-700 text-white"
-                                              : " text-white"
-                                      }`}
-                                  >
-                                      {msg.text}
-                                  </div>
-                              </div>
-                          ))}
+                    {ChatArea}
                 </div>
                 {/* Input bar */}
                 <div className="flex gap-2 mt-4 text-xl">
                     {/* Input box */}
                     <div className="relative flex-grow">
-                        {showPopup && ( // Conditional rendering for the popup
-                            // TODO: Update visualisation
-                            // TODO: Highlight when hover
-                            // FIXME: if click icon again, close
-                            // FIXME: if click anywhere, close
-                            <div className="absolute bottom-full z-10 p-2 mb-2 w-80 bg-white rounded border shadow-lg">
-                                <button
-                                    onClick={() => setShowPopup(false)}
-                                    className="absolute top-2 right-2 text-sm text-gray-300"
-                                >
-                                    <AiOutlineClose className="text-sm" />{" "}
-                                    {/* Cross icon to close the popup */}
-                                </button>
-                                <button
-                                    className="flex items-center text-sm font-bold"
-                                    onClick={() =>
-                                        document
-                                            .getElementById("fileInput")
-                                            ?.click()
-                                    } // Trigger file input click
-                                >
-                                    <AiOutlineUpload className="mr-1" />{" "}
-                                    {/* Upload icon with margin */}
-                                    Upload Dataset
-                                </button>
-                                <input
-                                    type="file"
-                                    id="fileInput"
-                                    className="hidden"
-                                    onChange={(e) => {
-                                        // Handle file selection here
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            console.log(
-                                                "Selected file:",
-                                                file.name
-                                            );
-                                            // Add further processing for the selected file
-                                        }
-                                    }}
-                                />
-                            </div>
-                        )}
+                        {UploadPopup}
                         <AiOutlinePaperClip
-                            className="absolute left-3 top-1/2 text-3xl text-gray-500 transform -translate-y-1/2 cursor-pointer"
+                            className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
                             onClick={() => setShowPopup(true)} // Show popup on click of the paperclip icon
-                        />{" "}
+                        />
                         {/* Add the icon */}
                         <input
                             type="text"
