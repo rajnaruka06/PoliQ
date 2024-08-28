@@ -242,6 +242,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     //  Overlay content on bottom left corner
+    //  TODO: Create a floating window
     const settingsOverlay = showSettingsMenu && (
         <div
             ref={settingsRef}
