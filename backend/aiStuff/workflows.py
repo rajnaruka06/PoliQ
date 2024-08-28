@@ -94,8 +94,8 @@ class ElecDataWorkflow:
             elif queryType.strip().upper() == "CHAT":
                 response = self.chatAgent.generateResponse(userQuery, chatHistory)
             else:
-                raise ValueError(f"Invalid query type determined: {queryType}")
-
+                logger.exception(f"Invalid query type determined: {queryType}")
+                return f"Error determining query type: {queryType}, Please try again."
             return response
         except InvalidUserQueryException as e:
             logger.exception(f"Invalid user query: {str(e)}")

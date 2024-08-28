@@ -4,3 +4,4 @@ backend/test.ipynb
 backend/aiStuff/__pycache__/
 backend/aiStuff/schemaInfo.json
 backend/api/__pycache__/
+backend/resources/.ENV
