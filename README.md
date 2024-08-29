@@ -140,7 +140,7 @@ Great now mongoDB is working with your credentials.
 
 #### Create .ENV file
 1. Go to your VSCode or Cursor and open the repo up.
-2. Go to the Backend folder then go into the AI_Stuff folder.
+2. Go to the Backend folder then go into the resources folder.
 3. Create a file called ".ENV". There is a "." at the start of "ENV".
 4. Add the following lines to your .ENV file:
 ```bash
@@ -206,9 +206,9 @@ All the dependencies will be installed.
 1. Now that the frontend is setup with npm i and the backend has postgresql and mongodb running, and the .ENV file and virtual environment, we can actually run the app.
 2. Start up the backend first. Navigate to the Backend folder with a terminal and type in:
 ```bash
-uvicorn API.try3:app --reload
+uvicorn API.main:app --reload
 ```
-This will start a uvicorn app that looks at the API folder and starts up try3.py
+This will start a uvicorn app that looks at the API folder and starts up main.py. Note that the folder is called API not api.
 You will see a lot of things in the terminal.
 3. Open a new terminal and start up the frontend with
 ```bash
@@ -220,7 +220,10 @@ npm run dev
 1. You can see how the APIs are running specifically by using an app like RapidAPI or Postman. This is highly recommended so you can see things happening in the backend as the frontend interface is used.
 
 2. If you want to set up the API calls use these parameters in RapidAPI or Postman:
+
+
 # API
+These API calls (that work in postman or rapidAPI) require some information in the mongodb "ChatHistoryDB"
 
 ## Requests
 
@@ -229,14 +232,14 @@ npm run dev
 #### CURL
 
 ```sh
-curl -X GET "http://localhost:8000/api/chats/all\
-?user_id=example_user_id" \
-    -H "Content-Type: application/json"
+curl -X GET "http://127.0.0.1:8000/api/chats/all\
+?userId=example_user_id" \
+    -H "Accept: application/json"
 ```
 
 #### Query Parameters
 
-- **user_id** should respect the following schema:
+- **userId** should respect the following schema:
 
 ```
 {
@@ -250,7 +253,7 @@ curl -X GET "http://localhost:8000/api/chats/all\
 
 #### Header Parameters
 
-- **Content-Type** should respect the following schema:
+- **Accept** should respect the following schema:
 
 ```
 {
@@ -262,30 +265,19 @@ curl -X GET "http://localhost:8000/api/chats/all\
 }
 ```
 
-### **GET** - /api/chats/chat_id/messages
+### **GET** - /api/chats/66c8154444a13666b4dcefc0/messages
 
 #### CURL
 
 ```sh
-curl -X GET "http://localhost:8000/api/chats/chat_id/messages\
-?chat_id=example_chat_id&user_id=example_user_id" \
-    -H "Content-Type: application/json"
+curl -X GET "http://127.0.0.1:8000/api/chats/66c8154444a13666b4dcefc0/messages\
+?userId=example_user_id" \
+    -H "Accept: application/json"
 ```
 
 #### Query Parameters
 
-- **chat_id** should respect the following schema:
-
-```
-{
-  "type": "string",
-  "enum": [
-    "example_chat_id"
-  ],
-  "default": "example_chat_id"
-}
-```
-- **user_id** should respect the following schema:
+- **userId** should respect the following schema:
 
 ```
 {
@@ -299,7 +291,7 @@ curl -X GET "http://localhost:8000/api/chats/chat_id/messages\
 
 #### Header Parameters
 
-- **Content-Type** should respect the following schema:
+- **Accept** should respect the following schema:
 
 ```
 {
@@ -316,15 +308,16 @@ curl -X GET "http://localhost:8000/api/chats/chat_id/messages\
 #### CURL
 
 ```sh
-curl -X POST "http://localhost:8000/api/messages/send\
-?user_id=example_user_id" \
+curl -X POST "http://127.0.0.1:8000/api/messages/send\
+?userId=example_user_id" \
+    -H "Accept: application/json" \
     -H "Content-Type: application/json" \
     --data-raw "$body"
 ```
 
 #### Query Parameters
 
-- **user_id** should respect the following schema:
+- **userId** should respect the following schema:
 
 ```
 {
@@ -338,6 +331,17 @@ curl -X POST "http://localhost:8000/api/messages/send\
 
 #### Header Parameters
 
+- **Accept** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "application/json"
+  ],
+  "default": "application/json"
+}
+```
 - **Content-Type** should respect the following schema:
 
 ```
@@ -357,34 +361,34 @@ curl -X POST "http://localhost:8000/api/messages/send\
 ```
 {
   "type": "string",
-  "default": "{ \"chat_id\": \"example_chat_id\", \"content\": \"Hello, this is a test message.\" }"
+  "default": "{\n  \"chatId\": \"66c8154444a13666b4dcefc0\",\n\"content\": \"which LLM is this?\"\n  }\n"
 }
 ```
 
-### **PUT** - /api/chats/chat_id/unpin
+### **GET** - /api/chats/66c8154644a13666b4dcefc3/latest
 
 #### CURL
 
 ```sh
-curl -X PUT "http://localhost:8000/api/chats/chat_id/unpin\
-?chat_id=example_chat_id&user_id=example_user_id" \
-    -H "Content-Type: application/json"
+curl -X GET "http://127.0.0.1:8000/api/chats/66c8154644a13666b4dcefc3/latest\
+?chatId=66c8154444a13666b4dcefc0&userId=example_user_id&limit=2" \
+    -H "Accept: application/json"
 ```
 
 #### Query Parameters
 
-- **chat_id** should respect the following schema:
+- **chatId** should respect the following schema:
 
 ```
 {
   "type": "string",
   "enum": [
-    "example_chat_id"
+    "66c8154444a13666b4dcefc0"
   ],
-  "default": "example_chat_id"
+  "default": "66c8154444a13666b4dcefc0"
 }
 ```
-- **user_id** should respect the following schema:
+- **userId** should respect the following schema:
 
 ```
 {
@@ -395,10 +399,21 @@ curl -X PUT "http://localhost:8000/api/chats/chat_id/unpin\
   "default": "example_user_id"
 }
 ```
+- **limit** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "2"
+  ],
+  "default": "2"
+}
+```
 
 #### Header Parameters
 
-- **Content-Type** should respect the following schema:
+- **Accept** should respect the following schema:
 
 ```
 {
@@ -410,30 +425,30 @@ curl -X PUT "http://localhost:8000/api/chats/chat_id/unpin\
 }
 ```
 
-### **PUT** - /api/chats/chat_id/unpin
+### **PUT** - /api/chats/66c8154644a13666b4dcefc6/pin
 
 #### CURL
 
 ```sh
-curl -X PUT "http://localhost:8000/api/chats/chat_id/unpin\
-?chat_id=example_chat_id&user_id=example_user_id" \
-    -H "Content-Type: application/json"
+curl -X PUT "http://127.0.0.1:8000/api/chats/66c8154644a13666b4dcefc6/pin\
+?chatId=66c8154444a13666b4dcefc0&userId=example_user_id" \
+    -H "Accept: application/json"
 ```
 
 #### Query Parameters
 
-- **chat_id** should respect the following schema:
+- **chatId** should respect the following schema:
 
 ```
 {
   "type": "string",
   "enum": [
-    "example_chat_id"
+    "66c8154444a13666b4dcefc0"
   ],
-  "default": "example_chat_id"
+  "default": "66c8154444a13666b4dcefc0"
 }
 ```
-- **user_id** should respect the following schema:
+- **userId** should respect the following schema:
 
 ```
 {
@@ -447,7 +462,7 @@ curl -X PUT "http://localhost:8000/api/chats/chat_id/unpin\
 
 #### Header Parameters
 
-- **Content-Type** should respect the following schema:
+- **Accept** should respect the following schema:
 
 ```
 {
@@ -459,30 +474,30 @@ curl -X PUT "http://localhost:8000/api/chats/chat_id/unpin\
 }
 ```
 
-### **DELETE** - /api/chats/chat_id/delete
+### **PUT** - /api/chats/66c8154644a13666b4dcefc3/unpin
 
 #### CURL
 
 ```sh
-curl -X DELETE "http://localhost:8000/api/chats/chat_id/delete\
-?chat_id=example_chat_id&user_id=example_user_id" \
-    -H "Content-Type: application/json"
+curl -X PUT "http://127.0.0.1:8000/api/chats/66c8154644a13666b4dcefc3/unpin\
+?chatId=66c8154444a13666b4dcefc0&userId=example_user_id" \
+    -H "Accept: application/json"
 ```
 
 #### Query Parameters
 
-- **chat_id** should respect the following schema:
+- **chatId** should respect the following schema:
 
 ```
 {
   "type": "string",
   "enum": [
-    "example_chat_id"
+    "66c8154444a13666b4dcefc0"
   ],
-  "default": "example_chat_id"
+  "default": "66c8154444a13666b4dcefc0"
 }
 ```
-- **user_id** should respect the following schema:
+- **userId** should respect the following schema:
 
 ```
 {
@@ -496,7 +511,7 @@ curl -X DELETE "http://localhost:8000/api/chats/chat_id/delete\
 
 #### Header Parameters
 
-- **Content-Type** should respect the following schema:
+- **Accept** should respect the following schema:
 
 ```
 {
@@ -508,30 +523,30 @@ curl -X DELETE "http://localhost:8000/api/chats/chat_id/delete\
 }
 ```
 
-### **PUT** - /api/chats/chat_id/archive
+### **DELETE** - /api/chats/66c8154644a13666b4dcefc6/delete
 
 #### CURL
 
 ```sh
-curl -X PUT "http://localhost:8000/api/chats/chat_id/archive\
-?chat_id=example_chat_id&user_id=example_user_id" \
-    -H "Content-Type: application/json"
+curl -X DELETE "http://127.0.0.1:8000/api/chats/66c8154644a13666b4dcefc6/delete\
+?chatId=66c8154444a13666b4dcefc0&userId=example_user_id" \
+    -H "Accept: application/json"
 ```
 
 #### Query Parameters
 
-- **chat_id** should respect the following schema:
+- **chatId** should respect the following schema:
 
 ```
 {
   "type": "string",
   "enum": [
-    "example_chat_id"
+    "66c8154444a13666b4dcefc0"
   ],
-  "default": "example_chat_id"
+  "default": "66c8154444a13666b4dcefc0"
 }
 ```
-- **user_id** should respect the following schema:
+- **userId** should respect the following schema:
 
 ```
 {
@@ -545,7 +560,105 @@ curl -X PUT "http://localhost:8000/api/chats/chat_id/archive\
 
 #### Header Parameters
 
-- **Content-Type** should respect the following schema:
+- **Accept** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "application/json"
+  ],
+  "default": "application/json"
+}
+```
+
+### **PUT** - /api/chats/66c8154644a13666b4dcefc3/archive
+
+#### CURL
+
+```sh
+curl -X PUT "http://127.0.0.1:8000/api/chats/66c8154644a13666b4dcefc3/archive\
+?chatId=66c8154444a13666b4dcefc0&userId=example_user_id" \
+    -H "Accept: application/json"
+```
+
+#### Query Parameters
+
+- **chatId** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "66c8154444a13666b4dcefc0"
+  ],
+  "default": "66c8154444a13666b4dcefc0"
+}
+```
+- **userId** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "example_user_id"
+  ],
+  "default": "example_user_id"
+}
+```
+
+#### Header Parameters
+
+- **Accept** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "application/json"
+  ],
+  "default": "application/json"
+}
+```
+
+### **PUT** - /api/chats/66c8154644a13666b4dcefc3/unarchive
+
+#### CURL
+
+```sh
+curl -X PUT "http://127.0.0.1:8000/api/chats/66c8154644a13666b4dcefc3/unarchive\
+?chatId=66c8154444a13666b4dcefc0&userId=example_user_id" \
+    -H "Accept: application/json"
+```
+
+#### Query Parameters
+
+- **chatId** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "66c8154444a13666b4dcefc0"
+  ],
+  "default": "66c8154444a13666b4dcefc0"
+}
+```
+- **userId** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "example_user_id"
+  ],
+  "default": "example_user_id"
+}
+```
+
+#### Header Parameters
+
+- **Accept** should respect the following schema:
 
 ```
 {
@@ -562,9 +675,9 @@ curl -X PUT "http://localhost:8000/api/chats/chat_id/archive\
 #### CURL
 
 ```sh
-curl -X GET "http://localhost:8000/api/chats/search\
-?term=example_search_term&user_id=example_user_id" \
-    -H "Content-Type: application/json"
+curl -X GET "http://127.0.0.1:8000/api/chats/search\
+?term=project&userId=example_user_id" \
+    -H "Accept: application/json"
 ```
 
 #### Query Parameters
@@ -575,12 +688,12 @@ curl -X GET "http://localhost:8000/api/chats/search\
 {
   "type": "string",
   "enum": [
-    "example_search_term"
+    "project"
   ],
-  "default": "example_search_term"
+  "default": "project"
 }
 ```
-- **user_id** should respect the following schema:
+- **userId** should respect the following schema:
 
 ```
 {
@@ -594,7 +707,7 @@ curl -X GET "http://localhost:8000/api/chats/search\
 
 #### Header Parameters
 
-- **Content-Type** should respect the following schema:
+- **Accept** should respect the following schema:
 
 ```
 {
@@ -605,6 +718,143 @@ curl -X GET "http://localhost:8000/api/chats/search\
   "default": "application/json"
 }
 ```
----
 
+### **PUT** - /api/chats/66c8154644a13666b4dcefc3/title
+
+#### CURL
+
+```sh
+curl -X PUT "http://127.0.0.1:8000/api/chats/66c8154644a13666b4dcefc3/title\
+?user_id=example_user_id&newTitle=Updated%20meeting%20notes" \
+    -H "Accept: application/json"
+```
+
+#### Query Parameters
+
+- **user_id** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "example_user_id"
+  ],
+  "default": "example_user_id"
+}
+```
+- **newTitle** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "Updated meeting notes"
+  ],
+  "default": "Updated meeting notes"
+}
+```
+
+#### Header Parameters
+
+- **Accept** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "application/json"
+  ],
+  "default": "application/json"
+}
+```
+
+### **GET** - /api/chats/66c8154644a13666b4dcefc3/messages/66c8154644a13666b4dcefc5
+
+#### CURL
+
+```sh
+curl -X GET "http://127.0.0.1:8000/api/chats/66c8154644a13666b4dcefc3/messages/66c8154644a13666b4dcefc5\
+?userId=example_user_id" \
+    -H "Accept: application/json"
+```
+
+#### Query Parameters
+
+- **userId** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "example_user_id"
+  ],
+  "default": "example_user_id"
+}
+```
+
+#### Header Parameters
+
+- **Accept** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "application/json"
+  ],
+  "default": "application/json"
+}
+```
+
+### **PUT** - /api/chats/66c8154644a13666b4dcefc3/messages/66c8154644a13666b4dcefc5
+
+#### CURL
+
+```sh
+curl -X PUT "http://127.0.0.1:8000/api/chats/66c8154644a13666b4dcefc3/messages/66c8154644a13666b4dcefc5\
+?userId=example_user_id\
+&newContent=Updated%20notes%20after%20the%20recent%20meeting" \
+    -H "Accept: application/json"
+```
+
+#### Query Parameters
+
+- **userId** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "example_user_id"
+  ],
+  "default": "example_user_id"
+}
+```
+- **newContent** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "Updated notes after the recent meeting"
+  ],
+  "default": "Updated notes after the recent meeting"
+}
+```
+
+#### Header Parameters
+
+- **Accept** should respect the following schema:
+
+```
+{
+  "type": "string",
+  "enum": [
+    "application/json"
+  ],
+  "default": "application/json"
+}
+```
+
+## References
 
