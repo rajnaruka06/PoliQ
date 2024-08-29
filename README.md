@@ -151,17 +151,16 @@ POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POLIMAP_DB_NAME=polimap_db
 ELECDATA_DB_NAME=elecdata_db
-OPENAI_API_KEY=!!!!
+OPENAI_API_KEY=xxxx
 LLM_MODEL=gpt-4o
 LLM_TEMPERATURE=0
 LLM_MAX_TOKENS=None
 LLM_TIMEOUT=None
 LLM_MAX_RETRIES=2
-MONGO_USER=myUser
-MONGO_PASSWORD=myPassword
-MONGO_HOST=localhost
-MONGO_PORT=27017
-MONGO_DB=ChatHistoryDB
+MONGO_URI=mongodb://localhost:27017
+MONGO_DB_NAME=ChatHistoryDB
+
+
 ```
 5. For the OPENAI_API_KEY, go to this link on next cloud
 https://next.poliq.au/apps/collectives/Swinburne/API%20Keys?fileId=949696
