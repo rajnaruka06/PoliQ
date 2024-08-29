@@ -31,7 +31,7 @@ const ChatBot: React.FC = () => {
     const [detailedMessages, setConvMessages] = useState<MessageHistory[]>([]);
     const [selectedChatID, setSelectedChatID] = useState<string | null>(null);
     const [showPopup, setShowPopup] = useState(false); // adds state for popup visibility
-    const user_id = "example_user_id"; // Update later with a user details hook
+    const userId = "example_user_id"; // Update later with a user details hook
     const popupRef = useRef<HTMLDivElement | null>(null); // Reference for the popup
 
     // Using useFetchMessages to fetch messages for the selected chat
@@ -39,14 +39,14 @@ const ChatBot: React.FC = () => {
         messages: fetchedMessages,
         loading,
         error,
-    } = useFetchMessages(selectedChatID, user_id);
+    } = useFetchMessages(selectedChatID, userId);
 
     // Using useSendMessage to send messages
     const {
         sendMessage,
         loading: sending,
         error: sendError,
-    } = useSendMessage(user_id);
+    } = useSendMessage(userId);
 
     // Reference for the popup
     useEffect(() => {
@@ -67,19 +67,41 @@ const ChatBot: React.FC = () => {
         };
     }, [popupRef]);
 
+    // New handleSend to use the correct format and reflect messages immediately.
     const handleSend = async () => {
         if (input.trim()) {
-            // Optimistically update the UI before sending the message
+            // Optimistically add the user's message to the UI
             setMessages([
                 ...messages,
                 { sender: "user", text: input, user: "user" },
             ]);
+    
             // Send the message using the hook and await the response
-            await sendMessage({ chat_id: selectedChatID, content: input });
+            await sendMessage({ chatId: selectedChatID || '', content: input });
+    
+            // Fetch the latest messages for the selected chat after sending
+            if (selectedChatID) {
+                const updatedMessages = await fetchUpdatedMessages(selectedChatID);
+                setConvMessages(updatedMessages);
+            }
+    
             // Clear the input after sending
             setInput("");
         }
     };
+    
+    // New fetchUpdatedMessages to retrieve updated messages after handleSend
+    const fetchUpdatedMessages = async (chatId: string) => {
+        // Call the same logic you use to fetch messages, which could be
+        // reused from your `useFetchMessages` hook
+        const response = await fetch(`http://localhost:8000/api/chats/${chatId}/messages?userId=${userId}`);
+        
+        if (!response.ok) throw new Error('Failed to fetch messages');
+        
+        const data: MessageHistory[] = await response.json();
+        return data;
+    };
+    
 
     // Effect to update conversation messages when new messages are fetched
     useEffect(() => {
@@ -189,6 +211,7 @@ const ChatBot: React.FC = () => {
             <Sidebar
                 selectedChatID={selectedChatID}
                 setSelectedChatID={setSelectedChatID}
+                setMessages={setMessages} //passes setMessages as a prop
             />
 
             {/* Chat area */}

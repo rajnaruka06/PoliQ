@@ -22,14 +22,13 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 
 ## Adding CORS middleware
-origins = os.getenv("CORS_ORIGINS").split(',')
-
+#Adding CORS middleware from try3.py to allow requests from 5173, seems to work 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["http://localhost:5173"], 
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"], 
 )
 
 ## Initializing the workflow

@@ -1,8 +1,9 @@
+// updated for main.py
 import { useState } from "react";
 
 // Define the interface for the message request
 interface MessageRequest {
-    chat_id?: string;
+    chatId?: string;  // Correctly using chatId
     content: string;
 }
 
@@ -15,7 +16,7 @@ interface UseSendMessageHook {
 }
 
 // PMJ 23/8/2024: This hook sends a message and gets a response from the backend workflow.
-export const useSendMessage = (user_id: string): UseSendMessageHook => {
+export const useSendMessage = (userId: string): UseSendMessageHook => {
     const [response, setResponse] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -23,7 +24,7 @@ export const useSendMessage = (user_id: string): UseSendMessageHook => {
     const sendMessage = async (message: MessageRequest) => {
         setLoading(true); // PMJ 23/8/2024: Loading is set to true when the API call starts.
         try {
-            const res = await fetch(`http://localhost:8000/api/messages/send?user_id=${user_id}`, {
+            const res = await fetch(`http://localhost:8000/api/messages/send?userId=${userId}`, {  // Updated to use userId instead of user_id
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

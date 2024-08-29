@@ -20,10 +20,10 @@ import { useUnpinChat } from "../hooks/useUnpinChat";
 import { useDeleteChat } from "../hooks/useDeleteChat";
 import { useArchiveChat } from "../hooks/useArchiveChat";
 import { useSearchChats } from "../hooks/useSearchChats";
+import { useUnarchiveChat } from "../hooks/useUnarchiveChat";
 
-// changed the interface format to accept the json format that returns to the UI
 interface ChatHistory {
-    chat_id: string;
+    chatId: string;
     date: string;
     title: string;
     pinned: boolean;
@@ -32,22 +32,24 @@ interface ChatHistory {
 interface SidebarProps {
     selectedChatID: string | null;
     setSelectedChatID: (chatID: string | null) => void;
+    setMessages: React.Dispatch<React.SetStateAction<MessageCurrent[]>>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
     selectedChatID,
     setSelectedChatID,
+    setMessages
 }) => {
     // TODO: Proper commenting to explain
 
-    const user_id = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
+    const userId = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
     const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
     const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
     const settingsRef = useRef<HTMLDivElement | null>(null);
     const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
-    const { chatHistory, loading, error } = useFetchChatHistory(user_id);
+    const { chatHistory, loading, error } = useFetchChatHistory(userId);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     // State to manage filtered chat history
@@ -90,29 +92,34 @@ const Sidebar: React.FC<SidebarProps> = ({
         deleteChat,
         // loading: deleteLoading,
         // error: deleteError,
-    } = useDeleteChat(user_id);
+    } = useDeleteChat(userId);
     //Use the useArchiveChat hook
     const {
         archiveChat,
         // loading: archiveLoading,
         // error: archiveError,
-    } = useArchiveChat(user_id);
+    } = useArchiveChat(userId);
     // Use the pin and unpin chat hooks
     const {
         pinChat,
         // loading: pinLoading,
         // error: pinError,
-    } = usePinChat(user_id);
+    } = usePinChat(userId);
     const {
         unpinChat,
         // loading: unpinLoading,
         // error: unpinError,
-    } = useUnpinChat(user_id);
+    } = useUnpinChat(userId);
     const {
         searchResults,
         // loading: searchLoading,
         // error: searchError,
-    } = useSearchChats(user_id, searchTerm);
+    } = useSearchChats(userId, searchTerm);
+    const {
+        unarchiveChat,
+        // loading: unarchiveLoading,
+        // error: unarchiveError
+    } = useUnarchiveChat(userId);
 
     // Effect to determine whether to use serach results or the full chat history
     // Function to handle search -> changed again to use hook
@@ -153,7 +160,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             // Optionally, update the local chat history state if needed
             setFilteredChatHistory((prevHistory) =>
                 prevHistory.map((chat) =>
-                    chat.chat_id === chatID
+                    chat.chatId === chatID
                         ? { ...chat, pinned: !isPinned }
                         : chat
                 )
@@ -169,7 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             await deleteChat(chatID); // Call the deleteChat function from the hook
             // Update the chat history locally
             setFilteredChatHistory((prevHistory) =>
-                prevHistory.filter((chat) => chat.chat_id !== chatID)
+                prevHistory.filter((chat) => chat.chatId !== chatID)
             );
             setPinnedChats((prev) => prev.filter((id) => id !== chatID)); // Remove from pinned chats if necessary
             if (selectedChatID === chatID) {
@@ -178,25 +185,28 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
     };
 
-    //
-    // Function to handle archiving a chat
-    const handleArchiveChat = async (chatID: string) => {
+    // Update archive/unarchive handling in threeDotsMenu function
+    const handleArchiveChat = async (chatID: string, isArchived: boolean) => {
         try {
-            await archiveChat(chatID);
-            // Update chat history or UI state to reflect the archived status
+            if (isArchived) {
+                await unarchiveChat(chatID); // Call unarchive if currently archived
+            } else {
+                await archiveChat(chatID); // Call archive otherwise
+            }
+            // Update chat history or UI state
             setFilteredChatHistory((prevHistory) =>
                 prevHistory.map((chat) =>
-                    chat.chat_id === chatID ? { ...chat, archived: true } : chat
+                    chat.chatId === chatID ? { ...chat, archived: !isArchived } : chat
                 )
             );
         } catch (error) {
-            console.error("Error archiving chat:", error);
+            console.error("Error archiving/unarchiving chat:", error);
         }
     };
 
     // Function to handle the three dots menu
     const threeDotsMenu = (chat: {
-        chat_id: string;
+        chatId: string;
         title: string;
         pinned: boolean;
     }) => {
@@ -205,9 +215,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                 ref={menuRef}
                 className="flex absolute right-4 z-50 flex-col gap-3 items-end p-3 mt-10 text-white rounded-xl shadow-lg bg-primary"
             >
+                {/* Pin / Unpin button */}
                 <button
                     className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
-                    onClick={() => handlePinChat(chat.chat_id, chat.pinned)}
+                    onClick={() => handlePinChat(chat.chatId, chat.pinned)}
                 >
                     {chat.pinned ? (
                         <>
@@ -221,20 +232,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </>
                     )}
                 </button>
+                {/* Delete chat button */}
                 <button
                     className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
-                    onClick={() => handleDeleteChat(chat.chat_id)}
+                    onClick={() => handleDeleteChat(chat.chatId)}
                 >
                     <BiTrash />
                     {/* <span>Delete</span> */}
                 </button>
+                {/* Archive / Unarchive button */}
                 <button
                     className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
-                    onClick={() => handleArchiveChat(chat.chat_id)}
+                    onClick={() => handleArchiveChat(chat.chatId, chat.archived || false)} // Pass the correct state
                 >
                     <BiArchive />
                     {/* <span>Archive</span> */}
                 </button>
+
             </div>
         );
     };
@@ -270,24 +284,24 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div
                 key={idx}
                 className={`flex flex-col py-1 pl-5 ml-3 rounded-xl text-xl truncate hover:bg-zinc-500 hover:cursor-pointer ${
-                    selectedChatID === chat.chat_id
+                    selectedChatID === chat.chatId
                         ? "bg-blue-600 text-white"
                         : "bg-transparent"
                 }`}
-                onClick={() => setSelectedChatID(chat.chat_id)}
-                onMouseEnter={() => setHoveredChatID(chat.chat_id)} // Set hovered chat on mouse enter
+                onClick={() => setSelectedChatID(chat.chatId)}
+                onMouseEnter={() => setHoveredChatID(chat.chatId)} // Set hovered chat on mouse enter
                 onMouseLeave={() => setHoveredChatID(null)} // Reset hovered chat on mouse leave
             >
                 <div className="flex justify-between group">
                     <span className="truncate">{chat.title}</span>
-                    {hoveredChatID === chat.chat_id && ( // Show icon only if hovered
+                    {hoveredChatID === chat.chatId && ( // Show icon only if hovered
                         <AiOutlineMore
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setShowOptionsMenu(
-                                    showOptionsMenu === chat.chat_id
+                                    showOptionsMenu === chat.chatId
                                         ? null
-                                        : chat.chat_id
+                                        : chat.chatId
                                 );
                             }}
                             className="pr-2 text-3xl"
@@ -295,7 +309,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     )}
                 </div>
                 {/* FIXME: when threedotsmenu hovered, row size changes */}
-                {showOptionsMenu === chat.chat_id && threeDotsMenu(chat)}
+                {showOptionsMenu === chat.chatId && threeDotsMenu(chat)}
             </div>
         );
     };
@@ -384,12 +398,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                             className="px-4 py-2 text-white rounded-full bg-zinc-700"
                             onClick={() => {
                                 setSelectedChatID(null); // Clear the selected chat
+                                setMessages([]);
                             }}
                         >
                             <AiOutlineForm />
                         </button>
                     </div>
-                    {loading && <p>Loading...</p>}
+                    {loading && <p>Loading results...</p>}
                     {error && <p>Error: {error}</p>}
                     {!loading && !error && loadChatHistory()}
 
