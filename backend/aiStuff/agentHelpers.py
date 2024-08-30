@@ -457,6 +457,25 @@ class ChatHistory:
         except OperationFailure as e:
             logger.error(f"Failed to create text index: {e}")
             raise ChatHistoryError(f"Failed to create text index: {str(e)}")
+        
+    def _ensureTextIndex(self) -> None:
+        """Ensures text index exists for message content."""
+        try:
+            indexes = list(self.collection.list_indexes())
+            textIndexExists = any(
+                index['key'] == [('messages.content', 'text')]
+                for index in indexes
+            )
+
+            if not textIndexExists:
+                indexName = "messagesContentTextIndex"
+                fieldsToIndex = [("messages.content", TEXT)]
+                self.collection.create_index(fieldsToIndex, name=indexName)
+            else:
+                logger.info("Text index for messages.content already exists.")
+        except OperationFailure as e:
+            logger.error(f"Failed to create or verify text index: {e}")
+            raise ChatHistoryError(f"Failed to create or verify text index: {str(e)}")
 
     @staticmethod
     def _convertObjectId(data: Any) -> Any:
