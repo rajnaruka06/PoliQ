@@ -111,6 +111,7 @@ const ChatBot: React.FC = () => {
     }, [selectedChatID, fetchedMessages]);
 
     // Hero for welcome screen
+    // TODO: If user click opt x, the content will be send as user input
     const hero = () => {
         return (
             <div className="flex flex-col flex-grow justify-center items-center h-full">
@@ -137,11 +138,11 @@ const ChatBot: React.FC = () => {
                   } group`}
               >
                   <div
-                      className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
+                      className={`inline-block p-2 max-w-7xl break-words rounded-xl px-7 ${
                           msg.user === "user"
                               ? "bg-zinc-700 text-white"
                               : " text-white"
-                      }`}
+                      } text-justify`} // Added text-justify for justification
                   >
                       {msg.content}
                       <div className="text-sm text-gray-400">
@@ -160,11 +161,11 @@ const ChatBot: React.FC = () => {
                   }`}
               >
                   <div
-                      className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
+                      className={`inline-block p-2 max-w-7xl break-words rounded-xl px-7 ${
                           msg.sender === "user"
                               ? "bg-zinc-700 text-white"
                               : " text-white"
-                      }`}
+                      } text-justify`} // Added text-justify for justification
                   >
                       {msg.text}
                   </div>
@@ -228,7 +229,7 @@ const ChatBot: React.FC = () => {
                     {/* Input box */}
                     <div className="relative flex-grow">
                         {UploadPopup}
-                        {/* FIXME: Upload popup when click paperclip can't close */}
+                        {/* FIXME: upload bug, useref broken */}
                         <AiOutlinePaperClip
                             className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
                             onClick={() => setShowPopup(true)} // Show popup on click of the paperclip icon
