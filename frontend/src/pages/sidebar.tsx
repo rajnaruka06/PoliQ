@@ -42,10 +42,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     const user_id = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
     const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
+    const settingsRef = useRef<HTMLDivElement | null>(null);
     const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
-    const settingsRef = useRef<HTMLDivElement | null>(null);
     const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
     const { chatHistory, loading, error } = useFetchChatHistory(user_id);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -59,6 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -201,6 +202,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         pinned: boolean;
     }) => {
         return (
+            // FIXME: threedots bug, useref can't close
             <div
                 ref={menuRef}
                 className="flex absolute right-4 z-50 flex-col gap-3 items-end p-3 mt-10 text-white rounded-xl shadow-lg bg-primary"
@@ -240,6 +242,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     //  Overlay content on bottom left corner
+    //  TODO: Create a floating window
     const settingsOverlay = showSettingsMenu && (
         <div
             ref={settingsRef}
@@ -247,13 +250,13 @@ const Sidebar: React.FC<SidebarProps> = ({
         >
             <ul className="flex flex-col gap-5 content-end p-5 text-lg rounded-lg bg-primary">
                 <button className="text-2xl font-semibold bg-primary">
-                    Archived Chats
+                    View all chats
+                </button>
+                <button className="text-2xl font-semibold bg-primary">
+                    Archived chats
                 </button>
                 <button className="text-2xl font-semibold bg-primary">
                     Memory
-                </button>
-                <button className="text-2xl font-semibold bg-primary">
-                    Menu 3
                 </button>
             </ul>
             {/* <div className="flex justify-end">
@@ -372,7 +375,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         {/* Search bar with icon */}
                         <div className="relative flex-grow">
                             <input
-                                className="px-4 py-2 pl-10 w-full text-white rounded-full bg-zinc-700"
+                                className="px-4 py-2 pl-10 w-full text-white rounded-full bg-zinc-700 "
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={handleSearch}
@@ -396,7 +399,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {/* Bottom Sidebar Area */}
                     <div className="flex relative text-3xl bg-sidebar">
                         <div className="">John Doe</div>
-                        {/* FIXME: when pressing the button again, it's not closing the menu */}
+                        {/* FIXME: settings bug, useref can't close */}
                         {settingsOverlay}
                         <AiOutlineEllipsis
                             className="absolute right-0 cursor-pointer"
