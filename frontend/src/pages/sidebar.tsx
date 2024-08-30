@@ -375,7 +375,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         {/* Search bar with icon */}
                         <div className="relative flex-grow">
                             <input
-                                className="px-4 py-2 pl-10 w-full text-white rounded-full bg-zinc-700"
+                                className="px-4 py-2 pl-10 w-full text-white rounded-full bg-zinc-700 "
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={handleSearch}

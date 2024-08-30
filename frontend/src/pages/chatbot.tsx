@@ -116,11 +116,11 @@ const ChatBot: React.FC = () => {
                   } group`}
               >
                   <div
-                      className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
+                      className={`inline-block p-2 max-w-7xl break-words rounded-xl px-7 ${
                           msg.user === "user"
                               ? "bg-zinc-700 text-white"
                               : " text-white"
-                      }`}
+                      } text-justify`} // Added text-justify for justification
                   >
                       {msg.content}
                       <div className="text-sm text-gray-400">
@@ -139,11 +139,11 @@ const ChatBot: React.FC = () => {
                   }`}
               >
                   <div
-                      className={`inline-block p-2 max-w-7xl break-words rounded-full px-7 ${
+                      className={`inline-block p-2 max-w-7xl break-words rounded-xl px-7 ${
                           msg.sender === "user"
                               ? "bg-zinc-700 text-white"
                               : " text-white"
-                      }`}
+                      } text-justify`} // Added text-justify for justification
                   >
                       {msg.text}
                   </div>
