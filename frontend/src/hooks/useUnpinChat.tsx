@@ -1,28 +1,29 @@
+// updated for new main.py
 import { useState } from "react";
 
 interface UseUnpinChatHook {
-    unpinChat: (chat_id: string) => Promise<void>;
+    unpinChat: (chatID: string) => Promise<void>;
     loading: boolean;
     error: string | null;
 }
 
-export const useUnpinChat = (user_id: string): UseUnpinChatHook => {
+export const useUnpinChat = (userId: string): UseUnpinChatHook => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const unpinChat = async (chat_id: string) => {
+    const unpinChat = async (chatID: string) => {
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:8000/api/chats/${chat_id}/unpin?user_id=${user_id}`, {
+            const response = await fetch(`http://localhost:8000/api/chats/${chatID}/unpin?userId=${userId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
 
-            if (!res.ok) throw new Error("Failed to unpin chat");
+            if (!response.ok) throw new Error("Failed to unpin chat");
 
-            // Optional: You can add logic here if you need to handle any data returned by the API
+            console.log(`Chat ${chatID} unpinned successfully`);
         } catch (err) {
             setError((err as Error).message);
         } finally {

@@ -1,7 +1,8 @@
+// updated for new main.py
 import { useState, useEffect } from "react";
 
 interface ChatHistory {
-    chat_id: string;
+    chatId: string;  // Updated to use chatId instead of chat_id
     date: string;
     title: string;
     pinned: boolean;
@@ -15,8 +16,8 @@ interface UseSearchChatsHook {
     error: string | null;
 }
 
-// The hook takes in the user_id and searchTerm and makes an API request
-export const useSearchChats = (user_id: string, searchTerm: string): UseSearchChatsHook => {
+// The hook takes in the userId and searchTerm and makes an API request
+export const useSearchChats = (userId: string, searchTerm: string): UseSearchChatsHook => {
     const [searchResults, setSearchResults] = useState<ChatHistory[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -33,7 +34,7 @@ export const useSearchChats = (user_id: string, searchTerm: string): UseSearchCh
                 const response = await fetch(
                     `http://localhost:8000/api/chats/search?term=${encodeURIComponent(
                         searchTerm
-                    )}&user_id=${user_id}`
+                    )}&userId=${userId}`  // Corrected query parameter to match API endpoint
                 );
                 if (!response.ok) throw new Error("Failed to search chats");
 
@@ -47,7 +48,7 @@ export const useSearchChats = (user_id: string, searchTerm: string): UseSearchCh
         };
 
         fetchSearchResults();
-    }, [searchTerm, user_id]);
+    }, [searchTerm, userId]);
 
     return { searchResults, loading, error };
 };

@@ -1,8 +1,9 @@
+// Updated for main.py
 import { useState, useEffect } from "react";
 
 // Define the message structure based on your backend response
 interface MessageHistory {
-    messageID: string;
+    messageId: string;  // Changed from messageID to messageId for consistency
     user: string;
     content: string;
     date: string;
@@ -16,20 +17,20 @@ interface UseFetchMessagesHook {
     error: string | null;
 }
 
-// PMJ 23/8/2024: This hook fetches all messages for a specified chat using the chat ID and user ID.
-export const useFetchMessages = (chat_id: string | null, user_id: string): UseFetchMessagesHook => {
+// This hook fetches all messages for a specified chat using the chatId and userId.
+export const useFetchMessages = (chatId: string | null, userId: string): UseFetchMessagesHook => {
     const [messages, setMessages] = useState<MessageHistory[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!chat_id) return; // If there's no chat ID, do not attempt to fetch messages
+        if (!chatId) return; // If there's no chatId, do not attempt to fetch messages
 
-        // PMJ 23/8/2024: This function makes the API call to fetch messages for a specific chat.
+        //  This function makes the API call to fetch messages for a specific chat.
         const fetchMessages = async () => {
             try {
                 // Fetches messages for the specified chat from the backend
-                const response = await fetch(`http://localhost:8000/api/chats/${chat_id}/messages?user_id=${user_id}`);
+                const response = await fetch(`http://localhost:8000/api/chats/${chatId}/messages?userId=${userId}`);
                 
                 // If the response is not OK, throw an error
                 if (!response.ok) throw new Error("Failed to fetch messages");
@@ -50,7 +51,7 @@ export const useFetchMessages = (chat_id: string | null, user_id: string): UseFe
 
         // Call the fetchMessages function
         fetchMessages();
-    }, [chat_id, user_id]);
+    }, [chatId, userId]);
 
     // Return the messages, loading status, and any errors encountered
     return { messages, loading, error };

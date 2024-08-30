@@ -1,3 +1,4 @@
+// updated for new main.py
 import { useState } from "react";
 
 // Define the return types of the hook
@@ -15,13 +16,14 @@ export const useDeleteChat = (user_id: string): UseDeleteChatHook => {
         setLoading(true);
         setError(null); // Clear any previous error
         try {
-            const response = await fetch(`http://localhost:8000/api/chats/${chatID}/delete?user_id=${user_id}`, {
+            const response = await fetch(`http://localhost:8000/api/chats/${chatID}/delete?userId=${user_id}`, {
                 method: "DELETE",
             });
 
             if (!response.ok) throw new Error("Failed to delete chat");
 
             // You can add any additional logic here if needed, e.g., notifying the user
+            console.log(`Chat ${chatID} deleted successfully`);
 
         } catch (err) {
             setError((err as Error).message);
