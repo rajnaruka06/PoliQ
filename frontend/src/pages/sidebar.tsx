@@ -234,38 +234,38 @@ const Sidebar: React.FC<SidebarProps> = ({
             >
                 {/* Pin / Unpin button */}
                 <button
-                    className="flex gap-2 items-center text-black shadow-sm bg-lightSecondary shadow-black/90 dark:bg-darkSecondary dark:text-white"
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() => handlePinChat(chat.chatId, chat.pinned)}
                 >
                     {chat.pinned ? (
                         <>
+                            <span>Unpin</span>
                             <BiSolidPin />
-                            {/* <span>Unpin</span> */}
                         </>
                     ) : (
                         <>
+                            <span>Pin</span>
                             <BiPin />
-                            {/* <span>Pin</span> */}
                         </>
                     )}
                 </button>
                 {/* Delete chat button */}
                 <button
-                    className="flex gap-2 items-center text-black shadow-sm bg-lightSecondary shadow-black/90 dark:bg-darkSecondary dark:text-white"
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() => handleDeleteChat(chat.chatId)}
                 >
+                    <span>Delete</span>
                     <BiTrash />
-                    {/* <span>Delete</span> */}
                 </button>
                 {/* Archive / Unarchive button */}
                 <button
-                    className="flex gap-2 items-center text-black shadow-sm bg-lightSecondary shadow-black/90 dark:bg-darkSecondary dark:text-white"
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() =>
                         handleArchiveChat(chat.chatId, chat.archived || false)
                     } // Pass the correct state
                 >
+                    <span>Archive</span>
                     <BiArchive />
-                    {/* <span>Archive</span> */}
                 </button>
             </div>
         );
@@ -276,23 +276,23 @@ const Sidebar: React.FC<SidebarProps> = ({
     const settingsOverlay = showSettingsMenu && (
         <div
             ref={settingsRef}
-            className="flex absolute right-0 bottom-10 flex-col gap-5 p-5 mb-2 w-full text-lg text-white rounded shadow-lg bg-lightTertiary dark:bg-darkPrimary dark:text-black"
+            className="flex absolute right-0 bottom-10 flex-col gap-5 p-5 mb-2 w-full text-lg text-white rounded-md shadow-lg bg-lightTertiary dark:bg-darkPrimary dark:text-black"
         >
             <button
                 onClick={() => onOptionClick && onOptionClick("View all chats")}
-                className="text-2xl font-semibold text-black bg-lightPrimary"
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
             >
                 View all chats
             </button>
             <button
                 onClick={() => onOptionClick && onOptionClick("Archived chats")}
-                className="text-2xl font-semibold text-black bg-lightPrimary"
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
             >
                 Archived chats
             </button>
             <button
                 onClick={() => onOptionClick && onOptionClick("Memory")}
-                className="text-2xl font-semibold text-black bg-lightPrimary"
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
             >
                 Memory
             </button>

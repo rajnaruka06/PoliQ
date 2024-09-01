@@ -344,7 +344,7 @@ const ChatBot: React.FC = () => {
                     {/* light dark mode button */}
                     <button
                         onClick={toggleDarkMode}
-                        className={`absolute top-4 right-4 p-2 text-xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                        className={`absolute top-4 right-4 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
                     >
                         {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
                     </button>
