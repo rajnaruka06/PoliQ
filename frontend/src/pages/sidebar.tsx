@@ -47,6 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
     const settingsRef = useRef<HTMLDivElement | null>(null);
     const SetRef = useRef<HTMLDivElement | null>(null); // Reference for the settings icon
+    const dotRef = useRef<HTMLDivElement | null>(null); // Reference for the three dots icon
     const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
@@ -68,7 +69,11 @@ const Sidebar: React.FC<SidebarProps> = ({
         const handleClickOutside = (event: MouseEvent) => {
             if (
                 menuRef.current &&
-                !menuRef.current.contains(event.target as Node)
+                !menuRef.current.contains(event.target as Node) && // Check if click is outside the popup
+                !(
+                    dotRef.current &&
+                    dotRef.current.contains(event.target as Node)
+                )
             ) {
                 setShowOptionsMenu(null); // Close the menu if clicked outside
             }
@@ -79,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 !(
                     SetRef.current &&
                     SetRef.current.contains(event.target as Node)
-                ) // Check if click is on the paperclip icon
+                )
             ) {
                 setShowSettingsMenu(false); // Close the settings menu if clicked outside
             }
@@ -305,17 +310,20 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div className="flex justify-between group">
                     <span className="truncate">{chat.title}</span>
                     {hoveredChatID === chat.chatId && ( // Show icon only if hovered
-                        <AiOutlineMore
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setShowOptionsMenu(
-                                    showOptionsMenu === chat.chatId
-                                        ? null
-                                        : chat.chatId
-                                );
-                            }}
-                            className="pr-2 text-2xl"
-                        />
+                        <div ref={dotRef}>
+                            <AiOutlineMore
+                                onClick={(event) => {
+                                    event.stopPropagation(); // Prevent click from bubbling up to the document
+                                    setShowOptionsMenu(
+                                        (prev) =>
+                                            prev === chat.chatId
+                                                ? null
+                                                : chat.chatId // Toggle the options menu for the specific chat
+                                    );
+                                }}
+                                className="pr-2 text-2xl"
+                            />
+                        </div>
                     )}
                 </div>
                 {/* FIXME: when threedotsmenu hovered, row size changes */}
