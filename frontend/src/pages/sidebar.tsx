@@ -31,12 +31,14 @@ interface ChatHistory {
 }
 
 interface SidebarProps {
+    onOptionClick?: (option: string) => void;
     selectedChatID: string | null;
     setSelectedChatID: (chatID: string | null) => void;
     setMessages: React.Dispatch<React.SetStateAction<MessageCurrent[]>>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
+    onOptionClick,
     selectedChatID,
     setSelectedChatID,
     setMessages,
@@ -276,20 +278,24 @@ const Sidebar: React.FC<SidebarProps> = ({
             ref={settingsRef}
             className="flex absolute right-0 bottom-10 flex-col gap-5 p-5 mb-2 w-full text-lg text-white rounded shadow-lg bg-lightTertiary dark:bg-darkPrimary dark:text-black"
         >
-            <button className="text-2xl font-semibold text-black bg-lightPrimary">
+            <button
+                onClick={() => onOptionClick && onOptionClick("View all chats")}
+                className="text-2xl font-semibold text-black bg-lightPrimary"
+            >
                 View all chats
             </button>
-            <button className="text-2xl font-semibold text-black bg-lightPrimary">
+            <button
+                onClick={() => onOptionClick && onOptionClick("Archived chats")}
+                className="text-2xl font-semibold text-black bg-lightPrimary"
+            >
                 Archived chats
             </button>
-            <button className="text-2xl font-semibold text-black bg-lightPrimary">
+            <button
+                onClick={() => onOptionClick && onOptionClick("Memory")}
+                className="text-2xl font-semibold text-black bg-lightPrimary"
+            >
                 Memory
             </button>
-            {/* <div className="flex justify-end">
-                <button className="text-3xl" onClick={toggleSettingsOverlay}>
-                    <AiOutlineEllipsis />
-                </button>
-            </div> */}
         </div>
     );
 
@@ -425,9 +431,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                             <AiOutlineForm />
                         </button>
                     </div>
-                    {loading && <p>Loading results...</p>}
-                    {error && <p>Error: {error}</p>}
-                    {!loading && !error && loadChatHistory()}
+                    {/* Loading and error handling */}
+                    {loading ? (
+                        <p>Loading results...</p>
+                    ) : error ? (
+                        <p>Error: {error}</p>
+                    ) : (
+                        loadChatHistory()
+                    )}
 
                     {/* Bottom Sidebar Area */}
                     <div className="flex relative text-3xl bg-lightSecondary dark:bg-darkSecondary">
