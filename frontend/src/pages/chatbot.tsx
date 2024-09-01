@@ -35,6 +35,8 @@ const ChatBot: React.FC = () => {
     const [showPopup, setShowPopup] = useState(false); // adds state for popup visibility
     const userId = "example_user_id"; // Update later with a user details hook
     const popupRef = useRef<HTMLDivElement | null>(null); // Reference for the popup
+    const paperclipRef = useRef<HTMLDivElement | null>(null); // Reference for the paperclip icon
+
     const [isDarkMode, setIsDarkMode] = useState(() => {
         // Dark mode state
         // Check local storage or use system preference
@@ -63,7 +65,11 @@ const ChatBot: React.FC = () => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
                 popupRef.current &&
-                !popupRef.current.contains(event.target as Node) // Check if click is outside the popup
+                !popupRef.current.contains(event.target as Node) && // Check if click is outside the popup
+                !(
+                    paperclipRef.current &&
+                    paperclipRef.current.contains(event.target as Node)
+                ) // Check if click is on the paperclip icon
             ) {
                 setShowPopup(false); // Close the popup if clicked outside
             }
@@ -75,7 +81,7 @@ const ChatBot: React.FC = () => {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [popupRef]);
+    }, [popupRef, paperclipRef]);
 
     useEffect(() => {
         if (isDarkMode) {
@@ -274,11 +280,16 @@ const ChatBot: React.FC = () => {
                         {/* Input box */}
                         <div className="relative flex-grow">
                             {UploadPopup}
-                            {/* FIXME: upload bug, useref broken */}
-                            <AiOutlinePaperClip
-                                className="absolute left-3 top-1/2 text-2xl text-black transform -translate-y-1/2 cursor-pointer dark:text-white"
-                                onClick={() => setShowPopup(true)} // Show popup on click of the paperclip icon
-                            />
+                            <div ref={paperclipRef}>
+                                <AiOutlinePaperClip
+                                    className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
+                                    onClick={(event) => {
+                                        event.stopPropagation(); // Prevent click from bubbling up to the document
+                                        setShowPopup((prev) => !prev); // Toggle the popup visibility
+                                    }}
+                                />
+                            </div>
+
                             {/* Input Area */}
                             <input
                                 type="text"

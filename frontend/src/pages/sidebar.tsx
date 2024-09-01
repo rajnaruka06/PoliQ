@@ -46,6 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const userId = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
     const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
     const settingsRef = useRef<HTMLDivElement | null>(null);
+    const SetRef = useRef<HTMLDivElement | null>(null); // Reference for the settings icon
     const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
@@ -74,7 +75,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
             if (
                 settingsRef.current &&
-                !settingsRef.current.contains(event.target as Node)
+                !settingsRef.current.contains(event.target as Node) && // Check if click is outside the popup
+                !(
+                    SetRef.current &&
+                    SetRef.current.contains(event.target as Node)
+                ) // Check if click is on the paperclip icon
             ) {
                 setShowSettingsMenu(false); // Close the settings menu if clicked outside
             }
@@ -423,10 +428,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                         {/* FIXME: settings bug, useref can't close */}
                         {settingsOverlay}
-                        <AiOutlineEllipsis
-                            className="absolute right-0 text-black cursor-pointer dark:text-white"
-                            onClick={() => setShowSettingsMenu(true)}
-                        />
+                        {/* Show settings menu if active */}
+                        <div ref={SetRef}>
+                            <AiOutlineEllipsis
+                                className="absolute right-0 text-black cursor-pointer dark:text-white"
+                                onClick={(event) => {
+                                    event.stopPropagation(); // Prevent click from bubbling up to the document
+                                    setShowSettingsMenu((prev) => !prev); // Toggle the settings menu visibility
+                                }}
+                            />
+                        </div>
                     </div>
                 </>
             )}
