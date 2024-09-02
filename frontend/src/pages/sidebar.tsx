@@ -31,21 +31,25 @@ interface ChatHistory {
 }
 
 interface SidebarProps {
+    onOptionClick?: (option: string) => void;
     selectedChatID: string | null;
     setSelectedChatID: (chatID: string | null) => void;
     setMessages: React.Dispatch<React.SetStateAction<MessageCurrent[]>>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
+    onOptionClick,
     selectedChatID,
     setSelectedChatID,
-    setMessages
+    setMessages,
 }) => {
     // TODO: Proper commenting to explain
 
     const userId = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
     const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
     const settingsRef = useRef<HTMLDivElement | null>(null);
+    const SetRef = useRef<HTMLDivElement | null>(null); // Reference for the settings icon
+    const dotRef = useRef<HTMLDivElement | null>(null); // Reference for the three dots icon
     const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
@@ -67,14 +71,22 @@ const Sidebar: React.FC<SidebarProps> = ({
         const handleClickOutside = (event: MouseEvent) => {
             if (
                 menuRef.current &&
-                !menuRef.current.contains(event.target as Node)
+                !menuRef.current.contains(event.target as Node) && // Check if click is outside the popup
+                !(
+                    dotRef.current &&
+                    dotRef.current.contains(event.target as Node)
+                )
             ) {
                 setShowOptionsMenu(null); // Close the menu if clicked outside
             }
 
             if (
                 settingsRef.current &&
-                !settingsRef.current.contains(event.target as Node)
+                !settingsRef.current.contains(event.target as Node) && // Check if click is outside the popup
+                !(
+                    SetRef.current &&
+                    SetRef.current.contains(event.target as Node)
+                )
             ) {
                 setShowSettingsMenu(false); // Close the settings menu if clicked outside
             }
@@ -198,7 +210,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             // Update chat history or UI state
             setFilteredChatHistory((prevHistory) =>
                 prevHistory.map((chat) =>
-                    chat.chatId === chatID ? { ...chat, archived: !isArchived } : chat
+                    chat.chatId === chatID
+                        ? { ...chat, archived: !isArchived }
+                        : chat
                 )
             );
         } catch (error) {
@@ -216,42 +230,43 @@ const Sidebar: React.FC<SidebarProps> = ({
             // FIXME: threedots bug, useref can't close
             <div
                 ref={menuRef}
-                className="flex absolute right-4 z-50 flex-col gap-3 items-end p-3 mt-10 text-white rounded-xl shadow-lg bg-primary"
+                className="flex absolute right-4 z-50 flex-col gap-3 items-end p-4 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
             >
                 {/* Pin / Unpin button */}
                 <button
-                    className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() => handlePinChat(chat.chatId, chat.pinned)}
                 >
                     {chat.pinned ? (
                         <>
+                            <span>Unpin</span>
                             <BiSolidPin />
-                            {/* <span>Unpin</span> */}
                         </>
                     ) : (
                         <>
+                            <span>Pin</span>
                             <BiPin />
-                            {/* <span>Pin</span> */}
                         </>
                     )}
                 </button>
                 {/* Delete chat button */}
                 <button
-                    className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() => handleDeleteChat(chat.chatId)}
                 >
+                    <span>Delete</span>
                     <BiTrash />
-                    {/* <span>Delete</span> */}
                 </button>
                 {/* Archive / Unarchive button */}
                 <button
-                    className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
-                    onClick={() => handleArchiveChat(chat.chatId, chat.archived || false)} // Pass the correct state
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+                    onClick={() =>
+                        handleArchiveChat(chat.chatId, chat.archived || false)
+                    } // Pass the correct state
                 >
+                    <span>Archive</span>
                     <BiArchive />
-                    {/* <span>Archive</span> */}
                 </button>
-
             </div>
         );
     };
@@ -261,24 +276,26 @@ const Sidebar: React.FC<SidebarProps> = ({
     const settingsOverlay = showSettingsMenu && (
         <div
             ref={settingsRef}
-            className="absolute right-0 bottom-10 p-2 mb-2 w-full rounded shadow-lg"
+            className="flex absolute right-0 bottom-10 flex-col gap-5 p-5 mb-2 w-full text-lg text-white rounded-md shadow-lg bg-lightTertiary dark:bg-darkPrimary dark:text-black"
         >
-            <ul className="flex flex-col gap-5 content-end p-5 text-lg rounded-lg bg-primary">
-                <button className="text-2xl font-semibold bg-primary">
-                    View all chats
-                </button>
-                <button className="text-2xl font-semibold bg-primary">
-                    Archived chats
-                </button>
-                <button className="text-2xl font-semibold bg-primary">
-                    Memory
-                </button>
-            </ul>
-            {/* <div className="flex justify-end">
-                <button className="text-3xl" onClick={toggleSettingsOverlay}>
-                    <AiOutlineEllipsis />
-                </button>
-            </div> */}
+            <button
+                onClick={() => onOptionClick && onOptionClick("View all chats")}
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+            >
+                View all chats
+            </button>
+            <button
+                onClick={() => onOptionClick && onOptionClick("Archived chats")}
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+            >
+                Archived chats
+            </button>
+            <button
+                onClick={() => onOptionClick && onOptionClick("Memory")}
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+            >
+                Memory
+            </button>
         </div>
     );
 
@@ -287,10 +304,10 @@ const Sidebar: React.FC<SidebarProps> = ({
         return (
             <div
                 key={idx}
-                className={`flex flex-col py-1 pl-5 ml-3 rounded-xl text-xl truncate hover:bg-zinc-500 hover:cursor-pointer ${
+                className={`flex flex-col py-1 pl-5 ml-3 rounded-xl text-xl truncate hover:cursor-pointer ${
                     selectedChatID === chat.chatId
-                        ? "bg-blue-600 text-white"
-                        : "bg-transparent"
+                        ? "bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-500 text-white dark:text-white"
+                        : "dark:hover:bg-darkPrimary hover:bg-gray-200 bg-transparent text-black dark:text-white"
                 }`}
                 onClick={() => setSelectedChatID(chat.chatId)}
                 onMouseEnter={() => setHoveredChatID(chat.chatId)} // Set hovered chat on mouse enter
@@ -299,17 +316,20 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div className="flex justify-between group">
                     <span className="truncate">{chat.title}</span>
                     {hoveredChatID === chat.chatId && ( // Show icon only if hovered
-                        <AiOutlineMore
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setShowOptionsMenu(
-                                    showOptionsMenu === chat.chatId
-                                        ? null
-                                        : chat.chatId
-                                );
-                            }}
-                            className="pr-2 text-3xl"
-                        />
+                        <div ref={dotRef}>
+                            <AiOutlineMore
+                                onClick={(event) => {
+                                    event.stopPropagation(); // Prevent click from bubbling up to the document
+                                    setShowOptionsMenu(
+                                        (prev) =>
+                                            prev === chat.chatId
+                                                ? null
+                                                : chat.chatId // Toggle the options menu for the specific chat
+                                    );
+                                }}
+                                className="pr-2 text-2xl"
+                            />
+                        </div>
                     )}
                 </div>
                 {/* FIXME: when threedotsmenu hovered, row size changes */}
@@ -344,7 +364,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         );
 
         return (
-            <div className="flex overflow-auto flex-col flex-grow gap-2 text-white">
+            <div className="flex overflow-auto flex-col flex-grow gap-2 text-black dark:text-white">
                 {/* Pinned Chats */}
                 {pinnedChatHistory.length > 0 && (
                     <div className="mb-4">
@@ -370,7 +390,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     return (
         <div
-            className={`flex flex-col relative rounded-lg shadow-lg transition-all duration-300 ease-in-out bg-sidebar ${
+            className={`flex flex-col relative rounded-lg shadow-lg transition-all duration-300 ease-in-out bg-lightSecondary dark:bg-darkSecondary ${
                 isSidebarVisible ? "p-4 w-1/6" : "w-0"
             }`}
         >
@@ -379,7 +399,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {/* Title Area*/}
                     <div className="flex relative mb-10">
                         <div className="text-5xl font-bold text-white">
-                            <a href="/" className="text-white hover:text-white">
+                            <a
+                                href="/"
+                                className="font-semibold text-black dark:text-white hover:text-white"
+                            >
                                 PoliQ Chat
                             </a>
                         </div>
@@ -390,16 +413,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                         {/* Search bar with icon */}
                         <div className="relative flex-grow">
                             <input
-                                className="px-4 py-2 pl-10 w-full text-white rounded-full bg-zinc-700 "
+                                className="px-4 py-2 pl-10 w-full text-xl text-black rounded-full dark:text-white bg-lightTertiary dark:bg-lightTertiary"
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={handleSearch}
                             />
-                            <AiOutlineSearch className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2" />
+                            <AiOutlineSearch className="absolute left-3 top-1/2 text-2xl text-black transform -translate-y-1/2 dark:text-white" />
                         </div>
                         {/* New chat button */}
                         <button
-                            className="px-4 py-2 text-white rounded-full bg-zinc-700"
+                            className="px-4 py-2 text-2xl text-black rounded-full bg-lightTertiary dark:text-black"
                             onClick={() => {
                                 setSelectedChatID(null); // Clear the selected chat
                                 setMessages([]);
@@ -408,19 +431,32 @@ const Sidebar: React.FC<SidebarProps> = ({
                             <AiOutlineForm />
                         </button>
                     </div>
-                    {loading && <p>Loading results...</p>}
-                    {error && <p>Error: {error}</p>}
-                    {!loading && !error && loadChatHistory()}
+                    {/* Loading and error handling */}
+                    {loading ? (
+                        <p>Loading results...</p>
+                    ) : error ? (
+                        <p>Error: {error}</p>
+                    ) : (
+                        loadChatHistory()
+                    )}
 
                     {/* Bottom Sidebar Area */}
-                    <div className="flex relative text-3xl bg-sidebar">
-                        <div className="">John Doe</div>
+                    <div className="flex relative text-3xl bg-lightSecondary dark:bg-darkSecondary">
+                        <div className="text-black dark:text-white">
+                            John Doe
+                        </div>
                         {/* FIXME: settings bug, useref can't close */}
                         {settingsOverlay}
-                        <AiOutlineEllipsis
-                            className="absolute right-0 cursor-pointer"
-                            onClick={() => setShowSettingsMenu(true)}
-                        />
+                        {/* Show settings menu if active */}
+                        <div ref={SetRef}>
+                            <AiOutlineEllipsis
+                                className="absolute right-0 text-black cursor-pointer dark:text-white"
+                                onClick={(event) => {
+                                    event.stopPropagation(); // Prevent click from bubbling up to the document
+                                    setShowSettingsMenu((prev) => !prev); // Toggle the settings menu visibility
+                                }}
+                            />
+                        </div>
                     </div>
                 </>
             )}
@@ -428,7 +464,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <button
                 className={`absolute top-4 ${
                     isSidebarVisible ? "right-0" : "-right-12"
-                } text-2xl text-white rounded-full bg-sidebar`}
+                } text-2xl text-black dark:text-white rounded-full bg-lightSecondary dark:bg-darkSecondary`}
                 onClick={toggleSidebar}
             >
                 {isSidebarVisible ? (
