@@ -75,33 +75,35 @@ const ChatBot: React.FC = () => {
                 ...messages,
                 { sender: "user", text: input, user: "user" },
             ]);
-    
+
             // Send the message using the hook and await the response
-            await sendMessage({ chatId: selectedChatID || '', content: input });
-    
+            await sendMessage({ chatId: selectedChatID || "", content: input });
+
             // Fetch the latest messages for the selected chat after sending
             if (selectedChatID) {
-                const updatedMessages = await fetchUpdatedMessages(selectedChatID);
+                const updatedMessages =
+                    await fetchUpdatedMessages(selectedChatID);
                 setConvMessages(updatedMessages);
             }
-    
+
             // Clear the input after sending
             setInput("");
         }
     };
-    
+
     // New fetchUpdatedMessages to retrieve updated messages after handleSend
     const fetchUpdatedMessages = async (chatId: string) => {
         // Call the same logic you use to fetch messages, which could be
         // reused from your `useFetchMessages` hook
-        const response = await fetch(`http://localhost:8000/api/chats/${chatId}/messages?userId=${userId}`);
-        
-        if (!response.ok) throw new Error('Failed to fetch messages');
-        
+        const response = await fetch(
+            `http://localhost:8000/api/chats/${chatId}/messages?userId=${userId}`
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch messages");
+
         const data: MessageHistory[] = await response.json();
         return data;
     };
-    
 
     // Effect to update conversation messages when new messages are fetched
     useEffect(() => {
@@ -110,17 +112,78 @@ const ChatBot: React.FC = () => {
         }
     }, [selectedChatID, fetchedMessages]);
 
+    // Sends predefined questions as messages upon click
+    const handleOptionClick = async (optionText: string) => {
+        // Adds the message
+        setMessages([
+            ...messages,
+            { sender: "user", text: optionText, user: "user" },
+        ]);
+
+        // Send the message using the sendMessage hook and await the response
+        await sendMessage({
+            chatId: selectedChatID || "",
+            content: optionText,
+        });
+
+        // Fetch the latest messages for the selected chat after sending
+        if (selectedChatID) {
+            const updatedMessages = await fetchUpdatedMessages(selectedChatID);
+            setConvMessages(updatedMessages);
+        }
+    };
+
     // Hero for welcome screen
     // TODO: If user click opt x, the content will be send as user input
     const hero = () => {
         return (
             <div className="flex flex-col flex-grow justify-center items-center h-full">
-                <div className="text-5xl">Hello World</div>
+                <div className="text-5xl">Welcome to PoliQ</div>
                 <div className="flex gap-3 mt-4">
-                    <button className="text-2xl">Opt 1</button>
-                    <button className="text-2xl">Opt 2</button>
-                    <button className="text-2xl">Opt 3</button>
-                    <button className="text-2xl">Opt 4</button>
+                    <button
+                        className="text-2xl"
+                        onClick={() =>
+                            handleOptionClick(
+                                "What is the age distribution demographic of Greens voters?"
+                            )
+                        }
+                    >
+                        What is the age distribution demographic of Greens
+                        voters?
+                    </button>
+                    <button
+                        className="text-2xl"
+                        onClick={() =>
+                            handleOptionClick(
+                                "Which electorates of AEC did the Greens have most success in the recent election?"
+                            )
+                        }
+                    >
+                        Which electorates of AEC did the Greens have most
+                        success in the recent election?
+                    </button>
+                    <button
+                        className="text-2xl"
+                        onClick={() =>
+                            handleOptionClick(
+                                "Which electorates in Victoria can the Greens improve their performance?"
+                            )
+                        }
+                    >
+                        Which electorates in Victoria can the Greens improve
+                        their performance?
+                    </button>
+                    <button
+                        className="text-2xl"
+                        onClick={() =>
+                            handleOptionClick(
+                                "Which electorates in New South Wales can the Greens improve their performance?"
+                            )
+                        }
+                    >
+                        Which electorates in New South Wales can the Greens
+                        improve their performance?
+                    </button>
                 </div>
             </div>
         );
