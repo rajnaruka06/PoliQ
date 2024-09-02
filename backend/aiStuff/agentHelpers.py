@@ -720,8 +720,7 @@ class ChatHistory:
                     for i, message in enumerate(chat["messages"]):
                         if message["messageId"] == messageId:
                             message["content"] = newContent
-                            # indexToPrune = i + 1
-                            indexToPrune = i
+                            indexToPrune = i + 1
                             break
 
                     if indexToPrune is not None:

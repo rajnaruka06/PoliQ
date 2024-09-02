@@ -164,9 +164,12 @@ async def handleUpdateMessage(chatId: str = Path(...), messageId: str = Path(...
     try:
         chatHistory = ChatHistory(userId=userId)
         chatHistory.updateMessage(chatId, messageId, newContent)
-        message = MessageRequest(chatId=chatId, content=newContent)
-        _ = await handleSend(message, userId)
-        messages = await fetchMessages(chatId, userId)
-        return {"status": "Message updated and new response generated", "messages": messages}
+        fetchedContext = chatHistory.getRecentMessages(chatId)
+        context = ''
+        for hist in fetchedContext[:-1]:
+            context += f"{hist['user']}: {hist['content']}\n"
+        response = workflow.processUserQuery(newContent, context)
+        chatHistory.addMessage(chatId, response, isUser=False)
+        return {"status": "Message updated and new response generated"}
     except ChatHistoryError as e:
         raise HTTPException(status_code=500, detail=str(e))
