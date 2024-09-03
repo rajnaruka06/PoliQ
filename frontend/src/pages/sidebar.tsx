@@ -50,7 +50,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     const settingsRef = useRef<HTMLDivElement | null>(null);
     const SetRef = useRef<HTMLDivElement | null>(null); // Reference for the settings icon
     const dotRef = useRef<HTMLDivElement | null>(null); // Reference for the three dots icon
-    const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
+    // const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs //commented to remove red prompt
+    const [, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
     const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
@@ -225,12 +226,13 @@ const Sidebar: React.FC<SidebarProps> = ({
         chatId: string;
         title: string;
         pinned: boolean;
+        archived: boolean;
     }) => {
         return (
             // FIXME: threedots bug, useref can't close
             <div
                 ref={menuRef}
-                className="flex absolute right-4 z-50 flex-col gap-3 items-end p-4 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
+                className="flex absolute right-4 z-50 flex-col gap-3 items-end p-2 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
             >
                 {/* Pin / Unpin button */}
                 <button

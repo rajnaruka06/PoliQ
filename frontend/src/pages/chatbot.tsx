@@ -55,15 +55,17 @@ const ChatBot: React.FC = () => {
     // Using useFetchMessages to fetch messages for the selected chat
     const {
         messages: fetchedMessages,
-        loading,
-        error,
+        // commented to remove red prompt
+        // loading,
+        // error,
     } = useFetchMessages(selectedChatID, userId);
 
     // Using useSendMessage to send messages
     const {
         sendMessage,
-        loading: sending,
-        error: sendError,
+        // commented to remove red prompt
+        // loading: sending,
+        // error: sendError,
     } = useSendMessage(userId);
 
     const [memories, setMemories] = useState<Memory[]>([]);
@@ -115,6 +117,8 @@ const ChatBot: React.FC = () => {
             // Send the message using the hook and await the response
             await sendMessage({ chatId: selectedChatID || "", content: input });
 
+            await sendMessage({ chatId: selectedChatID || "", content: input });
+
             // Fetch the latest messages for the selected chat after sending
             if (selectedChatID) {
                 const updatedMessages =
@@ -148,26 +152,79 @@ const ChatBot: React.FC = () => {
         }
     }, [selectedChatID, fetchedMessages]);
 
+    // Sends predefined questions as messages upon click
+    const handleOptionClick = async (optionText: string) => {
+        // Adds the message
+        setMessages([
+            ...messages,
+            { sender: "user", text: optionText, user: "user" },
+        ]);
+
+        // Send the message using the sendMessage hook and await the response
+        await sendMessage({
+            chatId: selectedChatID || "",
+            content: optionText,
+        });
+
+        // Fetch the latest messages for the selected chat after sending
+        if (selectedChatID) {
+            const updatedMessages = await fetchUpdatedMessages(selectedChatID);
+            setConvMessages(updatedMessages);
+        }
+    };
+
     // Hero for welcome screen
     // TODO: If user click opt x, the content will be send as user input
     const hero = () => {
         return (
             <div className="flex flex-col flex-grow justify-center items-center h-full">
                 <div className="text-5xl text-black text-text dark:text-white">
-                    Hello World
+                    Welcome to PoliQ
                 </div>
                 <div className="flex gap-3 mt-4">
-                    <button className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white">
-                        Opt 1
+                    <button
+                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                        onClick={() =>
+                            handleOptionClick(
+                                "What is the age distribution demographic of Greens voters?"
+                            )
+                        }
+                    >
+                        What is the age distribution demographic of Greens
+                        voters?
                     </button>
-                    <button className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white">
-                        Opt 2
+                    <button
+                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                        onClick={() =>
+                            handleOptionClick(
+                                "Which electorates of AEC did the Greens have most success in the recent election?"
+                            )
+                        }
+                    >
+                        Which electorates of AEC did the Greens have most
+                        success in the recent election?
                     </button>
-                    <button className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white">
-                        Opt 3
+                    <button
+                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                        onClick={() =>
+                            handleOptionClick(
+                                "Which electorates in Victoria can the Greens improve their performance?"
+                            )
+                        }
+                    >
+                        Which electorates in Victoria can the Greens improve
+                        their performance?
                     </button>
-                    <button className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white">
-                        Opt 4
+                    <button
+                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                        onClick={() =>
+                            handleOptionClick(
+                                "Which electorates in New South Wales can the Greens improve their performance?"
+                            )
+                        }
+                    >
+                        Which electorates in New South Wales can the Greens
+                        improve their performance?
                     </button>
                 </div>
             </div>
@@ -198,7 +255,13 @@ const ChatBot: React.FC = () => {
                       </div>
                   </div>
                   {/* Feedback Button */}
-                  {msg.user !== "user" && <FeedbackButton />}
+                  {msg.user !== "user" && (
+                      <FeedbackButton
+                          chatId={selectedChatID || ""} // Pass the selected chat ID
+                          messageId={msg.messageID} // Pass the message ID
+                          userId={userId} // Pass the user ID
+                      />
+                  )}
               </div>
           ))
         : messages.map((msg, index) => (
