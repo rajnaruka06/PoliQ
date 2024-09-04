@@ -4,13 +4,19 @@ from typing import Dict, Any, Optional
 from langchain_core.prompts import PromptTemplate
 from langchain.base_language import BaseLanguageModel
 import pandas as pd
+import os
+
+resourcesPath = os.path.join(os.path.dirname(__file__), '../resources')
+envPath = os.path.join(resourcesPath, '.ENV')
+polimapPromptPath = os.path.join(resourcesPath, 'polimapPrompt.txt')
+multiDBPromptPath = os.path.join(resourcesPath, 'multiDBPrompt.txt')
 
 ## Using CRAG for SQL Generation
 class SqlExpert:
     def __init__(self, llm: BaseLanguageModel):
         self.llm = llm
 
-    def generateAndRefineQuery(self, userQuery: str, dialect: str, tableInfo: str, chatHistory: str = '') -> Dict[str, str]:
+    def generateAndRefineQuery(self, userQuery: str, dialect: str, tableInfo: str, chatHistory: str = '') -> str:
         template = """Given an input question, perform the following steps:
 
         1. Generate a syntactically correct {dialect} SQL query.
@@ -25,7 +31,7 @@ class SqlExpert:
         - Never use * in the SELECT statement. Always specify the columns you want to retrieve.
         - Use GROUP BY instead of DISTINCT where applicable.
         - End the SQL query with a semicolon (;).
-        - Do not include any LIMIT or OFFSET clauses unless the user query requires it.
+        - Do not include any LIMIT, OFFSET, WHERE clauses, or any other filters unless explicitly mentioned in the user query.
 
         Available tables:
         {tableInfo}
@@ -66,7 +72,7 @@ class ResponseSummarizer:
     def __init__(self, llm: BaseLanguageModel):
         self.llm = llm
 
-    def generateSummaryWithReflection(self, response: str, userQuery: str) -> Dict[str, str]:
+    def generateSummaryWithReflection(self, response: str, userQuery: str) -> str:
         template = """Given a user query and a response, perform the following steps:
 
         1. Generate a concise summary of the response.
@@ -139,3 +145,71 @@ class RouterAgent:
         prompt = PromptTemplate.from_template(template)
         chain = prompt | self.llm
         return chain.invoke({"userQuery": userQuery, "chatHistory": chatHistory}).content.strip()
+
+## Under Development
+class PolimapTableSelector:
+    def __init__(self, llm: BaseLanguageModel):
+        self.llm = llm
+        self.polimapPrompt = self._loadPolimapPrompt()
+
+    def _loadPolimapPrompt(self):
+        with open(polimapPromptPath, 'r') as file:
+            return file.read()
+    def selectTables(self, userQuery: str) -> str:
+        template = """
+        {polimapPrompt}
+
+        User question: {userQuery}
+
+        Based on this question, which tables would you recommend using to find the answer? Please provide a comma-separated list of table names, without any additional explanation.
+
+        Tables:
+        """
+
+        prompt = PromptTemplate.from_template(template)
+        chain = prompt | self.llm
+        return chain.invoke({"userQuery": userQuery, "polimapPrompt": self.polimapPrompt}).content.strip()
+
+## Under Development
+# class RouterAgent:
+#     def __init__(self, llm: BaseLanguageModel):
+#         self.llm = llm
+#         self.multiDBPrompt = self._loadMultiDBPrompt()
+
+#     def _loadMultiDBPrompt(self):
+#         with open(multiDBPromptPath, 'r') as file:
+#             return file.read()
+
+#     def determineQueryType(self, userQuery: str, chatHistory: str = '') -> str:
+#         template = """
+#         {multiDBPrompt}
+
+#         User question: {userQuery}
+
+#         Chat History: {chatHistory}
+        
+#         Based on this question and chat history, which option would you recommend? 
+#         Respond with either "elecdata", "polimap", or "chat".
+#         Your response should be just one of these three words.
+
+#         Query Type:
+#         """
+
+#         prompt = PromptTemplate.from_template(template)
+#         chain = prompt | self.llm
+#         return chain.invoke({"userQuery": userQuery, "chatHistory": chatHistory, "multiDBPrompt": self.multiDBPrompt}).content.strip().lower()
+
+#     def generateChatResponse(self, userQuery: str, chatHistory: str = '') -> str:
+#         template = """You are an AI assistant specializing in Australian political and demographic data analysis.
+
+#         Chat History: {chatHistory}
+#         User Query: {userQuery}
+
+#         Provide a helpful and engaging response to the user's query. Do not assume any information not provided in the chat history. If you're unsure about specific data points, you can mention that you don't have access to the latest data and provide general information instead.
+
+#         Response:
+#         """
+
+#         prompt = PromptTemplate.from_template(template)
+#         chain = prompt | self.llm
+#         return chain.invoke({"userQuery": userQuery, "chatHistory": chatHistory}).content.strip()

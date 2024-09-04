@@ -35,8 +35,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 ## Loading environment variables
-env_path = os.path.join(os.path.dirname(__file__), '../resources/.ENV')
-load_dotenv(dotenv_path=env_path)
+recourcesPath = os.path.join(os.path.dirname(__file__), '../resources')
+envPath = os.path.join(recourcesPath, '.ENV')
+load_dotenv(dotenv_path=envPath)
 
 ## Type aliases
 Message = TypedDict('Message', {
@@ -180,15 +181,10 @@ def cleanSqlQuery(sqlQuery: str) -> str:
     Returns:
         str: The cleaned SQL query string.
     """
-    # sqlQuery = sqlQuery.split("3. FINAL SQL QUERY:")[1].strip()
-    # sqlQuery = sqlQuery.replace("```sql", "").replace("```", "").strip()
-    # if sqlQuery.startswith('SQL Query:'): 
-    #     sqlQuery = sqlQuery[len('SQL Query:'):].strip()
-    # return sqlQuery
 
     sqlQuery = sqlQuery.lower().strip()
     sqlQuery = sqlQuery.replace("```sql", "").replace("```", "").strip()
-    match = re.search(r'\b(with|select)\b', sqlQuery)
+    match = re.search(r'\b(with\s+\w+\s+as|select)\b', sqlQuery, re.IGNORECASE)
     if match:
         sqlQuery = sqlQuery[match.start():]
 
@@ -374,12 +370,16 @@ class ChatHistory:
     - Collection: <user_id> (Each user has a dedicated collection named after their user_id)
     - Document Structure:
       {
-        "chat_id": <str>,             # Unique identifier for the chat session
+        "chatId": <str>,             # Unique identifier for the chat session
         "date": <str>,                # Date the chat was created (YYYY-MM-DD format)
         "title": <str>,               # Short title for the chat (first 30 characters of the first message)
         "pinned": <bool>,             # Indicates if the chat is pinned
         "archived": <bool>,           # Indicates if the chat is archived
-        "last_updated": <datetime>,   # Timestamp of the last update to the chat
+        "lastUpdated": <datetime>,   # Timestamp of the last update to the chat
+        "groupDetails": {
+          "groupName": <str>,        # Name of the group also unique identifier
+          "groupColor": <str>,       # Color of the group (e.g., "red" or "blue")
+        },
         "messages": [                 # Array of message objects
           {
             "messageID": <str>,       # Unique identifier for the message
@@ -403,7 +403,7 @@ class ChatHistory:
     
     Key Features:
     - Each user's chat history is stored in a separate collection, identified by `user_id`.
-    - Each chat session is represented by a document, identified by `chat_id`.
+    - Each chat session is represented by a document, identified by `chatId`.
     - The `messages` field in the document contains an array of chat messages.
     - The `documents` field contains metadata about uploaded documents.
     - Actual document files are stored in GridFS.
@@ -442,21 +442,6 @@ class ChatHistory:
         except Exception as e:
             logger.error(f"Failed to connect to database: {e}")
             raise ChatHistoryError(f"Database connection error: {str(e)}")
-
-    def _ensureTextIndex(self) -> None:
-        """Ensures text index exists for message content."""
-        try:
-            indexes = self.collection.list_indexes()
-            indexNames = [index['name'] for index in indexes]
-
-            indexName = "messagesContentTextIndex"
-            fieldsToIndex = [("messages.content", TEXT)]
-
-            if indexName not in indexNames:
-                self.collection.create_index(fieldsToIndex, name=indexName)
-        except OperationFailure as e:
-            logger.error(f"Failed to create text index: {e}")
-            raise ChatHistoryError(f"Failed to create text index: {str(e)}")
         
     def _ensureTextIndex(self) -> None:
         """Ensures text index exists for message content."""
@@ -680,7 +665,11 @@ class ChatHistory:
                             "date": datetime.now().strftime("%Y-%m-%d"),
                             "title": content[:30],
                             "pinned": False,
-                            "archived": False
+                            "archived": False,
+                            "groupDetails": {
+                                "groupName": "Default",
+                                "groupColor": "gray"
+                            }
                         },
                         "$set": {"lastUpdated": datetime.now()}
                     },
@@ -691,6 +680,28 @@ class ChatHistory:
                 raise ChatHistoryError(f"Failed to add message: {str(e)}")
         
         return chatId
+    
+    def updateGroupStatus(self, chatId: str, groupName: str = 'CustomGroup', groupColor: str = 'red') -> None:
+        """Updates the group status of a chat."""
+        with self._getDbConnection():
+            try:
+                result = self.collection.update_one(
+                    {"chatId": chatId},
+                    {
+                        "$set": {
+                            "groupDetails": {
+                                "groupName": groupName,
+                                "groupColor": groupColor
+                            },
+                            "lastUpdated": datetime.now()
+                        }
+                    }
+                )
+                if result.matched_count == 0:
+                    raise ChatHistoryError(f"No chat found with ID: {chatId}")
+            except Exception as e:
+                logger.error(f"Error updating group status for chat {chatId}: {e}")
+                raise ChatHistoryError(f"Failed to update group status: {str(e)}")
     
     def updateChatTitle(self, chatId: str, newTitle: str) -> None:
         """Updates the title of a chat."""
