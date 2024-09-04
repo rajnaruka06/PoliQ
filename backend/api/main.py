@@ -178,8 +178,8 @@ async def handleUpdateMessage(chatId: str = Path(...), messageId: str = Path(...
     except ChatHistoryError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/api/upload")
-async def uploadFile(file: UploadFile = File(...), chatId: str = Query(...), userId: str = Query(...)):
+@app.post("/api/{chatId}/upload")
+async def uploadFile(file: UploadFile = File(...), chatId: str = Path(...), userId: str = Query(...)):
     try:
         chatHistory = ChatHistory(userId=userId)
         content = await file.read()
