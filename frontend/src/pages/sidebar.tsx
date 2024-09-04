@@ -13,8 +13,10 @@ import {
     AiOutlineSearch,
     AiOutlineEllipsis,
     AiOutlineForm,
+    AiOutlineEdit,
 } from "react-icons/ai";
 // Import hooks
+import { useUpdateTitleChat } from "../hooks/useUpdateTitleChat";
 import { useFetchChatHistory } from "../hooks/useFetchChatHistory";
 import { usePinChat } from "../hooks/usePinChat";
 import { useUnpinChat } from "../hooks/useUnpinChat";
@@ -58,6 +60,10 @@ const Sidebar: React.FC<SidebarProps> = ({
     const { chatHistory, loading, error } = useFetchChatHistory(userId);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isRenaming, setIsRenaming] = useState(false); // To control renaming state
+    const [newTitle, setNewTitle] = useState(""); // New title state
+    const [chatToRename, setChatToRename] = useState<string | null>(null); // Chat ID to rename
+    const { updateTitleChat, loading: renameLoading, error: renameError } = useUpdateTitleChat(userId); // Hook to rename chat
     // State to manage filtered chat history
     const [filteredChatHistory, setFilteredChatHistory] = useState<
         ChatHistory[]
@@ -221,6 +227,23 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
     };
 
+    //to rename a chat title
+    const handleRenameChat = async (chatID: string) => {
+        if (!newTitle.trim()) return; // Prevent empty titles
+        try {
+          await updateTitleChat(chatID, newTitle); // Call the updateTitleChat function from the hook
+          // Update the chat title locally after renaming
+          setFilteredChatHistory((prevHistory) =>
+            prevHistory.map((chat) =>
+              chat.chatId === chatID ? { ...chat, title: newTitle } : chat
+            )
+          );
+          setIsRenaming(false); // Hide the rename input
+        } catch (error) {
+          console.error("Error renaming chat:", error);
+        }
+      };
+
     // Function to handle the three dots menu
     const threeDotsMenu = (chat: {
         chatId: string;
@@ -269,6 +292,17 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <span>Archive</span>
                     <BiArchive />
                 </button>
+                <button
+                    className="flex gap-2 items-center text-black shadow-sm bg-lightSecondary shadow-black/90 dark:bg-darkSecondary dark:text-white"
+                    onClick={() => {
+                        setIsRenaming(true);
+                        setChatToRename(chat.chatId); // Set the chat ID to rename
+                        setNewTitle(chat.title); // Set the current title as default
+                    }}
+        >
+        <AiOutlineEdit />
+        {/* <span>Rename</span> */}
+        </button>
             </div>
         );
     };
@@ -336,6 +370,34 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 {/* FIXME: when threedotsmenu hovered, row size changes */}
                 {showOptionsMenu === chat.chatId && threeDotsMenu(chat)}
+                {/* Rename input field when renaming is active for this chat */}
+      {isRenaming && chatToRename === chat.chatId && (
+        <div className="flex gap-2 items-center mt-2">
+          <input
+            type="text"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            className="px-2 py-1 border rounded bg-white text-black"
+            placeholder="Enter new title"
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleRenameChat(chatToRename!);
+                }
+              }}
+          />
+          <button
+            className="px-3 py-1 bg-blue-500 text-white rounded"
+            onClick={() => handleRenameChat(chatToRename!)}
+          >
+            Save
+          </button>
+          <button
+            className="px-3 py-1 bg-red-500 text-white rounded"
+            onClick={() => setIsRenaming(false)}
+          >
+            Cancel
+          </button>
+        </div>
             </div>
         );
     };
