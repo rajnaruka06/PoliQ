@@ -232,7 +232,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             // FIXME: threedots bug, useref can't close
             <div
                 ref={menuRef}
-                className="flex absolute right-4 z-50 flex-col gap-3 items-end p-2 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
+                className="flex absolute right-4 z-10 flex-col gap-3 items-end p-2 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
             >
                 {/* Pin / Unpin button */}
                 <button

@@ -17,8 +17,11 @@ interface FeedbackButtonProps {
     userId: string;
 }
 
-
-const FeedbackButton: React.FC<FeedbackButtonProps> = ({ chatId, messageId, userId }) => {
+const FeedbackButton: React.FC<FeedbackButtonProps> = ({
+    chatId,
+    messageId,
+    userId,
+}) => {
     const [showPopup, setShowPopup] = useState(false);
     const { updateMessage, loading, error } = useUpdateMessage(userId); // Use the custom hook
 
@@ -36,10 +39,9 @@ const FeedbackButton: React.FC<FeedbackButtonProps> = ({ chatId, messageId, user
         await updateMessage(chatId, messageId, newContent); // Use the hook to call the API
     };
 
-
     return (
-        <div className="relative">
-            <div className="absolute left-0 top-full mt-2">
+        <>
+            <div className="absolute left-0 top-full z-10 pt-2 pl-7">
                 <div className="flex gap-1 p-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     {/* Copy Icon */}
                     <button className="px-1 py-1 text-white bg-blue-500 rounded-full">
@@ -55,8 +57,9 @@ const FeedbackButton: React.FC<FeedbackButtonProps> = ({ chatId, messageId, user
                         <BiRefresh className="text-xl" />
                     </button>
                     {/* Confused Icon */}
-                    <button className="px-1 py-1 text-white bg-red-500 rounded-full"
-                    onClick={handleConfusedClick}
+                    <button
+                        className="px-1 py-1 text-white bg-red-500 rounded-full"
+                        onClick={handleConfusedClick}
                     >
                         {/* CHANGE TODO: Allow user to report bad or confusing response */}
                         <BiConfused className="text-xl" />
@@ -75,11 +78,12 @@ const FeedbackButton: React.FC<FeedbackButtonProps> = ({ chatId, messageId, user
             </div>
             {/* Confused icon click popup message  */}
             {showPopup && (
-                <div className="absolute top-0 left-0 mt-8 ml-10 p-4 bg-red-500 text-white rounded shadow-lg">
-                    ☹️ I am sorry you didn't like this response. I will do better next time boss!
+                <div className="absolute top-0 left-0 p-4 mt-8 ml-10 text-white bg-red-500 rounded shadow-lg">
+                    ☹️ I am sorry you didn't like this response. I will do
+                    better next time boss!
                 </div>
             )}
-        </div>
+        </>
     );
 };
 
