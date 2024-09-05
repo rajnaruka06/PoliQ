@@ -243,7 +243,7 @@ const ChatBot: React.FC = () => {
                   } group`}
               >
                   <div
-                      className={`inline-block p-2 max-w-7xl break-words rounded-xl px-7 ${
+                      className={`inline-block p-2 break-words rounded-xl px-7 ${
                           msg.user === "user"
                               ? "bg-lightTertiary text-black dark:text-white dark:bg-darkSecondary"
                               : "text-black dark:text-white dark:bg-darkPrimary bg-lightPrimary"
@@ -403,23 +403,26 @@ const ChatBot: React.FC = () => {
 
                 {settingsOptionsOverlay()}
                 {/* Chat area */}
-                <div className="flex flex-col mx-auto w-3/5">
+                <div className="flex flex-col w-full">
                     {/* light dark mode button */}
                     <button
                         onClick={toggleDarkMode}
-                        className={`absolute top-4 right-4 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                        className={`absolute top-4 right-9 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
                     >
                         {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
                     </button>
                     {/* Hero for welcoming page */}
                     {!selectedChatID && hero()}
 
-                    <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
-                        {/* Messages */}
-                        {ChatArea}
+                    <div className="overflow-y-auto">
+                        {/* Chat Area Container */}
+                        <div className="mx-auto w-full max-w-7xl">
+                            {ChatArea}
+                        </div>
                     </div>
+
                     {/* Input bar */}
-                    <div className="flex gap-2 mt-4 text-xl">
+                    <div className="flex gap-2 mx-auto mt-4 w-full max-w-7xl text-xl">
                         {/* Input box */}
                         <div className="relative flex-grow">
                             {UploadPopup}
