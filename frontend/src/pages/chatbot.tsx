@@ -8,11 +8,11 @@ import {
     AiOutlineUpload,
     AiFillSun,
     AiFillMoon,
-    AiFillDelete,
 } from "react-icons/ai";
 import FeedbackButton from "../components/FeedbackButton.tsx";
 import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
+import SettingsOptionOverlay from "../components/SettingsOptionOverlay.tsx";
 
 interface MessageCurrent {
     sender: string;
@@ -26,11 +26,6 @@ interface MessageHistory {
     content: string;
     date: string;
     time: string;
-}
-
-interface Memory {
-    memoryId: string;
-    memoryContent: string;
 }
 
 const ChatBot: React.FC = () => {
@@ -67,10 +62,6 @@ const ChatBot: React.FC = () => {
         // loading: sending,
         // error: sendError,
     } = useSendMessage(userId);
-
-    const [memories, setMemories] = useState<Memory[]>([]);
-    const [showSettingsOverlay, setShowSettingsOverlay] = useState(false); // State to control visibility of settings overlay
-    const [selectedOption, setSelectedOption] = useState<string | null>(null); // State to track which option is selected
 
     // Reference for the popup
     useEffect(() => {
@@ -316,77 +307,22 @@ const ChatBot: React.FC = () => {
         </div>
     );
 
-    // Fetch memory data from memory.json
-    useEffect(() => {
-        const fetchMemories = async () => {
-            try {
-                const response = await fetch("../../public/memory.json");
-                if (!response.ok) throw new Error("Failed to fetch memories");
-
-                const data = await response.json();
-                setMemories(data);
-            } catch (error) {
-                console.error("Error fetching memories:", error);
-            }
-        };
-
-        fetchMemories();
-    }, []);
-
     // Toggle Dark Mode
     const toggleDarkMode = () => {
         setIsDarkMode((prevMode) => !prevMode);
     };
 
-    // Function to handle showing the settings overlay
-    const handleShowSettingsOverlay = (option: string) => {
-        setSelectedOption(option); // Update the selected option
-        setShowSettingsOverlay(true); // Show the overlay
-    };
+    const [showSettingsOverlay, setShowSettingsOverlay] = useState(false);
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
-    // Function to hide the settings overlay
-    const handleHideSettingsOverlay = () => {
-        setShowSettingsOverlay(false); // Hide the overlay
-        setSelectedOption(null); // Reset the selected option
-    };
-
-    // Settings overlay for viewallchats, archivedchats, memory
-    const settingsOptionsOverlay = () => {
-        if (!showSettingsOverlay) return null;
-
-        return (
-            <div className="flex absolute top-1/2 left-1/2 flex-col gap-3 p-4 w-1/2 h-1/2 rounded-2xl transform -translate-x-1/2 -translate-y-1/2 bg-darkSecondary">
-                <div className="relative h-full">
-                    <div className="sticky p-2 mb-10 text-3xl font-semibold rounded-md bg-darkPrimary">
-                        {selectedOption}
-                    </div>
-                    <div className="flex overflow-y-auto flex-col gap-3 p-2 bg-darkPrimary max-h-[calc(100%-10rem)] scrollbar-hide rounded-md">
-                        {/* Content based on the selected option */}
-                        {selectedOption === "Memory" &&
-                            memories.map((memory) => (
-                                <div
-                                    key={memory.memoryId}
-                                    className="flex justify-between text-2xl"
-                                >
-                                    <div className="truncate">
-                                        {memory.memoryContent}
-                                    </div>
-                                    <div className="px-4 rounded-md cursor-pointer bg-darkSecondary hover:border">
-                                        <AiFillDelete className="" />
-                                    </div>
-                                </div>
-                            ))}
-                        {/* Other options handling */}
-                    </div>
-                    <button
-                        onClick={handleHideSettingsOverlay}
-                        className="absolute right-0 bottom-0 px-2 text-xl rounded-md bg-darkPrimary"
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
-        );
+    const handleSettingsOverlay = (option: string | null) => {
+        if (option) {
+            setSelectedOption(option);
+            setShowSettingsOverlay(true);
+        } else {
+            setShowSettingsOverlay(false);
+            setSelectedOption(null);
+        }
     };
 
     // Return
@@ -397,11 +333,16 @@ const ChatBot: React.FC = () => {
                 <Sidebar
                     selectedChatID={selectedChatID}
                     setSelectedChatID={setSelectedChatID}
-                    setMessages={setMessages} //passes setMessages as a prop
-                    onOptionClick={handleShowSettingsOverlay}
+                    setMessages={setMessages}
+                    onOptionClick={handleSettingsOverlay}
                 />
 
-                {settingsOptionsOverlay()}
+                {/* Settings Option Overlay */}
+                <SettingsOptionOverlay
+                    showSettingsOverlay={showSettingsOverlay}
+                    handleSettingsOverlay={handleSettingsOverlay}
+                    selectedOption={selectedOption}
+                />
                 {/* Chat area */}
                 <div className="flex flex-col w-full">
                     {/* light dark mode button */}
