@@ -37,6 +37,7 @@ const ChatBot: React.FC = () => {
     const userId = "example_user_id"; // Update later with a user details hook
     const popupRef = useRef<HTMLDivElement | null>(null); // Reference for the popup
     const paperclipRef = useRef<HTMLDivElement | null>(null); // Reference for the paperclip icon
+    const [showHero, setShowHero] = useState(true);
 
     const [isDarkMode, setIsDarkMode] = useState(() => {
         // Dark mode state
@@ -108,8 +109,6 @@ const ChatBot: React.FC = () => {
             // Send the message using the hook and await the response
             await sendMessage({ chatId: selectedChatID || "", content: input });
 
-            await sendMessage({ chatId: selectedChatID || "", content: input });
-
             // Fetch the latest messages for the selected chat after sending
             if (selectedChatID) {
                 const updatedMessages =
@@ -145,6 +144,7 @@ const ChatBot: React.FC = () => {
 
     // Sends predefined questions as messages upon click
     const handleOptionClick = async (optionText: string) => {
+        setShowHero(false);
         // Adds the message
         setMessages([
             ...messages,
@@ -165,11 +165,10 @@ const ChatBot: React.FC = () => {
     };
 
     // Hero for welcome screen
-    // TODO: If user click opt x, the content will be send as user input
     const hero = () => {
         return (
-            <div className="flex flex-col flex-grow justify-center items-center h-full">
-                <div className="text-5xl text-black text-text dark:text-white">
+            <div className="flex flex-col flex-grow justify-center items-center mx-auto max-w-7xl h-full">
+                <div className="text-5xl font-semibold text-black text-text dark:text-white">
                     Welcome to PoliQ
                 </div>
                 <div className="flex gap-3 mt-4">
@@ -224,7 +223,6 @@ const ChatBot: React.FC = () => {
 
     // Chat Area right hand side
     // TODO: need to change logic
-    // FIXME: rounded bug if message too long
     const ChatArea = selectedChatID
         ? detailedMessages.map((msg, index) => (
               <div
@@ -276,7 +274,6 @@ const ChatBot: React.FC = () => {
 
     // Popup for Upload File
     const UploadPopup = showPopup && (
-        // TODO: Highlight icon when hover
         <div
             ref={popupRef}
             className="absolute bottom-full z-10 p-2 mb-2 rounded-2xl shadow-lg bg-lightSecondary dark:bg-darkSecondary dark:text-white"
@@ -353,9 +350,9 @@ const ChatBot: React.FC = () => {
                         {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
                     </button>
                     {/* Hero for welcoming page */}
-                    {!selectedChatID && hero()}
+                    {showHero && !selectedChatID && hero()}
 
-                    <div className="overflow-y-auto">
+                    <div className="flex overflow-y-auto flex-col flex-grow">
                         {/* Chat Area Container */}
                         <div className="mx-auto w-full max-w-7xl">
                             {ChatArea}
