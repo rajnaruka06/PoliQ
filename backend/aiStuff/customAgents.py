@@ -1,15 +1,14 @@
 ## CustomAgents.py
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from langchain_core.prompts import PromptTemplate
 from langchain.base_language import BaseLanguageModel
 import pandas as pd
+import json
 import os
 
 resourcesPath = os.path.join(os.path.dirname(__file__), '../resources')
 envPath = os.path.join(resourcesPath, '.ENV')
-polimapPromptPath = os.path.join(resourcesPath, 'polimapPrompt.txt')
-multiDBPromptPath = os.path.join(resourcesPath, 'multiDBPrompt.txt')
 
 ## Using CRAG for SQL Generation
 class SqlExpert:
@@ -94,6 +93,7 @@ class ResponseSummarizer:
         <Write only the updated summary here, nothing else>
 
         Each section should be separated by the delimiter: -----
+        Do not add the delimiter at the end of the response it should be placed between the sections.
         """
 
         result = self._invokeLlm(template, response=response, userQuery=userQuery)
@@ -145,71 +145,3 @@ class RouterAgent:
         prompt = PromptTemplate.from_template(template)
         chain = prompt | self.llm
         return chain.invoke({"userQuery": userQuery, "chatHistory": chatHistory}).content.strip()
-
-## Under Development
-class PolimapTableSelector:
-    def __init__(self, llm: BaseLanguageModel):
-        self.llm = llm
-        self.polimapPrompt = self._loadPolimapPrompt()
-
-    def _loadPolimapPrompt(self):
-        with open(polimapPromptPath, 'r') as file:
-            return file.read()
-    def selectTables(self, userQuery: str) -> str:
-        template = """
-        {polimapPrompt}
-
-        User question: {userQuery}
-
-        Based on this question, which tables would you recommend using to find the answer? Please provide a comma-separated list of table names, without any additional explanation.
-
-        Tables:
-        """
-
-        prompt = PromptTemplate.from_template(template)
-        chain = prompt | self.llm
-        return chain.invoke({"userQuery": userQuery, "polimapPrompt": self.polimapPrompt}).content.strip()
-
-## Under Development
-# class RouterAgent:
-#     def __init__(self, llm: BaseLanguageModel):
-#         self.llm = llm
-#         self.multiDBPrompt = self._loadMultiDBPrompt()
-
-#     def _loadMultiDBPrompt(self):
-#         with open(multiDBPromptPath, 'r') as file:
-#             return file.read()
-
-#     def determineQueryType(self, userQuery: str, chatHistory: str = '') -> str:
-#         template = """
-#         {multiDBPrompt}
-
-#         User question: {userQuery}
-
-#         Chat History: {chatHistory}
-        
-#         Based on this question and chat history, which option would you recommend? 
-#         Respond with either "elecdata", "polimap", or "chat".
-#         Your response should be just one of these three words.
-
-#         Query Type:
-#         """
-
-#         prompt = PromptTemplate.from_template(template)
-#         chain = prompt | self.llm
-#         return chain.invoke({"userQuery": userQuery, "chatHistory": chatHistory, "multiDBPrompt": self.multiDBPrompt}).content.strip().lower()
-
-#     def generateChatResponse(self, userQuery: str, chatHistory: str = '') -> str:
-#         template = """You are an AI assistant specializing in Australian political and demographic data analysis.
-
-#         Chat History: {chatHistory}
-#         User Query: {userQuery}
-
-#         Provide a helpful and engaging response to the user's query. Do not assume any information not provided in the chat history. If you're unsure about specific data points, you can mention that you don't have access to the latest data and provide general information instead.
-
-#         Response:
-#         """
-
-#         prompt = PromptTemplate.from_template(template)
-#         chain = prompt | self.llm
-#         return chain.invoke({"userQuery": userQuery, "chatHistory": chatHistory}).content.strip()

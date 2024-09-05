@@ -8,7 +8,7 @@ import json
 import logging
 from typing import List, Dict, Any, Tuple, Optional, TypedDict
 from decimal import Decimal
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 import sqlparse
 from sqlparse.sql import IdentifierList, Identifier
 from sqlparse.tokens import Keyword, DML
@@ -19,6 +19,7 @@ from sqlalchemy import create_engine
 import pandas as pd
 import tiktoken
 from PyPDF2 import PdfReader
+import pymongo
 from pymongo import MongoClient, TEXT
 from pymongo.errors import OperationFailure
 from bson import ObjectId
@@ -90,6 +91,38 @@ class ChatHistoryError(Exception):
     def __init__(self, message="Chat History Error."):
         self.message = message
         super().__init__(self.message)
+
+def loadMetadata(dbName: str) -> str:
+    """
+    Load metadata for a given database from MongoDB.
+
+    Args:
+        dbName (str): Name of the database.
+
+    Returns:
+        str: Metadata content as a string.
+
+    Raises:
+        pymongo.errors.PyMongoError: If there's an error connecting to MongoDB or retrieving the metadata.
+    """
+    try:
+        client = MongoClient(os.environ.get('MONGODB_URI'))
+        db = client['Resources']
+        collection = db['metadata']
+        
+        metadata = collection.find_one({'name': dbName})
+        
+        if metadata and 'content' in metadata:
+            return metadata['content']
+        else:
+            logger.warning(f"No metadata found for database: {dbName}")
+            return ''
+    except pymongo.errors.PyMongoError as e:
+        logger.error(f"Error loading metadata for database {dbName}: {str(e)}")
+        raise
+    finally:
+        if 'client' in locals():
+            client.close()
 
 @contextmanager
 def loadPostgresDatabase(dbName: str):
@@ -182,7 +215,8 @@ def cleanSqlQuery(sqlQuery: str) -> str:
         str: The cleaned SQL query string.
     """
 
-    sqlQuery = sqlQuery.lower().strip()
+    # sqlQuery = sqlQuery.lower().strip()
+    sqlQuery = sqlQuery.strip()
     sqlQuery = sqlQuery.replace("```sql", "").replace("```", "").strip()
     match = re.search(r'\b(with\s+\w+\s+as|select)\b', sqlQuery, re.IGNORECASE)
     if match:
@@ -215,7 +249,7 @@ class QuerySQLTool:
 
     This class provides methods to execute SQL queries, parse the results,
     and convert them into pandas DataFrames. It includes custom parsing for
-    special data types like Decimal and datetime.
+    special data types like Decimal, datetime, and date.
 
     Attributes:
         db (SQLDatabase): The database connection object.
@@ -230,6 +264,7 @@ class QuerySQLTool:
     Private Methods:
         _parseDecimal(match): Parse Decimal values from query results.
         _parseDatetime(match): Parse datetime values from query results.
+        _parseDate(match): Parse date values from query results.
         _customParser(resStr: str): Custom parser for query result strings.
 
     Raises:
@@ -308,6 +343,11 @@ class QuerySQLTool:
         else:
             dt = datetime(*dateArgs)
         return f"'{dt.isoformat()}'"
+
+    def _parseDate(self, match):
+        dateArgs = list(map(int, match.group(1).split(',')))
+        dt = date(*dateArgs)
+        return f"'{dt.isoformat()}'"
     
     def _customParser(self, resStr: str):
         resStr = re.sub(
@@ -318,6 +358,11 @@ class QuerySQLTool:
         resStr = re.sub(
             r"datetime\.datetime\(([\d, ]+)(, tzinfo=datetime\.timezone\.utc)?\)"
             , self._parseDatetime
+            , resStr
+        )
+        resStr = re.sub(
+            r"datetime\.date\(([\d, ]+)\)"
+            , self._parseDate
             , resStr
         )
         return ast.literal_eval(resStr)
