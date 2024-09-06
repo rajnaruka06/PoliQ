@@ -398,6 +398,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             Cancel
           </button>
         </div>
+      )}
             </div>
         );
     };
