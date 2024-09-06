@@ -189,13 +189,17 @@ const ChatBot: React.FC = () => {
                           {msg.date} {msg.time}
                       </div>
                   </div>
-                  {/* Feedback Button */}
+                  {/* Copy and Feedback Buttons */}
                   {msg.user !== "user" && (
-                      <FeedbackButton
-                          chatId={selectedChatID || ""} // Pass the selected chat ID
-                          messageId={msg.messageID} // Pass the message ID
-                          userId={userId} // Pass the user ID
-                      />
+                      <div className="flex gap-2 mt-2">
+                          
+                          <FeedbackButton
+                            chatId={selectedChatID || ""}
+                            messageId={msg.messageID}
+                            userId={userId}
+                            content={msg.content} // Pass the content for the copy functionality
+/> 
+                      </div>
                   )}
               </div>
           ))
