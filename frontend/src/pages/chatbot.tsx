@@ -8,11 +8,12 @@ import {
     AiOutlineUpload,
     AiFillSun,
     AiFillMoon,
-    AiFillDelete,
 } from "react-icons/ai";
 import FeedbackButton from "../components/FeedbackButton.tsx";
 import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
+import SettingsOptionOverlay from "../components/SettingsOptionOverlay.tsx";
+import Hero from "../components/Hero.tsx";
 
 interface MessageCurrent {
     sender: string;
@@ -28,11 +29,6 @@ interface MessageHistory {
     time: string;
 }
 
-interface Memory {
-    memoryId: string;
-    memoryContent: string;
-}
-
 const ChatBot: React.FC = () => {
     const [messages, setMessages] = useState<MessageCurrent[]>([]);
     const [input, setInput] = useState("");
@@ -42,6 +38,7 @@ const ChatBot: React.FC = () => {
     const userId = "example_user_id"; // Update later with a user details hook
     const popupRef = useRef<HTMLDivElement | null>(null); // Reference for the popup
     const paperclipRef = useRef<HTMLDivElement | null>(null); // Reference for the paperclip icon
+    const [showHero, setShowHero] = useState(true);
 
     const [isDarkMode, setIsDarkMode] = useState(() => {
         // Dark mode state
@@ -67,10 +64,6 @@ const ChatBot: React.FC = () => {
         // loading: sending,
         // error: sendError,
     } = useSendMessage(userId);
-
-    const [memories, setMemories] = useState<Memory[]>([]);
-    const [showSettingsOverlay, setShowSettingsOverlay] = useState(false); // State to control visibility of settings overlay
-    const [selectedOption, setSelectedOption] = useState<string | null>(null); // State to track which option is selected
 
     // Reference for the popup
     useEffect(() => {
@@ -117,8 +110,6 @@ const ChatBot: React.FC = () => {
             // Send the message using the hook and await the response
             await sendMessage({ chatId: selectedChatID || "", content: input });
 
-            await sendMessage({ chatId: selectedChatID || "", content: input });
-
             // Fetch the latest messages for the selected chat after sending
             if (selectedChatID) {
                 const updatedMessages =
@@ -154,6 +145,7 @@ const ChatBot: React.FC = () => {
 
     // Sends predefined questions as messages upon click
     const handleOptionClick = async (optionText: string) => {
+        setShowHero(false);
         // Adds the message
         setMessages([
             ...messages,
@@ -173,67 +165,8 @@ const ChatBot: React.FC = () => {
         }
     };
 
-    // Hero for welcome screen
-    // TODO: If user click opt x, the content will be send as user input
-    const hero = () => {
-        return (
-            <div className="flex flex-col flex-grow justify-center items-center h-full">
-                <div className="text-5xl text-black text-text dark:text-white">
-                    Welcome to PoliQ
-                </div>
-                <div className="flex gap-3 mt-4">
-                    <button
-                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        onClick={() =>
-                            handleOptionClick(
-                                "What is the age distribution demographic of Greens voters?"
-                            )
-                        }
-                    >
-                        What is the age distribution demographic of Greens
-                        voters?
-                    </button>
-                    <button
-                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        onClick={() =>
-                            handleOptionClick(
-                                "Which electorates of AEC did the Greens have most success in the recent election?"
-                            )
-                        }
-                    >
-                        Which electorates of AEC did the Greens have most
-                        success in the recent election?
-                    </button>
-                    <button
-                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        onClick={() =>
-                            handleOptionClick(
-                                "Which electorates in Victoria can the Greens improve their performance?"
-                            )
-                        }
-                    >
-                        Which electorates in Victoria can the Greens improve
-                        their performance?
-                    </button>
-                    <button
-                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        onClick={() =>
-                            handleOptionClick(
-                                "Which electorates in New South Wales can the Greens improve their performance?"
-                            )
-                        }
-                    >
-                        Which electorates in New South Wales can the Greens
-                        improve their performance?
-                    </button>
-                </div>
-            </div>
-        );
-    };
-
     // Chat Area right hand side
     // TODO: need to change logic
-    // FIXME: rounded bug if message too long
     const ChatArea = selectedChatID
         ? detailedMessages.map((msg, index) => (
               <div
@@ -243,7 +176,7 @@ const ChatBot: React.FC = () => {
                   } group`}
               >
                   <div
-                      className={`inline-block p-2 max-w-7xl break-words rounded-xl px-7 ${
+                      className={`inline-block p-2 break-words rounded-xl px-7 ${
                           msg.user === "user"
                               ? "bg-lightTertiary text-black dark:text-white dark:bg-darkSecondary"
                               : "text-black dark:text-white dark:bg-darkPrimary bg-lightPrimary"
@@ -285,7 +218,6 @@ const ChatBot: React.FC = () => {
 
     // Popup for Upload File
     const UploadPopup = showPopup && (
-        // TODO: Highlight icon when hover
         <div
             ref={popupRef}
             className="absolute bottom-full z-10 p-2 mb-2 rounded-2xl shadow-lg bg-lightSecondary dark:bg-darkSecondary dark:text-white"
@@ -316,77 +248,22 @@ const ChatBot: React.FC = () => {
         </div>
     );
 
-    // Fetch memory data from memory.json
-    useEffect(() => {
-        const fetchMemories = async () => {
-            try {
-                const response = await fetch("../../public/memory.json");
-                if (!response.ok) throw new Error("Failed to fetch memories");
-
-                const data = await response.json();
-                setMemories(data);
-            } catch (error) {
-                console.error("Error fetching memories:", error);
-            }
-        };
-
-        fetchMemories();
-    }, []);
-
     // Toggle Dark Mode
     const toggleDarkMode = () => {
         setIsDarkMode((prevMode) => !prevMode);
     };
 
-    // Function to handle showing the settings overlay
-    const handleShowSettingsOverlay = (option: string) => {
-        setSelectedOption(option); // Update the selected option
-        setShowSettingsOverlay(true); // Show the overlay
-    };
+    const [showSettingsOverlay, setShowSettingsOverlay] = useState(false);
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
-    // Function to hide the settings overlay
-    const handleHideSettingsOverlay = () => {
-        setShowSettingsOverlay(false); // Hide the overlay
-        setSelectedOption(null); // Reset the selected option
-    };
-
-    // Settings overlay for viewallchats, archivedchats, memory
-    const settingsOptionsOverlay = () => {
-        if (!showSettingsOverlay) return null;
-
-        return (
-            <div className="flex absolute top-1/2 left-1/2 flex-col gap-3 p-4 w-1/2 h-1/2 rounded-2xl transform -translate-x-1/2 -translate-y-1/2 bg-darkSecondary">
-                <div className="relative h-full">
-                    <div className="sticky p-2 mb-10 text-3xl font-semibold rounded-md bg-darkPrimary">
-                        {selectedOption}
-                    </div>
-                    <div className="flex overflow-y-auto flex-col gap-3 p-2 bg-darkPrimary max-h-[calc(100%-10rem)] scrollbar-hide rounded-md">
-                        {/* Content based on the selected option */}
-                        {selectedOption === "Memory" &&
-                            memories.map((memory) => (
-                                <div
-                                    key={memory.memoryId}
-                                    className="flex justify-between text-2xl"
-                                >
-                                    <div className="truncate">
-                                        {memory.memoryContent}
-                                    </div>
-                                    <div className="px-4 rounded-md cursor-pointer bg-darkSecondary hover:border">
-                                        <AiFillDelete className="" />
-                                    </div>
-                                </div>
-                            ))}
-                        {/* Other options handling */}
-                    </div>
-                    <button
-                        onClick={handleHideSettingsOverlay}
-                        className="absolute right-0 bottom-0 px-2 text-xl rounded-md bg-darkPrimary"
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
-        );
+    const handleSettingsOverlay = (option: string | null) => {
+        if (option) {
+            setSelectedOption(option);
+            setShowSettingsOverlay(true);
+        } else {
+            setShowSettingsOverlay(false);
+            setSelectedOption(null);
+        }
     };
 
     // Return
@@ -397,29 +274,37 @@ const ChatBot: React.FC = () => {
                 <Sidebar
                     selectedChatID={selectedChatID}
                     setSelectedChatID={setSelectedChatID}
-                    setMessages={setMessages} //passes setMessages as a prop
-                    onOptionClick={handleShowSettingsOverlay}
+                    setMessages={setMessages}
+                    onOptionClick={handleSettingsOverlay}
                 />
 
-                {settingsOptionsOverlay()}
+                {/* Settings Option Overlay */}
+                <SettingsOptionOverlay
+                    showSettingsOverlay={showSettingsOverlay}
+                    handleSettingsOverlay={handleSettingsOverlay}
+                    selectedOption={selectedOption}
+                />
                 {/* Chat area */}
-                <div className="flex flex-col mx-auto w-3/5">
+                <div className="flex flex-col w-full">
                     {/* light dark mode button */}
                     <button
                         onClick={toggleDarkMode}
-                        className={`absolute top-4 right-4 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                        className={`absolute top-4 right-9 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
                     >
                         {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
                     </button>
                     {/* Hero for welcoming page */}
-                    {!selectedChatID && hero()}
+                    {showHero && !selectedChatID && <Hero />}
 
-                    <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
-                        {/* Messages */}
-                        {ChatArea}
+                    <div className="flex overflow-y-auto flex-col flex-grow">
+                        {/* Chat Area Container */}
+                        <div className="mx-auto w-full max-w-7xl">
+                            {ChatArea}
+                        </div>
                     </div>
+
                     {/* Input bar */}
-                    <div className="flex gap-2 mt-4 text-xl">
+                    <div className="flex gap-2 mx-auto mt-4 w-full max-w-7xl text-xl">
                         {/* Input box */}
                         <div className="relative flex-grow">
                             {UploadPopup}

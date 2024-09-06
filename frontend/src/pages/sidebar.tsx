@@ -256,10 +256,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         archived: boolean;
     }) => {
         return (
-            // FIXME: threedots bug, useref can't close
             <div
                 ref={menuRef}
-                className="flex absolute right-4 z-50 flex-col gap-3 items-end p-2 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
+                className="flex absolute right-4 z-10 flex-col gap-3 items-end p-2 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
             >
                 {/* Pin / Unpin button */}
                 <button
@@ -312,7 +311,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     //  Overlay content on bottom left corner
-    //  TODO: Create a floating window
     const settingsOverlay = showSettingsMenu && (
         <div
             ref={settingsRef}
@@ -340,6 +338,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     );
 
     // components that called inside loadChatHistory
+    // FIXME: if chat title too long, truncate not working. but if hovered, truncate working and width changed
     const loadChatHistoryComponent = (chat: ChatHistory, idx: number) => {
         return (
             <div
@@ -372,7 +371,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                     )}
                 </div>
-                {/* FIXME: when threedotsmenu hovered, row size changes */}
                 {showOptionsMenu === chat.chatId && threeDotsMenu(chat)}
                 {/* Rename input field when renaming is active for this chat */}
                 {isRenaming && chatToRename === chat.chatId && (
@@ -514,7 +512,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                         <div className="text-black dark:text-white">
                             John Doe
                         </div>
-                        {/* FIXME: settings bug, useref can't close */}
                         {settingsOverlay}
                         {/* Show settings menu if active */}
                         <div ref={SetRef}>
