@@ -100,6 +100,8 @@ const ChatBot: React.FC = () => {
 
     // New handleSend to use the correct format and reflect messages immediately.
     const handleSend = async () => {
+        setShowHero(false);
+
         if (input.trim()) {
             // Optimistically add the user's message to the UI
             setMessages([
@@ -294,7 +296,9 @@ const ChatBot: React.FC = () => {
                         {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
                     </button>
                     {/* Hero for welcoming page */}
-                    {showHero && !selectedChatID && <Hero />}
+                    {showHero && !selectedChatID && (
+                        <Hero handleOptionClick={handleOptionClick} />
+                    )}
 
                     <div className="flex overflow-y-auto flex-col flex-grow">
                         {/* Chat Area Container */}
