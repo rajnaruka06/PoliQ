@@ -9,7 +9,7 @@ from .agentHelpers import (
     , NoDataFoundException
     , loadLLM
 )
-from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent, SqlExpert2
+from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent
 import sys
 import os
 import re
