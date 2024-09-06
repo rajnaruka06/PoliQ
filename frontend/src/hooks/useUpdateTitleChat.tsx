@@ -16,7 +16,7 @@ export const useUpdateTitleChat = (user_id: string): UseUpdateTitleChatHook => {
     setError(null); // Clear any previous error
     try {
       const response = await fetch(
-        `http://localhost:8000/api/chats/${chatID}/title?user=${user_id}&newTitle=${encodeURIComponent(newTitle)}`,
+        `http://localhost:8000/api/chats/${chatID}/title?userId=${user_id}&newTitle=${encodeURIComponent(newTitle)}`,
         {
           method: "PUT",
         }
