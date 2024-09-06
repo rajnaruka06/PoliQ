@@ -1,6 +1,6 @@
 ## main.py
 
-from fastapi import FastAPI, HTTPException, Path, Query
+from fastapi import FastAPI, HTTPException, Path, Query, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import logging
@@ -44,6 +44,10 @@ class QueryRequest(BaseModel):
     userQuery: str
     chatId: Optional[str]
 
+class GroupUpdateRequest(BaseModel):
+    groupName: str
+    groupColor: str
+
 @app.get("/api/chats/all")
 async def fetchChatHistory(userId: str = Query(...)):
     try:
@@ -63,7 +67,7 @@ async def fetchMessages(chatId: str = Path(...), userId: str = Query(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/messages/send")
-async def handleSend(message: MessageRequest, userId: str = Query(...)):
+async def handleSend(message: MessageRequest = ..., userId: str = Query(...)):
     try:
         chatHistory = ChatHistory(userId=userId)
         chatId = chatHistory.addMessage(message.chatId, message.content)
@@ -171,5 +175,32 @@ async def handleUpdateMessage(chatId: str = Path(...), messageId: str = Path(...
         response = workflow.processUserQuery(newContent, context)
         chatHistory.addMessage(chatId, response, isUser=False)
         return {"status": "Message updated and new response generated"}
+    except ChatHistoryError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/{chatId}/upload")
+async def uploadFile(file: UploadFile = File(...), chatId: str = Path(...), userId: str = Query(...)):
+    try:
+        chatHistory = ChatHistory(userId=userId)
+        content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1][1:].lower()
+        
+        if file_extension not in ["csv", "pdf", "txt"]:
+            raise HTTPException(status_code=400, detail="Unsupported file type. Only CSV, PDF, and TXT are allowed.")
+        
+        docId = chatHistory.uploadDoc(chatId, content, file.filename, file_extension)
+        
+        return {"status": "File uploaded successfully", "docId": docId}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except ChatHistoryError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put("/api/chats/{chatId}/group")
+async def updateGroupStatus(chatId: str = Path(...), userId: str = Query(...), groupUpdate: GroupUpdateRequest = ...):
+    try:
+        chatHistory = ChatHistory(userId=userId)
+        chatHistory.updateGroupStatus(chatId, groupUpdate.groupName, groupUpdate.groupColor)
+        return {"status": "Group status updated successfully"}
     except ChatHistoryError as e:
         raise HTTPException(status_code=500, detail=str(e))

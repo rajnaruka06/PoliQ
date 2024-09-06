@@ -14,6 +14,11 @@ This directory contains the core AI and data processing logic for our electoral 
 
 - `QuerySQLTool`: Executes SQL queries on the database
 - `ChatHistory`: Manages user chat history and document storage
+  - Supports document upload and management (CSV, PDF, TXT)
+  - Handles chat operations: pin, unpin, archive, unarchive, delete
+  - Manages messages: add, update, retrieve
+  - Supports group status updates
+  - Implements search functionality
 - `loadPostgresDatabase`: Context manager for database connections
 - `loadLLM`: Loads the specified language model
 
@@ -25,6 +30,13 @@ This directory contains the core AI and data processing logic for our electoral 
 ### Workflows
 
 - `ElecDataWorkflow`: Orchestrates the entire process of handling user queries, generating SQL, executing queries, and summarizing results
+
+## New Features
+
+- Document upload and management for CSV, PDF, and TXT files
+- Chat grouping functionality
+- Message updating with chat history pruning
+- Enhanced error handling with custom exceptions
 
 ## Usage
 

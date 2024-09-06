@@ -8,7 +8,7 @@ import json
 import logging
 from typing import List, Dict, Any, Tuple, Optional, TypedDict
 from decimal import Decimal
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 import sqlparse
 from sqlparse.sql import IdentifierList, Identifier
 from sqlparse.tokens import Keyword, DML
@@ -19,6 +19,7 @@ from sqlalchemy import create_engine
 import pandas as pd
 import tiktoken
 from PyPDF2 import PdfReader
+import pymongo
 from pymongo import MongoClient, TEXT
 from pymongo.errors import OperationFailure
 from bson import ObjectId
@@ -35,8 +36,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 ## Loading environment variables
-env_path = os.path.join(os.path.dirname(__file__), '../resources/.ENV')
-load_dotenv(dotenv_path=env_path)
+recourcesPath = os.path.join(os.path.dirname(__file__), '../resources')
+envPath = os.path.join(recourcesPath, '.ENV')
+load_dotenv(dotenv_path=envPath)
 
 ## Type aliases
 Message = TypedDict('Message', {
@@ -89,6 +91,38 @@ class ChatHistoryError(Exception):
     def __init__(self, message="Chat History Error."):
         self.message = message
         super().__init__(self.message)
+
+def loadMetadata(dbName: str) -> str:
+    """
+    Load metadata for a given database from MongoDB.
+
+    Args:
+        dbName (str): Name of the database.
+
+    Returns:
+        str: Metadata content as a string.
+
+    Raises:
+        pymongo.errors.PyMongoError: If there's an error connecting to MongoDB or retrieving the metadata.
+    """
+    try:
+        client = MongoClient(os.environ.get('MONGODB_URI'))
+        db = client['Resources']
+        collection = db['metadata']
+        
+        metadata = collection.find_one({'name': dbName})
+        
+        if metadata and 'content' in metadata:
+            return metadata['content']
+        else:
+            logger.warning(f"No metadata found for database: {dbName}")
+            return ''
+    except pymongo.errors.PyMongoError as e:
+        logger.error(f"Error loading metadata for database {dbName}: {str(e)}")
+        raise
+    finally:
+        if 'client' in locals():
+            client.close()
 
 @contextmanager
 def loadPostgresDatabase(dbName: str):
@@ -180,15 +214,11 @@ def cleanSqlQuery(sqlQuery: str) -> str:
     Returns:
         str: The cleaned SQL query string.
     """
-    # sqlQuery = sqlQuery.split("3. FINAL SQL QUERY:")[1].strip()
-    # sqlQuery = sqlQuery.replace("```sql", "").replace("```", "").strip()
-    # if sqlQuery.startswith('SQL Query:'): 
-    #     sqlQuery = sqlQuery[len('SQL Query:'):].strip()
-    # return sqlQuery
 
-    sqlQuery = sqlQuery.lower().strip()
+    # sqlQuery = sqlQuery.lower().strip()
+    sqlQuery = sqlQuery.strip()
     sqlQuery = sqlQuery.replace("```sql", "").replace("```", "").strip()
-    match = re.search(r'\b(with|select)\b', sqlQuery)
+    match = re.search(r'\b(with\s+\w+\s+as|select)\b', sqlQuery, re.IGNORECASE)
     if match:
         sqlQuery = sqlQuery[match.start():]
 
@@ -219,7 +249,7 @@ class QuerySQLTool:
 
     This class provides methods to execute SQL queries, parse the results,
     and convert them into pandas DataFrames. It includes custom parsing for
-    special data types like Decimal and datetime.
+    special data types like Decimal, datetime, and date.
 
     Attributes:
         db (SQLDatabase): The database connection object.
@@ -234,6 +264,7 @@ class QuerySQLTool:
     Private Methods:
         _parseDecimal(match): Parse Decimal values from query results.
         _parseDatetime(match): Parse datetime values from query results.
+        _parseDate(match): Parse date values from query results.
         _customParser(resStr: str): Custom parser for query result strings.
 
     Raises:
@@ -312,6 +343,11 @@ class QuerySQLTool:
         else:
             dt = datetime(*dateArgs)
         return f"'{dt.isoformat()}'"
+
+    def _parseDate(self, match):
+        dateArgs = list(map(int, match.group(1).split(',')))
+        dt = date(*dateArgs)
+        return f"'{dt.isoformat()}'"
     
     def _customParser(self, resStr: str):
         resStr = re.sub(
@@ -322,6 +358,11 @@ class QuerySQLTool:
         resStr = re.sub(
             r"datetime\.datetime\(([\d, ]+)(, tzinfo=datetime\.timezone\.utc)?\)"
             , self._parseDatetime
+            , resStr
+        )
+        resStr = re.sub(
+            r"datetime\.date\(([\d, ]+)\)"
+            , self._parseDate
             , resStr
         )
         return ast.literal_eval(resStr)
@@ -374,12 +415,16 @@ class ChatHistory:
     - Collection: <user_id> (Each user has a dedicated collection named after their user_id)
     - Document Structure:
       {
-        "chat_id": <str>,             # Unique identifier for the chat session
+        "chatId": <str>,             # Unique identifier for the chat session
         "date": <str>,                # Date the chat was created (YYYY-MM-DD format)
         "title": <str>,               # Short title for the chat (first 30 characters of the first message)
         "pinned": <bool>,             # Indicates if the chat is pinned
         "archived": <bool>,           # Indicates if the chat is archived
-        "last_updated": <datetime>,   # Timestamp of the last update to the chat
+        "lastUpdated": <datetime>,   # Timestamp of the last update to the chat
+        "groupDetails": {
+          "groupName": <str>,        # Name of the group also unique identifier
+          "groupColor": <str>,       # Color of the group (e.g., "red" or "blue")
+        },
         "messages": [                 # Array of message objects
           {
             "messageID": <str>,       # Unique identifier for the message
@@ -403,7 +448,7 @@ class ChatHistory:
     
     Key Features:
     - Each user's chat history is stored in a separate collection, identified by `user_id`.
-    - Each chat session is represented by a document, identified by `chat_id`.
+    - Each chat session is represented by a document, identified by `chatId`.
     - The `messages` field in the document contains an array of chat messages.
     - The `documents` field contains metadata about uploaded documents.
     - Actual document files are stored in GridFS.
@@ -442,21 +487,6 @@ class ChatHistory:
         except Exception as e:
             logger.error(f"Failed to connect to database: {e}")
             raise ChatHistoryError(f"Database connection error: {str(e)}")
-
-    def _ensureTextIndex(self) -> None:
-        """Ensures text index exists for message content."""
-        try:
-            indexes = self.collection.list_indexes()
-            indexNames = [index['name'] for index in indexes]
-
-            indexName = "messagesContentTextIndex"
-            fieldsToIndex = [("messages.content", TEXT)]
-
-            if indexName not in indexNames:
-                self.collection.create_index(fieldsToIndex, name=indexName)
-        except OperationFailure as e:
-            logger.error(f"Failed to create text index: {e}")
-            raise ChatHistoryError(f"Failed to create text index: {str(e)}")
         
     def _ensureTextIndex(self) -> None:
         """Ensures text index exists for message content."""
@@ -680,7 +710,11 @@ class ChatHistory:
                             "date": datetime.now().strftime("%Y-%m-%d"),
                             "title": content[:30],
                             "pinned": False,
-                            "archived": False
+                            "archived": False,
+                            "groupDetails": {
+                                "groupName": "Default",
+                                "groupColor": "gray"
+                            }
                         },
                         "$set": {"lastUpdated": datetime.now()}
                     },
@@ -691,6 +725,28 @@ class ChatHistory:
                 raise ChatHistoryError(f"Failed to add message: {str(e)}")
         
         return chatId
+    
+    def updateGroupStatus(self, chatId: str, groupName: str = 'CustomGroup', groupColor: str = 'red') -> None:
+        """Updates the group status of a chat."""
+        with self._getDbConnection():
+            try:
+                result = self.collection.update_one(
+                    {"chatId": chatId},
+                    {
+                        "$set": {
+                            "groupDetails": {
+                                "groupName": groupName,
+                                "groupColor": groupColor
+                            },
+                            "lastUpdated": datetime.now()
+                        }
+                    }
+                )
+                if result.matched_count == 0:
+                    raise ChatHistoryError(f"No chat found with ID: {chatId}")
+            except Exception as e:
+                logger.error(f"Error updating group status for chat {chatId}: {e}")
+                raise ChatHistoryError(f"Failed to update group status: {str(e)}")
     
     def updateChatTitle(self, chatId: str, newTitle: str) -> None:
         """Updates the title of a chat."""

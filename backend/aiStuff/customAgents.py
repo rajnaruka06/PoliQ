@@ -1,16 +1,21 @@
 ## CustomAgents.py
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from langchain_core.prompts import PromptTemplate
 from langchain.base_language import BaseLanguageModel
 import pandas as pd
+import json
+import os
+
+resourcesPath = os.path.join(os.path.dirname(__file__), '../resources')
+envPath = os.path.join(resourcesPath, '.ENV')
 
 ## Using CRAG for SQL Generation
 class SqlExpert:
     def __init__(self, llm: BaseLanguageModel):
         self.llm = llm
 
-    def generateAndRefineQuery(self, userQuery: str, dialect: str, tableInfo: str, chatHistory: str = '') -> Dict[str, str]:
+    def generateAndRefineQuery(self, userQuery: str, dialect: str, tableInfo: str, chatHistory: str = '') -> str:
         template = """Given an input question, perform the following steps:
 
         1. Generate a syntactically correct {dialect} SQL query.
@@ -25,7 +30,7 @@ class SqlExpert:
         - Never use * in the SELECT statement. Always specify the columns you want to retrieve.
         - Use GROUP BY instead of DISTINCT where applicable.
         - End the SQL query with a semicolon (;).
-        - Do not include any LIMIT or OFFSET clauses unless the user query requires it.
+        - Do not include any LIMIT, OFFSET, WHERE clauses, or any other filters unless explicitly mentioned in the user query.
 
         Available tables:
         {tableInfo}
@@ -66,7 +71,7 @@ class ResponseSummarizer:
     def __init__(self, llm: BaseLanguageModel):
         self.llm = llm
 
-    def generateSummaryWithReflection(self, response: str, userQuery: str) -> Dict[str, str]:
+    def generateSummaryWithReflection(self, response: str, userQuery: str) -> str:
         template = """Given a user query and a response, perform the following steps:
 
         1. Generate a concise summary of the response.
@@ -88,6 +93,7 @@ class ResponseSummarizer:
         <Write only the updated summary here, nothing else>
 
         Each section should be separated by the delimiter: -----
+        Do not add the delimiter at the end of the response it should be placed between the sections.
         """
 
         result = self._invokeLlm(template, response=response, userQuery=userQuery)
