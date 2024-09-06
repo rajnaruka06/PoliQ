@@ -13,6 +13,7 @@ import FeedbackButton from "../components/FeedbackButton.tsx";
 import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
 import SettingsOptionOverlay from "../components/SettingsOptionOverlay.tsx";
+import Hero from "../components/Hero.tsx";
 
 interface MessageCurrent {
     sender: string;
@@ -164,63 +165,6 @@ const ChatBot: React.FC = () => {
         }
     };
 
-    // Hero for welcome screen
-    const hero = () => {
-        return (
-            <div className="flex flex-col flex-grow justify-center items-center mx-auto max-w-7xl h-full">
-                <div className="text-5xl font-semibold text-black text-text dark:text-white">
-                    Welcome to PoliQ
-                </div>
-                <div className="flex gap-3 mt-4">
-                    <button
-                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        onClick={() =>
-                            handleOptionClick(
-                                "What is the age distribution demographic of Greens voters?"
-                            )
-                        }
-                    >
-                        What is the age distribution demographic of Greens
-                        voters?
-                    </button>
-                    <button
-                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        onClick={() =>
-                            handleOptionClick(
-                                "Which electorates of AEC did the Greens have most success in the recent election?"
-                            )
-                        }
-                    >
-                        Which electorates of AEC did the Greens have most
-                        success in the recent election?
-                    </button>
-                    <button
-                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        onClick={() =>
-                            handleOptionClick(
-                                "Which electorates in Victoria can the Greens improve their performance?"
-                            )
-                        }
-                    >
-                        Which electorates in Victoria can the Greens improve
-                        their performance?
-                    </button>
-                    <button
-                        className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        onClick={() =>
-                            handleOptionClick(
-                                "Which electorates in New South Wales can the Greens improve their performance?"
-                            )
-                        }
-                    >
-                        Which electorates in New South Wales can the Greens
-                        improve their performance?
-                    </button>
-                </div>
-            </div>
-        );
-    };
-
     // Chat Area right hand side
     // TODO: need to change logic
     const ChatArea = selectedChatID
@@ -350,7 +294,7 @@ const ChatBot: React.FC = () => {
                         {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
                     </button>
                     {/* Hero for welcoming page */}
-                    {showHero && !selectedChatID && hero()}
+                    {showHero && !selectedChatID && <Hero />}
 
                     <div className="flex overflow-y-auto flex-col flex-grow">
                         {/* Chat Area Container */}
