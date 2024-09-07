@@ -8,8 +8,9 @@ from .agentHelpers import (
     , InvalidUserQueryException
     , NoDataFoundException
     , loadLLM
+    , loadJson
 )
-from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent
+from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent, DatasetRegionMatcherAgent
 import sys
 import os
 import re
@@ -17,6 +18,7 @@ from typing import Dict, List, Any
 from dotenv import load_dotenv
 import logging
 from langchain.base_language import BaseLanguageModel
+import json
 
 sys.path.append(os.path.dirname(__file__))
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -119,3 +121,17 @@ class ElecDataWorkflow:
         except Exception as e:
             logger.exception(f"An error occurred: {str(e)}")
             return f"An error occurred: {str(e)}"
+
+class DatasetRegionMatcher:
+    def __init__(self):
+        self.llm = loadLLM()
+        self.datasetsMetadata = loadJson("datasetsMetadata.json")
+        self.regionsMetadata = loadJson("regionsMetadata.json")
+        self.agent = DatasetRegionMatcherAgent(llm = self.llm)
+
+    def match(self, userQuery):
+        return self.agent.match(
+            userQuery,
+            self.regionsMetadata,
+            self.datasetsMetadata
+        )

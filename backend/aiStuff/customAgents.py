@@ -3,6 +3,7 @@
 from typing import Dict, Any, Optional, List
 from langchain_core.prompts import PromptTemplate
 from langchain.base_language import BaseLanguageModel
+from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 import pandas as pd
 import json
 import os
@@ -145,3 +146,64 @@ class RouterAgent:
         prompt = PromptTemplate.from_template(template)
         chain = prompt | self.llm
         return chain.invoke({"userQuery": userQuery, "chatHistory": chatHistory}).content.strip()
+
+class DatasetRegionMatcherAgent:
+    def __init__(self, llm: BaseLanguageModel):
+        self.llm = llm
+        self.outputParser = self._createOutputParser()
+        self.prompt = self._createPrompt()
+        self.chain = self.prompt | self.llm | self.outputParser
+
+    def _createOutputParser(self):
+        return StructuredOutputParser.from_response_schemas([
+            ResponseSchema(
+                name="layers",
+                description="A JSON string representing a list of layers, where each layer is an array [RegionID, DatasetID, Level]. RegionID should be included whenever possible. DatasetID is necessary. Level is one of 'top', 'booth', or 'SA1'. Return an empty list [] if there are no relevant data/regions."
+            )
+        ])
+
+    def _createPrompt(self):
+        template = """You are an AI assistant specializing in electoral and census data. Your task is to identify the minimum set of layers necessary to answer the user's query based on the provided metadata.
+
+        Regions Metadata:
+        {regions_metadata}
+
+        Datasets Metadata:
+        {datasets_metadata}
+
+        User Query: {user_query}
+
+        Based on the user's query and the provided metadata, determine the minimum set of layers required to fully answer the query. Each layer should be represented as [RegionID, DatasetID, Level], where:
+        - RegionID should be included whenever possible. Only omit it if there is absolutely no relevant region for the query.
+        - DatasetID is necessary
+        - Level is one of "top" (for CEDs), "booth" (for polling booths), or "SA1" (for Statistical Areas)
+
+        Only include layers that are absolutely necessary to provide a complete and accurate response.
+
+        Remember:
+        1. Only include layers that are directly relevant to answering the user's specific query.
+        2. Aim for the smallest possible set of layers that can fully address the query.
+        3. Do not include any layer unless you are certain it will contribute to answering the user's question.
+        4. More than one layer might be needed to answer the user query correctly, but look for the least number of layers possible.
+        5. If there are no relevant data or regions to answer the query, return an empty list [].
+        6. Always try to include a specific RegionID. Only omit the RegionID if the query doesn't specify or imply any particular region and no region from the metadata is relevant.
+
+        {format_instructions}
+        """
+        
+        return PromptTemplate(
+            template=template,
+            input_variables=["regions_metadata", "datasets_metadata", "user_query"],
+            partial_variables={"format_instructions": self.outputParser.get_format_instructions()}
+        )
+
+    def match(self, userQuery, regionsMetadata, datasetsMetadata):
+        try:
+            result = self.chain.invoke({
+                "regions_metadata": regionsMetadata,
+                "datasets_metadata": datasetsMetadata,
+                "user_query": userQuery
+            })
+            return result
+        except Exception as e:
+            raise RuntimeError(f"Error processing LLM output: {str(e)}")
