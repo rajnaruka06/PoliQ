@@ -289,6 +289,7 @@ class DataFetcher:
         try:
             yield db
         finally:
+            # await self.mongo_client.close()
             pass  
 
     async def fetch_dataset(self, id: int) -> Optional[Dict[str, Any]]:
@@ -357,31 +358,22 @@ class DataFetcher:
 
         return column_data
 
-    async def get_datasets_with_data(self, datasetIds: List[int], regionIds: Optional[List[int]] = None) -> List[Dict[str, Any]]:
-        results = []
-        for datasetId in datasetIds:
-            dataset = await self.fetch_dataset(datasetId)
-            if dataset is None:
-                raise ValueError(f"Dataset {datasetId} not found")
+    async def get_dataset_with_data(self, datasetId: int, regionId: Optional[int] = None) -> Dict[str, Any]:
+        dataset = await self.fetch_dataset(datasetId)
+        if dataset is None:
+            raise ValueError(f"Dataset {datasetId} not found")
 
-            if regionIds:
-                for regionId in regionIds:
-                    region = await self.fetch_region(regionId)
-                    if region is None:
-                        raise ValueError(f"Region {regionId} not found")
-                    column_data = await self.fetch_data(dataset, region)
-                    dataset_copy = dataset.copy()
-                    dataset_copy['data'] = column_data
-                    del dataset_copy['query']
-                    results.append(dataset_copy)
-            else:
-                column_data = await self.fetch_data(dataset, None)
-                dataset_copy = dataset.copy()
-                dataset_copy['data'] = column_data
-                del dataset_copy['query']
-                results.append(dataset_copy)
+        region = None
+        if regionId is not None:
+            region = await self.fetch_region(regionId)
+            if region is None:
+                raise ValueError(f"Region {regionId} not found")
 
-        return results
+        column_data = await self.fetch_data(dataset, region)
+
+        dataset['data'] = column_data
+        del dataset['query']
+        return dataset
 
 class QuerySQLTool:
     """
