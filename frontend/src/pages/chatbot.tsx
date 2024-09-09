@@ -36,6 +36,65 @@ const ChatBot: React.FC = () => {
     const userId = "example_user_id"; // Update later with a user details hook
     const popupRef = useRef<HTMLDivElement | null>(null); // Reference for the popup
     const paperclipRef = useRef<HTMLDivElement | null>(null); // Reference for the paperclip icon
+    const [showRegionDropdown, setShowRegionDropdown] = useState(false); // State for Region dropdown
+    const [showLevelsDropdown, setShowLevelsDropdown] = useState(false); // State for Levels dropdown
+    const [searchRegion, setSearchRegion] = useState(""); // State for region search
+    const [searchLevel, setSearchLevel] = useState(""); // State for level search
+
+    const toggleRegionDropdown = () => {
+        setShowRegionDropdown((prev) => !prev);
+        setShowLevelsDropdown(false); // Close Levels dropdown if open
+    };
+
+    const toggleLevelsDropdown = () => {
+        setShowLevelsDropdown((prev) => !prev);
+        setShowRegionDropdown(false); // Close Region dropdown if open
+    };
+    // Sample data for dropdown options
+    const regions = [
+        "Region 1",
+        "Region 2",
+        "Region 3",
+        "Region 4",
+        "Region 5",
+        "Region 6",
+        "Region 7",
+        "Region 8",
+        "Region 9",
+        "Region 10",
+        "Region 11",
+        "Region 12",
+        "Region 13",
+        "Region 14",
+        "Region 15",
+        "Region 16",
+        "Region 17",
+        "Region 18",
+        "Region 19",
+        "Region 20",
+    ];
+    const levels = [
+        "Level 1",
+        "Level 2",
+        "Level 3",
+        "Level 4",
+        "Level 5",
+        "Level 6",
+        "Level 7",
+        "Level 8",
+        "Level 9",
+        "Level 10",
+        "Level 11",
+        "Level 12",
+        "Level 13",
+        "Level 14",
+        "Level 15",
+        "Level 16",
+        "Level 17",
+        "Level 18",
+        "Level 19",
+        "Level 20",
+    ];
 
     const [isDarkMode, setIsDarkMode] = useState(() => {
         // Dark mode state
@@ -258,7 +317,89 @@ const ChatBot: React.FC = () => {
                     setSelectedChatID={setSelectedChatID}
                     setMessages={setMessages} //passes setMessages as a prop
                 />
+                <div
+                    className="relative flex gap-2 mb-2"
+                    style={{ marginTop: "42.8rem", marginLeft: "1rem" }}
+                >
+                    {" "}
+                    {/* Custom margin top for maximum space */}
+                    <button
+                        onClick={toggleLevelsDropdown}
+                        className="w-32 p-3 bg-lightTertiary dark:bg-darkSecondary rounded-full text-white"
+                    >
+                        Levels
+                    </button>
+                    <button
+                        onClick={toggleRegionDropdown}
+                        className="w-32 p-3 bg-lightTertiary dark:bg-darkSecondary rounded-full text-white"
+                    >
+                        Region
+                    </button>
+                    {showRegionDropdown && (
+                        <div className="absolute bottom-full mb-2 w-64 bg-white dark:bg-darkPrimary shadow-lg rounded">
+                            <input
+                                type="text"
+                                placeholder="Search Region..."
+                                value={searchRegion}
+                                onChange={(e) =>
+                                    setSearchRegion(e.target.value)
+                                }
+                                className="p-2 w-full border border-gray-300 rounded mb-2"
+                            />
+                            <ul className="max-h-48 overflow-y-auto p-2">
+                                {" "}
+                                {/* Set max height and enable scrolling */}
+                                {regions
+                                    .filter((region) =>
+                                        region
+                                            .toLowerCase()
+                                            .includes(
+                                                searchRegion.toLowerCase()
+                                            )
+                                    )
+                                    .map((region, index) => (
+                                        <li
+                                            key={index}
+                                            className="py-1 px-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer text-white"
+                                        >
+                                            {region}
+                                        </li>
+                                    ))}
+                            </ul>
+                        </div>
+                    )}
+                    {/* Levels Dropdown Menu */}
+                    {showLevelsDropdown && (
+                        <div className="absolute bottom-full mb-2 w-64 bg-white dark:bg-darkPrimary shadow-lg rounded">
+                            <input
+                                type="text"
+                                placeholder="Search Level..."
+                                value={searchLevel}
+                                onChange={(e) => setSearchLevel(e.target.value)}
+                                className="p-2 w-full border border-gray-300 rounded mb-2"
+                            />
 
+                            <ul className="max-h-48 overflow-y-auto p-2">
+                                {" "}
+                                {/* Set max height and enable scrolling */}
+                                {levels
+                                    .filter((level) =>
+                                        level
+                                            .toLowerCase()
+                                            .includes(searchLevel.toLowerCase())
+                                    )
+                                    .map((level, index) => (
+                                        <li
+                                            key={index}
+                                            className="py-1 px-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer text-white"
+                                        >
+                                            {level}
+                                        </li>
+                                    ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
                 {/* Chat area */}
                 <div className="flex flex-col mx-auto w-3/5">
                     {/* light dark mode button */}
@@ -275,6 +416,7 @@ const ChatBot: React.FC = () => {
                         {/* Messages */}
                         {ChatArea}
                     </div>
+
                     {/* Input bar */}
                     <div className="flex gap-2 mt-4 text-xl">
                         {/* Input box */}
