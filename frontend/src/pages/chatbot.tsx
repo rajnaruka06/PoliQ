@@ -41,6 +41,8 @@ const ChatBot: React.FC = () => {
     const [searchRegion, setSearchRegion] = useState(""); // State for region search
     const [searchLevel, setSearchLevel] = useState(""); // State for level search
     const [showHero, setShowHero] = useState(true);
+    const [levels, setLevels] = useState<string[]>([]); // Initialize state for levels
+    const [regions, setRegions] = useState<string[]>([]); // Initialize state for regions
 
     const toggleRegionDropdown = () => {
         setShowRegionDropdown((prev) => !prev);
@@ -50,51 +52,26 @@ const ChatBot: React.FC = () => {
         setShowLevelsDropdown((prev) => !prev);
         setShowRegionDropdown(false); // Close Region dropdown if open
     };
-    // Sample data for dropdown options
-    const regions = [
-        "Region 1",
-        "Region 2",
-        "Region 3",
-        "Region 4",
-        "Region 5",
-        "Region 6",
-        "Region 7",
-        "Region 8",
-        "Region 9",
-        "Region 10",
-        "Region 11",
-        "Region 12",
-        "Region 13",
-        "Region 14",
-        "Region 15",
-        "Region 16",
-        "Region 17",
-        "Region 18",
-        "Region 19",
-        "Region 20",
-    ];
-    const levels = [
-        "Level 1",
-        "Level 2",
-        "Level 3",
-        "Level 4",
-        "Level 5",
-        "Level 6",
-        "Level 7",
-        "Level 8",
-        "Level 9",
-        "Level 10",
-        "Level 11",
-        "Level 12",
-        "Level 13",
-        "Level 14",
-        "Level 15",
-        "Level 16",
-        "Level 17",
-        "Level 18",
-        "Level 19",
-        "Level 20",
-    ];
+
+    // Levels fetch
+    useEffect(() => {
+        const fetchLevels = async () => {
+            const response = await fetch("../../public/levels.json"); // Fetch levels from JSON
+            const data = await response.json();
+            setLevels(data.levels); // Set levels from fetched data
+        };
+        fetchLevels(); // Call the fetch function
+    }, []); // Empty dependency array to run once on mount
+
+    // Regions fetch
+    useEffect(() => {
+        const fetchRegions = async () => {
+            const response = await fetch("../../public/regions.json"); // Fetch regions from JSON
+            const data = await response.json();
+            setRegions(data.regions); // Set regions from fetched data
+        };
+        fetchRegions(); // Call the fetch function
+    }, []); // Empty dependency array to run once on mount
 
     // Function to render level and region dropdowns
     const LevelRegions = () => {
