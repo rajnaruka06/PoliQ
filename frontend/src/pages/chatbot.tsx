@@ -12,13 +12,11 @@ import {
 import FeedbackButton from "../components/FeedbackButton.tsx";
 import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
-
 interface MessageCurrent {
     sender: string;
     text: string;
     user: string;
 }
-
 interface MessageHistory {
     messageID: string;
     user: string;
@@ -26,7 +24,6 @@ interface MessageHistory {
     date: string;
     time: string;
 }
-
 const ChatBot: React.FC = () => {
     const [messages, setMessages] = useState<MessageCurrent[]>([]);
     const [input, setInput] = useState("");
@@ -40,12 +37,10 @@ const ChatBot: React.FC = () => {
     const [showLevelsDropdown, setShowLevelsDropdown] = useState(false); // State for Levels dropdown
     const [searchRegion, setSearchRegion] = useState(""); // State for region search
     const [searchLevel, setSearchLevel] = useState(""); // State for level search
-
     const toggleRegionDropdown = () => {
         setShowRegionDropdown((prev) => !prev);
         setShowLevelsDropdown(false); // Close Levels dropdown if open
     };
-
     const toggleLevelsDropdown = () => {
         setShowLevelsDropdown((prev) => !prev);
         setShowRegionDropdown(false); // Close Region dropdown if open
@@ -96,6 +91,80 @@ const ChatBot: React.FC = () => {
         "Level 20",
     ];
 
+    // Function to render level and region dropdowns
+    const LevelRegions = () => {
+        return (
+            <div className="flex relative gap-2 mx-5 mt-auto mb-2">
+                <button
+                    onClick={toggleLevelsDropdown}
+                    className="w-32 p-3 bg-lightTertiary dark:bg-darkSecondary rounded-full text-white"
+                >
+                    Levels
+                </button>
+                <button
+                    onClick={toggleRegionDropdown}
+                    className="w-32 p-3 bg-lightTertiary dark:bg-darkSecondary rounded-full text-white"
+                >
+                    Region
+                </button>
+                {showRegionDropdown && (
+                    <div className="absolute bottom-full mb-2 w-64 bg-white rounded shadow-lg dark:bg-darkPrimary">
+                        <input
+                            type="text"
+                            placeholder="Search Region..."
+                            value={searchRegion}
+                            onChange={(e) => setSearchRegion(e.target.value)}
+                            className="p-2 mb-2 w-full rounded border border-gray-300"
+                        />
+                        <ul className="overflow-y-auto p-2 max-h-48">
+                            {regions
+                                .filter((region) =>
+                                    region
+                                        .toLowerCase()
+                                        .includes(searchRegion.toLowerCase())
+                                )
+                                .map((region, index) => (
+                                    <li
+                                        key={index}
+                                        className="px-2 py-1 text-white cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+                                    >
+                                        {region}
+                                    </li>
+                                ))}
+                        </ul>
+                    </div>
+                )}
+                {showLevelsDropdown && (
+                    <div className="absolute bottom-full mb-2 w-64 bg-white rounded shadow-lg dark:bg-darkPrimary">
+                        <input
+                            type="text"
+                            placeholder="Search Level..."
+                            value={searchLevel}
+                            onChange={(e) => setSearchLevel(e.target.value)}
+                            className="p-2 mb-2 w-full rounded border border-gray-300"
+                        />
+                        <ul className="overflow-y-auto p-2 max-h-48">
+                            {levels
+                                .filter((level) =>
+                                    level
+                                        .toLowerCase()
+                                        .includes(searchLevel.toLowerCase())
+                                )
+                                .map((level, index) => (
+                                    <li
+                                        key={index}
+                                        className="px-2 py-1 text-white cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+                                    >
+                                        {level}
+                                    </li>
+                                ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     const [isDarkMode, setIsDarkMode] = useState(() => {
         // Dark mode state
         // Check local storage or use system preference
@@ -104,21 +173,18 @@ const ChatBot: React.FC = () => {
         }
         return window.matchMedia("(prefers-color-scheme: dark)").matches;
     });
-
     // Using useFetchMessages to fetch messages for the selected chat
     const {
         messages: fetchedMessages,
         loading,
         error,
     } = useFetchMessages(selectedChatID, userId);
-
     // Using useSendMessage to send messages
     const {
         sendMessage,
         loading: sending,
         error: sendError,
     } = useSendMessage(userId);
-
     // Reference for the popup
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -133,15 +199,12 @@ const ChatBot: React.FC = () => {
                 setShowPopup(false); // Close the popup if clicked outside
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
-
         // Cleanup event listener when component unmounts
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [popupRef, paperclipRef]);
-
     useEffect(() => {
         if (isDarkMode) {
             document.documentElement.classList.add("dark");
@@ -151,7 +214,6 @@ const ChatBot: React.FC = () => {
             localStorage.setItem("theme", "light");
         }
     }, [isDarkMode]);
-
     // New handleSend to use the correct format and reflect messages immediately.
     const handleSend = async () => {
         if (input.trim()) {
@@ -160,22 +222,18 @@ const ChatBot: React.FC = () => {
                 ...messages,
                 { sender: "user", text: input, user: "user" },
             ]);
-
             // Send the message using the hook and await the response
             await sendMessage({ chatId: selectedChatID || "", content: input });
-
             // Fetch the latest messages for the selected chat after sending
             if (selectedChatID) {
                 const updatedMessages =
                     await fetchUpdatedMessages(selectedChatID);
                 setConvMessages(updatedMessages);
             }
-
             // Clear the input after sending
             setInput("");
         }
     };
-
     // New fetchUpdatedMessages to retrieve updated messages after handleSend
     const fetchUpdatedMessages = async (chatId: string) => {
         // Call the same logic you use to fetch messages, which could be
@@ -183,20 +241,16 @@ const ChatBot: React.FC = () => {
         const response = await fetch(
             `http://localhost:8000/api/chats/${chatId}/messages?userId=${userId}`
         );
-
         if (!response.ok) throw new Error("Failed to fetch messages");
-
         const data: MessageHistory[] = await response.json();
         return data;
     };
-
     // Effect to update conversation messages when new messages are fetched
     useEffect(() => {
         if (selectedChatID && fetchedMessages) {
             setConvMessages(fetchedMessages);
         }
     }, [selectedChatID, fetchedMessages]);
-
     // Hero for welcome screen
     // TODO: If user click opt x, the content will be send as user input
     const hero = () => {
@@ -222,7 +276,6 @@ const ChatBot: React.FC = () => {
             </div>
         );
     };
-
     // Chat Area right hand side
     // TODO: need to change logic
     // FIXME: rounded bug if message too long
@@ -268,7 +321,6 @@ const ChatBot: React.FC = () => {
                   </div>
               </div>
           ));
-
     // Popup for Upload File
     const UploadPopup = showPopup && (
         // TODO: Highlight icon when hover
@@ -285,7 +337,6 @@ const ChatBot: React.FC = () => {
                 {/* Upload icon with margin */}
                 <div className="text-black dark:text-white">Upload Dataset</div>
             </button>
-
             <input
                 type="file"
                 id="fileInput"
@@ -301,12 +352,10 @@ const ChatBot: React.FC = () => {
             />
         </div>
     );
-
     // Toggle Dark Mode
     const toggleDarkMode = () => {
         setIsDarkMode((prevMode) => !prevMode);
     };
-
     // Return
     return (
         <div className={`${isDarkMode && "dark"}`}>
@@ -317,89 +366,8 @@ const ChatBot: React.FC = () => {
                     setSelectedChatID={setSelectedChatID}
                     setMessages={setMessages} //passes setMessages as a prop
                 />
-                <div
-                    className="relative flex gap-2 mb-2"
-                    style={{ marginTop: "42.8rem", marginLeft: "1rem" }}
-                >
-                    {" "}
-                    {/* Custom margin top for maximum space */}
-                    <button
-                        onClick={toggleLevelsDropdown}
-                        className="w-32 p-3 bg-lightTertiary dark:bg-darkSecondary rounded-full text-white"
-                    >
-                        Levels
-                    </button>
-                    <button
-                        onClick={toggleRegionDropdown}
-                        className="w-32 p-3 bg-lightTertiary dark:bg-darkSecondary rounded-full text-white"
-                    >
-                        Region
-                    </button>
-                    {showRegionDropdown && (
-                        <div className="absolute bottom-full mb-2 w-64 bg-white dark:bg-darkPrimary shadow-lg rounded">
-                            <input
-                                type="text"
-                                placeholder="Search Region..."
-                                value={searchRegion}
-                                onChange={(e) =>
-                                    setSearchRegion(e.target.value)
-                                }
-                                className="p-2 w-full border border-gray-300 rounded mb-2"
-                            />
-                            <ul className="max-h-48 overflow-y-auto p-2">
-                                {" "}
-                                {/* Set max height and enable scrolling */}
-                                {regions
-                                    .filter((region) =>
-                                        region
-                                            .toLowerCase()
-                                            .includes(
-                                                searchRegion.toLowerCase()
-                                            )
-                                    )
-                                    .map((region, index) => (
-                                        <li
-                                            key={index}
-                                            className="py-1 px-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer text-white"
-                                        >
-                                            {region}
-                                        </li>
-                                    ))}
-                            </ul>
-                        </div>
-                    )}
-                    {/* Levels Dropdown Menu */}
-                    {showLevelsDropdown && (
-                        <div className="absolute bottom-full mb-2 w-64 bg-white dark:bg-darkPrimary shadow-lg rounded">
-                            <input
-                                type="text"
-                                placeholder="Search Level..."
-                                value={searchLevel}
-                                onChange={(e) => setSearchLevel(e.target.value)}
-                                className="p-2 w-full border border-gray-300 rounded mb-2"
-                            />
-
-                            <ul className="max-h-48 overflow-y-auto p-2">
-                                {" "}
-                                {/* Set max height and enable scrolling */}
-                                {levels
-                                    .filter((level) =>
-                                        level
-                                            .toLowerCase()
-                                            .includes(searchLevel.toLowerCase())
-                                    )
-                                    .map((level, index) => (
-                                        <li
-                                            key={index}
-                                            className="py-1 px-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer text-white"
-                                        >
-                                            {level}
-                                        </li>
-                                    ))}
-                            </ul>
-                        </div>
-                    )}
-                </div>
+                {/*Levels and Regions */}
+                <LevelRegions /> {/* Call the LevelRegions function here */}
                 {/* Chat area */}
                 <div className="flex flex-col mx-auto w-3/5">
                     {/* light dark mode button */}
@@ -411,12 +379,10 @@ const ChatBot: React.FC = () => {
                     </button>
                     {/* Hero for welcoming page */}
                     {!selectedChatID && hero()}
-
                     <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
                         {/* Messages */}
                         {ChatArea}
                     </div>
-
                     {/* Input bar */}
                     <div className="flex gap-2 mt-4 text-xl">
                         {/* Input box */}
@@ -431,7 +397,6 @@ const ChatBot: React.FC = () => {
                                     }}
                                 />
                             </div>
-
                             {/* Input Area */}
                             <input
                                 type="text"
@@ -464,5 +429,4 @@ const ChatBot: React.FC = () => {
         </div>
     );
 };
-
 export default ChatBot;
