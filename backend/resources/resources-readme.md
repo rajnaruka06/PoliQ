@@ -5,6 +5,7 @@ This directory contains configuration files and environment variables for the ap
 ## Files
 
 - `.ENV`: Environment variable file (not tracked in version control)
+- `.ENV.example`: Example environment file with placeholder values (for documentation purposes)
 
 ## Environment Variables
 
@@ -26,4 +27,4 @@ The environment variables are loaded using the `python-dotenv` library in variou
 
 ## Security Note
 
-Never commit the `.ENV` file to version control. It contains sensitive information and should be kept secure. Consider using a `.ENV.example` file with placeholder values for documentation purposes.
+Never commit the `.ENV` file to version control. It contains sensitive information and should be kept secure. Use the `.ENV.example` file with placeholder values for documentation purposes.

@@ -13,8 +13,10 @@ import {
     AiOutlineSearch,
     AiOutlineEllipsis,
     AiOutlineForm,
+    AiOutlineEdit,
 } from "react-icons/ai";
 // Import hooks
+import { useUpdateTitleChat } from "../hooks/useUpdateTitleChat";
 import { useFetchChatHistory } from "../hooks/useFetchChatHistory";
 import { usePinChat } from "../hooks/usePinChat";
 import { useUnpinChat } from "../hooks/useUnpinChat";
@@ -31,12 +33,14 @@ interface ChatHistory {
 }
 
 interface SidebarProps {
+    onOptionClick?: (option: string) => void;
     selectedChatID: string | null;
     setSelectedChatID: (chatID: string | null) => void;
     setMessages: React.Dispatch<React.SetStateAction<MessageCurrent[]>>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
+    onOptionClick,
     selectedChatID,
     setSelectedChatID,
     setMessages,
@@ -48,13 +52,22 @@ const Sidebar: React.FC<SidebarProps> = ({
     const settingsRef = useRef<HTMLDivElement | null>(null);
     const SetRef = useRef<HTMLDivElement | null>(null); // Reference for the settings icon
     const dotRef = useRef<HTMLDivElement | null>(null); // Reference for the three dots icon
-    const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
+    // const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs //commented to remove red prompt
+    const [, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
     const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
     const { chatHistory, loading, error } = useFetchChatHistory(userId);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isRenaming, setIsRenaming] = useState(false); // To control renaming state
+    const [newTitle, setNewTitle] = useState(""); // New title state
+    const [chatToRename, setChatToRename] = useState<string | null>(null); // Chat ID to rename
+    const {
+        updateTitleChat,
+        loading: renameLoading,
+        error: renameError,
+    } = useUpdateTitleChat(userId); // Hook to rename chat
     // State to manage filtered chat history
     const [filteredChatHistory, setFilteredChatHistory] = useState<
         ChatHistory[]
@@ -218,82 +231,114 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
     };
 
+    //to rename a chat title
+    const handleRenameChat = async (chatID: string) => {
+        if (!newTitle.trim()) return; // Prevent empty titles
+        try {
+            await updateTitleChat(chatID, newTitle); // Call the updateTitleChat function from the hook
+            // Update the chat title locally after renaming
+            setFilteredChatHistory((prevHistory) =>
+                prevHistory.map((chat) =>
+                    chat.chatId === chatID ? { ...chat, title: newTitle } : chat
+                )
+            );
+            setIsRenaming(false); // Hide the rename input
+        } catch (error) {
+            console.error("Error renaming chat:", error);
+        }
+    };
+
     // Function to handle the three dots menu
     const threeDotsMenu = (chat: {
         chatId: string;
         title: string;
         pinned: boolean;
+        archived: boolean;
     }) => {
         return (
-            // FIXME: threedots bug, useref can't close
             <div
                 ref={menuRef}
-                className="flex absolute right-4 z-50 flex-col gap-3 items-end p-4 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
+                className="flex absolute right-4 z-10 flex-col gap-3 items-end p-2 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
             >
                 {/* Pin / Unpin button */}
                 <button
-                    className="flex gap-2 items-center text-black shadow-sm bg-lightSecondary shadow-black/90 dark:bg-darkSecondary dark:text-white"
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() => handlePinChat(chat.chatId, chat.pinned)}
                 >
                     {chat.pinned ? (
                         <>
+                            <span>Unpin</span>
                             <BiSolidPin />
-                            {/* <span>Unpin</span> */}
                         </>
                     ) : (
                         <>
+                            <span>Pin</span>
                             <BiPin />
-                            {/* <span>Pin</span> */}
                         </>
                     )}
                 </button>
                 {/* Delete chat button */}
                 <button
-                    className="flex gap-2 items-center text-black shadow-sm bg-lightSecondary shadow-black/90 dark:bg-darkSecondary dark:text-white"
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() => handleDeleteChat(chat.chatId)}
                 >
+                    <span>Delete</span>
                     <BiTrash />
-                    {/* <span>Delete</span> */}
                 </button>
                 {/* Archive / Unarchive button */}
                 <button
-                    className="flex gap-2 items-center text-black shadow-sm bg-lightSecondary shadow-black/90 dark:bg-darkSecondary dark:text-white"
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() =>
                         handleArchiveChat(chat.chatId, chat.archived || false)
                     } // Pass the correct state
                 >
+                    <span>Archive</span>
                     <BiArchive />
-                    {/* <span>Archive</span> */}
+                </button>
+                <button
+                    className="flex gap-2 items-center text-black shadow-sm bg-lightSecondary shadow-black/90 dark:bg-darkSecondary dark:text-white"
+                    onClick={() => {
+                        setIsRenaming(true);
+                        setChatToRename(chat.chatId); // Set the chat ID to rename
+                        setNewTitle(chat.title); // Set the current title as default
+                    }}
+                >
+                    <AiOutlineEdit />
+                    {/* <span>Rename</span> */}
                 </button>
             </div>
         );
     };
 
     //  Overlay content on bottom left corner
-    //  TODO: Create a floating window
     const settingsOverlay = showSettingsMenu && (
         <div
             ref={settingsRef}
-            className="flex absolute right-0 bottom-10 flex-col gap-5 p-5 mb-2 w-full text-lg text-white rounded shadow-lg bg-lightTertiary dark:bg-darkPrimary dark:text-black"
+            className="flex absolute right-0 bottom-10 flex-col gap-5 p-5 mb-2 w-full text-lg text-white rounded-md shadow-lg bg-lightTertiary dark:bg-darkPrimary dark:text-black"
         >
-            <button className="text-2xl font-semibold text-black bg-lightPrimary">
+            <button
+                onClick={() => onOptionClick && onOptionClick("View all chats")}
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+            >
                 View all chats
             </button>
-            <button className="text-2xl font-semibold text-black bg-lightPrimary">
+            <button
+                onClick={() => onOptionClick && onOptionClick("Archived chats")}
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+            >
                 Archived chats
             </button>
-            <button className="text-2xl font-semibold text-black bg-lightPrimary">
+            <button
+                onClick={() => onOptionClick && onOptionClick("Memory")}
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+            >
                 Memory
             </button>
-            {/* <div className="flex justify-end">
-                <button className="text-3xl" onClick={toggleSettingsOverlay}>
-                    <AiOutlineEllipsis />
-                </button>
-            </div> */}
         </div>
     );
 
     // components that called inside loadChatHistory
+    // FIXME: if chat title too long, truncate not working. but if hovered, truncate working and width changed
     const loadChatHistoryComponent = (chat: ChatHistory, idx: number) => {
         return (
             <div
@@ -326,8 +371,36 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                     )}
                 </div>
-                {/* FIXME: when threedotsmenu hovered, row size changes */}
                 {showOptionsMenu === chat.chatId && threeDotsMenu(chat)}
+                {/* Rename input field when renaming is active for this chat */}
+                {isRenaming && chatToRename === chat.chatId && (
+                    <div className="flex gap-2 items-center mt-2">
+                        <input
+                            type="text"
+                            value={newTitle}
+                            onChange={(e) => setNewTitle(e.target.value)}
+                            className="px-2 py-1 text-black bg-white rounded border"
+                            placeholder="Enter new title"
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    handleRenameChat(chatToRename!);
+                                }
+                            }}
+                        />
+                        <button
+                            className="px-3 py-1 text-white bg-blue-500 rounded"
+                            onClick={() => handleRenameChat(chatToRename!)}
+                        >
+                            Save
+                        </button>
+                        <button
+                            className="px-3 py-1 text-white bg-red-500 rounded"
+                            onClick={() => setIsRenaming(false)}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                )}
             </div>
         );
     };
@@ -425,16 +498,20 @@ const Sidebar: React.FC<SidebarProps> = ({
                             <AiOutlineForm />
                         </button>
                     </div>
-                    {loading && <p>Loading results...</p>}
-                    {error && <p>Error: {error}</p>}
-                    {!loading && !error && loadChatHistory()}
+                    {/* Loading and error handling */}
+                    {loading ? (
+                        <p>Loading results...</p>
+                    ) : error ? (
+                        <p>Error: {error}</p>
+                    ) : (
+                        loadChatHistory()
+                    )}
 
                     {/* Bottom Sidebar Area */}
                     <div className="flex relative text-3xl bg-lightSecondary dark:bg-darkSecondary">
                         <div className="text-black dark:text-white">
                             John Doe
                         </div>
-                        {/* FIXME: settings bug, useref can't close */}
                         {settingsOverlay}
                         {/* Show settings menu if active */}
                         <div ref={SetRef}>
