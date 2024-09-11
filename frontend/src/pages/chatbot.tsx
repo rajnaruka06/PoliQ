@@ -14,7 +14,7 @@ import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
 import SettingsOptionOverlay from "../components/SettingsOptionOverlay.tsx";
 import Hero from "../components/Hero.tsx";
-import LevelRegions from "../components/LevelsRegion.tsx";
+import LevelRegions from "../components/LevelsRegions.tsx";
 
 interface MessageCurrent {
     sender: string;
