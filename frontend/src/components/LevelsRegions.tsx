@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const LevelsRegion: React.FC = () => {
     const [levels, setLevels] = useState<string[]>([]); // Initialize state for levels
@@ -7,16 +7,12 @@ const LevelsRegion: React.FC = () => {
     const [showLevelsDropdown, setShowLevelsDropdown] = useState(false); // State for Levels dropdown
     const [searchRegion, setSearchRegion] = useState(""); // State for region search
     const [searchLevel, setSearchLevel] = useState(""); // State for level search
+    const regionRef = useRef<HTMLDivElement | null>(null); // Reference for the region dropdown
+    const levelsRef = useRef<HTMLDivElement | null>(null); // Reference for the levels dropdown
+    const regionButtonRef = useRef<HTMLButtonElement | null>(null); // Reference for the region button
+    const levelsButtonRef = useRef<HTMLButtonElement | null>(null); // Reference for the levels button
 
-    const toggleRegionDropdown = () => {
-        setShowRegionDropdown((prev) => !prev);
-        setShowLevelsDropdown(false); // Close Levels dropdown if open
-    };
-    const toggleLevelsDropdown = () => {
-        setShowLevelsDropdown((prev) => !prev);
-        setShowRegionDropdown(false); // Close Region dropdown if open
-    };
-
+    // Fetch levels from JSON
     useEffect(() => {
         const fetchLevels = async () => {
             const response = await fetch("../../public/levels.json"); // Fetch levels from JSON
@@ -26,31 +22,89 @@ const LevelsRegion: React.FC = () => {
         fetchLevels(); // Call the fetch function
     }, []); // Empty dependency array to run once on mount
 
-    // Regions fetch
+    // Fetch regions from JSON
     useEffect(() => {
         const fetchRegions = async () => {
-            const response = await fetch("../../public/regions.json"); // Fetch regions from JSON
+            const response = await fetch("../../public/regions.json"); // Fetch Regions from JSON
             const data = await response.json();
             setRegions(data.regions); // Set regions from fetched data
         };
         fetchRegions(); // Call the fetch function
     }, []); // Empty dependency array to run once on mount
+
+    // Close dropdowns when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as Node;
+
+            // Check if the dropdowns and buttons are defined before accessing them
+            const isOutsideRegionDropdown =
+                regionRef.current && !regionRef.current.contains(target);
+            const isOutsideLevelsDropdown =
+                levelsRef.current && !levelsRef.current.contains(target);
+            const isOutsideRegionButton =
+                regionButtonRef.current &&
+                !regionButtonRef.current.contains(target);
+            const isOutsideLevelsButton =
+                levelsButtonRef.current &&
+                !levelsButtonRef.current.contains(target);
+
+            // Debugging logs
+            console.log("Clicked target:", target);
+            console.log("Is outside region dropdown:", isOutsideRegionDropdown);
+            console.log("Is outside levels dropdown:", isOutsideLevelsDropdown);
+            console.log("Is outside region button:", isOutsideRegionButton);
+            console.log("Is outside levels button:", isOutsideLevelsButton);
+
+            // Close dropdowns if clicking outside of both dropdowns and their buttons
+            if (
+                (isOutsideRegionDropdown || isOutsideLevelsDropdown) &&
+                isOutsideRegionButton &&
+                isOutsideLevelsButton
+            ) {
+                console.log("Closing dropdowns"); // Debugging log
+                setShowRegionDropdown(false);
+                setShowLevelsDropdown(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
         <div className="flex relative gap-2 mx-5 mt-auto mb-2">
             <button
-                onClick={toggleLevelsDropdown}
+                ref={levelsButtonRef}
                 className="p-3 w-32 text-white rounded-full bg-lightTertiary dark:bg-darkSecondary"
+                onClick={(event) => {
+                    event.stopPropagation(); // Prevent click from bubbling up to the document
+                    setShowLevelsDropdown((prev) => !prev); // Toggle the popup visibility
+                    setShowRegionDropdown(false); // Close Region dropdown if open
+                }}
             >
                 Levels
             </button>
+
             <button
-                onClick={toggleRegionDropdown}
+                ref={regionButtonRef}
                 className="p-3 w-32 text-white rounded-full bg-lightTertiary dark:bg-darkSecondary"
+                onClick={(event) => {
+                    event.stopPropagation(); // Prevent click from bubbling up to the document
+                    setShowRegionDropdown((prev) => !prev); // Toggle the popup visibility
+                    setShowLevelsDropdown(false); // Close Levels dropdown if open
+                }}
             >
                 Region
             </button>
+
             {showRegionDropdown && (
-                <div className="absolute bottom-full mb-2 w-64 bg-white rounded shadow-lg dark:bg-darkPrimary">
+                <div
+                    ref={regionRef}
+                    className="absolute bottom-full mb-2 w-64 bg-white rounded shadow-lg dark:bg-darkPrimary"
+                >
                     <input
                         type="text"
                         placeholder="Search Region..."
@@ -76,8 +130,12 @@ const LevelsRegion: React.FC = () => {
                     </ul>
                 </div>
             )}
+
             {showLevelsDropdown && (
-                <div className="absolute bottom-full mb-2 w-64 bg-white rounded shadow-lg dark:bg-darkPrimary">
+                <div
+                    ref={levelsRef}
+                    className="absolute bottom-full mb-2 w-64 bg-white rounded shadow-lg dark:bg-darkPrimary"
+                >
                     <input
                         type="text"
                         placeholder="Search Level..."
