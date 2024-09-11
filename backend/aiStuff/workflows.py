@@ -8,7 +8,7 @@ from .agentHelpers import (
     , InvalidUserQueryException
     , NoDataFoundException
     , loadLLM
-    , loadJson
+    , loadMetadata
 )
 from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent, DatasetRegionMatcherAgent
 import sys
@@ -125,8 +125,8 @@ class ElecDataWorkflow:
 class DatasetRegionMatcher:
     def __init__(self):
         self.llm = loadLLM()
-        self.datasetsMetadata = loadJson("datasetsMetadata.json")
-        self.regionsMetadata = loadJson("regionsMetadata.json")
+        self.datasetsMetadata = loadMetadata('metadata', 'Datasets')
+        self.regionsMetadata = loadMetadata('metadata', 'Regions')
         self.agent = DatasetRegionMatcherAgent(llm = self.llm)
 
     def match(self, userQuery):
