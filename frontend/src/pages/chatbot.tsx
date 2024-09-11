@@ -29,10 +29,6 @@ interface MessageHistory {
     time: string;
 }
 
-export const chatbot = () => {
-    return <div>chatbot</div>;
-};
-
 const ChatBot: React.FC = () => {
     const [messages, setMessages] = useState<MessageCurrent[]>([]);
     const [input, setInput] = useState("");
