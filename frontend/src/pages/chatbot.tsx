@@ -83,6 +83,7 @@ const ChatBot: React.FC = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [popupRef, paperclipRef]);
+
     useEffect(() => {
         if (isDarkMode) {
             document.documentElement.classList.add("dark");
@@ -92,6 +93,7 @@ const ChatBot: React.FC = () => {
             localStorage.setItem("theme", "light");
         }
     }, [isDarkMode]);
+
     // New handleSend to use the correct format and reflect messages immediately.
     const handleSend = async () => {
         setShowHero(false);
@@ -206,6 +208,7 @@ const ChatBot: React.FC = () => {
                   </div>
               </div>
           ));
+
     // Popup for Upload File
     const UploadPopup = showPopup && (
         <div
@@ -236,6 +239,7 @@ const ChatBot: React.FC = () => {
             />
         </div>
     );
+
     // Toggle Dark Mode
     const toggleDarkMode = () => {
         setIsDarkMode((prevMode) => !prevMode);
@@ -243,7 +247,6 @@ const ChatBot: React.FC = () => {
 
     const [showSettingsOverlay, setShowSettingsOverlay] = useState(false);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
-
     const handleSettingsOverlay = (option: string | null) => {
         if (option) {
             setSelectedOption(option);
@@ -252,6 +255,49 @@ const ChatBot: React.FC = () => {
             setShowSettingsOverlay(false);
             setSelectedOption(null);
         }
+    };
+
+    const InputArea = () => {
+        return (
+            <div className="flex gap-2 mx-auto mt-4 w-full max-w-7xl text-xl">
+                {/* Input box */}
+                <div className="relative flex-grow">
+                    {UploadPopup}
+                    <div ref={paperclipRef}>
+                        <AiOutlinePaperClip
+                            className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
+                            onClick={(event) => {
+                                event.stopPropagation(); // Prevent click from bubbling up to the document
+                                setShowPopup((prev) => !prev); // Toggle the popup visibility
+                            }}
+                        />
+                    </div>
+                    {/* Input Area */}
+                    <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)} // Update input state on change
+                        onKeyUp={(e) => e.key === "Enter" && handleSend()} // Send message on Enter key press
+                        className="flex-grow p-3 pr-3 pl-12 w-full text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                        placeholder="Type your message..."
+                    />
+                </div>
+                {/* Send button */}
+                <button
+                    onClick={handleSend}
+                    className="px-4 py-2 text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                >
+                    <AiOutlineArrowUp />
+                </button>
+                {/* Clear button */}
+                <button
+                    onClick={() => setInput("")}
+                    className="px-4 py-2 text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                >
+                    <AiOutlineClose />
+                </button>
+            </div>
+        );
     };
 
     // Return
@@ -282,6 +328,7 @@ const ChatBot: React.FC = () => {
                     >
                         {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
                     </button>
+
                     {/* Hero for welcoming page */}
                     {showHero && !selectedChatID && (
                         <Hero handleOptionClick={handleOptionClick} />
@@ -293,48 +340,7 @@ const ChatBot: React.FC = () => {
                             {ChatArea}
                         </div>
                     </div>
-
-                    {/* Input bar */}
-                    <div className="flex gap-2 mx-auto mt-4 w-full max-w-7xl text-xl">
-                        {/* Input box */}
-                        <div className="relative flex-grow">
-                            {UploadPopup}
-                            <div ref={paperclipRef}>
-                                <AiOutlinePaperClip
-                                    className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
-                                    onClick={(event) => {
-                                        event.stopPropagation(); // Prevent click from bubbling up to the document
-                                        setShowPopup((prev) => !prev); // Toggle the popup visibility
-                                    }}
-                                />
-                            </div>
-                            {/* Input Area */}
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)} // Update input state on change
-                                onKeyUp={(e) =>
-                                    e.key === "Enter" && handleSend()
-                                } // Send message on Enter key press
-                                className="flex-grow p-3 pr-3 pl-12 w-full text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                                placeholder="Type your message..."
-                            />
-                        </div>
-                        {/* Send button */}
-                        <button
-                            onClick={handleSend}
-                            className="px-4 py-2 text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        >
-                            <AiOutlineArrowUp />
-                        </button>
-                        {/* Clear button */}
-                        <button
-                            onClick={() => setInput("")}
-                            className="px-4 py-2 text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        >
-                            <AiOutlineClose />
-                        </button>
-                    </div>
+                    <InputArea />
                 </div>
             </div>
         </div>

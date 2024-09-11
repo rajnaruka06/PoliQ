@@ -338,7 +338,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     );
 
     // components that called inside loadChatHistory
-    // FIXME: if chat title too long, truncate not working. but if hovered, truncate working and width changed
+    // FIXME PRIYA: if chat title too long, truncate not working. but if hovered, truncate working and width changed
     const loadChatHistoryComponent = (chat: ChatHistory, idx: number) => {
         return (
             <div
@@ -373,6 +373,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 {showOptionsMenu === chat.chatId && threeDotsMenu(chat)}
                 {/* Rename input field when renaming is active for this chat */}
+                {/* FIXME KRITIKA: organize the container */}
                 {isRenaming && chatToRename === chat.chatId && (
                     <div className="flex gap-2 items-center mt-2">
                         <input
