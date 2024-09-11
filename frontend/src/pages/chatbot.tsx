@@ -14,13 +14,13 @@ import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
 import SettingsOptionOverlay from "../components/SettingsOptionOverlay.tsx";
 import Hero from "../components/Hero.tsx";
+import LevelRegions from "../components/LevelsRegions.tsx";
 
 interface MessageCurrent {
     sender: string;
     text: string;
     user: string;
 }
-
 interface MessageHistory {
     messageID: string;
     user: string;
@@ -48,7 +48,6 @@ const ChatBot: React.FC = () => {
         }
         return window.matchMedia("(prefers-color-scheme: dark)").matches;
     });
-
     // Using useFetchMessages to fetch messages for the selected chat
     const {
         messages: fetchedMessages,
@@ -56,7 +55,6 @@ const ChatBot: React.FC = () => {
         // loading,
         // error,
     } = useFetchMessages(selectedChatID, userId);
-
     // Using useSendMessage to send messages
     const {
         sendMessage,
@@ -79,9 +77,7 @@ const ChatBot: React.FC = () => {
                 setShowPopup(false); // Close the popup if clicked outside
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
-
         // Cleanup event listener when component unmounts
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -108,22 +104,18 @@ const ChatBot: React.FC = () => {
                 ...messages,
                 { sender: "user", text: input, user: "user" },
             ]);
-
             // Send the message using the hook and await the response
             await sendMessage({ chatId: selectedChatID || "", content: input });
-
             // Fetch the latest messages for the selected chat after sending
             if (selectedChatID) {
                 const updatedMessages =
                     await fetchUpdatedMessages(selectedChatID);
                 setConvMessages(updatedMessages);
             }
-
             // Clear the input after sending
             setInput("");
         }
     };
-
     // New fetchUpdatedMessages to retrieve updated messages after handleSend
     const fetchUpdatedMessages = async (chatId: string) => {
         // Call the same logic you use to fetch messages, which could be
@@ -131,13 +123,10 @@ const ChatBot: React.FC = () => {
         const response = await fetch(
             `http://localhost:8000/api/chats/${chatId}/messages?userId=${userId}`
         );
-
         if (!response.ok) throw new Error("Failed to fetch messages");
-
         const data: MessageHistory[] = await response.json();
         return data;
     };
-
     // Effect to update conversation messages when new messages are fetched
     useEffect(() => {
         if (selectedChatID && fetchedMessages) {
@@ -166,7 +155,6 @@ const ChatBot: React.FC = () => {
             setConvMessages(updatedMessages);
         }
     };
-
     // Chat Area right hand side
     // TODO: need to change logic
     const ChatArea = selectedChatID
@@ -192,13 +180,12 @@ const ChatBot: React.FC = () => {
                   {/* Copy and Feedback Buttons */}
                   {msg.user !== "user" && (
                       <div className="flex gap-2 mt-2">
-                          
                           <FeedbackButton
-                            chatId={selectedChatID || ""}
-                            messageId={msg.messageID}
-                            userId={userId}
-                            content={msg.content} // Pass the content for the copy functionality
-/> 
+                              chatId={selectedChatID || ""}
+                              messageId={msg.messageID}
+                              userId={userId}
+                              content={msg.content} // Pass the content for the copy functionality
+                          />
                       </div>
                   )}
               </div>
@@ -237,7 +224,6 @@ const ChatBot: React.FC = () => {
                 {/* Upload icon with margin */}
                 <div className="text-black dark:text-white">Upload Dataset</div>
             </button>
-
             <input
                 type="file"
                 id="fileInput"
@@ -261,7 +247,6 @@ const ChatBot: React.FC = () => {
 
     const [showSettingsOverlay, setShowSettingsOverlay] = useState(false);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
-
     const handleSettingsOverlay = (option: string | null) => {
         if (option) {
             setSelectedOption(option);
@@ -270,6 +255,49 @@ const ChatBot: React.FC = () => {
             setShowSettingsOverlay(false);
             setSelectedOption(null);
         }
+    };
+
+    const InputArea = () => {
+        return (
+            <div className="flex gap-2 mx-auto mt-4 w-full max-w-7xl text-xl">
+                {/* Input box */}
+                <div className="relative flex-grow">
+                    {UploadPopup}
+                    <div ref={paperclipRef}>
+                        <AiOutlinePaperClip
+                            className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
+                            onClick={(event) => {
+                                event.stopPropagation(); // Prevent click from bubbling up to the document
+                                setShowPopup((prev) => !prev); // Toggle the popup visibility
+                            }}
+                        />
+                    </div>
+                    {/* Input Area */}
+                    <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)} // Update input state on change
+                        onKeyUp={(e) => e.key === "Enter" && handleSend()} // Send message on Enter key press
+                        className="flex-grow p-3 pr-3 pl-12 w-full text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                        placeholder="Type your message..."
+                    />
+                </div>
+                {/* Send button */}
+                <button
+                    onClick={handleSend}
+                    className="px-4 py-2 text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                >
+                    <AiOutlineArrowUp />
+                </button>
+                {/* Clear button */}
+                <button
+                    onClick={() => setInput("")}
+                    className="px-4 py-2 text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                >
+                    <AiOutlineClose />
+                </button>
+            </div>
+        );
     };
 
     // Return
@@ -283,13 +311,14 @@ const ChatBot: React.FC = () => {
                     setMessages={setMessages}
                     onOptionClick={handleSettingsOverlay}
                 />
-
                 {/* Settings Option Overlay */}
                 <SettingsOptionOverlay
                     showSettingsOverlay={showSettingsOverlay}
                     handleSettingsOverlay={handleSettingsOverlay}
                     selectedOption={selectedOption}
                 />
+                {/*Levels and Regions */}
+                <LevelRegions /> {/* Call the LevelRegions function here */}
                 {/* Chat area */}
                 <div className="flex flex-col w-full">
                     {/* light dark mode button */}
@@ -299,6 +328,7 @@ const ChatBot: React.FC = () => {
                     >
                         {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
                     </button>
+
                     {/* Hero for welcoming page */}
                     {showHero && !selectedChatID && (
                         <Hero handleOptionClick={handleOptionClick} />
@@ -310,53 +340,10 @@ const ChatBot: React.FC = () => {
                             {ChatArea}
                         </div>
                     </div>
-
-                    {/* Input bar */}
-                    <div className="flex gap-2 mx-auto mt-4 w-full max-w-7xl text-xl">
-                        {/* Input box */}
-                        <div className="relative flex-grow">
-                            {UploadPopup}
-                            <div ref={paperclipRef}>
-                                <AiOutlinePaperClip
-                                    className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
-                                    onClick={(event) => {
-                                        event.stopPropagation(); // Prevent click from bubbling up to the document
-                                        setShowPopup((prev) => !prev); // Toggle the popup visibility
-                                    }}
-                                />
-                            </div>
-
-                            {/* Input Area */}
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)} // Update input state on change
-                                onKeyUp={(e) =>
-                                    e.key === "Enter" && handleSend()
-                                } // Send message on Enter key press
-                                className="flex-grow p-3 pr-3 pl-12 w-full text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                                placeholder="Type your message..."
-                            />
-                        </div>
-                        {/* Send button */}
-                        <button
-                            onClick={handleSend}
-                            className="px-4 py-2 text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        >
-                            <AiOutlineArrowUp />
-                        </button>
-                        {/* Clear button */}
-                        <button
-                            onClick={() => setInput("")}
-                            className="px-4 py-2 text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
-                        >
-                            <AiOutlineClose />
-                        </button>
-                    </div>
+                    <InputArea />
                 </div>
             </div>
         </div>
     );
 };
-
 export default ChatBot;
