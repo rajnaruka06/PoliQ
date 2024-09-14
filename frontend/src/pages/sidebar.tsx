@@ -264,7 +264,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                 {/* Pin / Unpin button */}
                 <button
                     className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
-                    onClick={() => handlePinChat(chat.chatId, chat.pinned)}
+                    onClick={() => {
+                        handlePinChat(chat.chatId, chat.pinned);
+                        setShowOptionsMenu(null); // Close the menu after action
+                    }}
                 >
                     {chat.pinned ? (
                         <>
@@ -281,7 +284,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                 {/* Delete chat button */}
                 <button
                     className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
-                    onClick={() => handleDeleteChat(chat.chatId)}
+                    onClick={() => {
+                        handleDeleteChat(chat.chatId);
+                        setShowOptionsMenu(null); // Close the menu after action
+                    }}
                 >
                     <span>Delete</span>
                     <BiTrash />
@@ -289,9 +295,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                 {/* Archive / Unarchive button */}
                 <button
                     className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
-                    onClick={() =>
-                        handleArchiveChat(chat.chatId, chat.archived || false)
-                    } // Pass the correct state
+                    onClick={() => {
+                        handleArchiveChat(chat.chatId, chat.archived || false);
+                        setShowOptionsMenu(null); // Close the menu after action
+                    }}
                 >
                     <span>Archive</span>
                     <BiArchive />
@@ -303,6 +310,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         setIsRenaming(true);
                         setChatToRename(chat.chatId); // Set the chat ID to rename
                         setNewTitle(chat.title); // Set the current title as default
+                        setShowOptionsMenu(null); // Close the menu after action
                     }}
                 >
                     <span>Rename</span>
@@ -340,31 +348,32 @@ const Sidebar: React.FC<SidebarProps> = ({
     );
 
     // components that called inside loadChatHistory
-    // FIXME PRIYA: if chat title too long, truncate not working. but if hovered, truncate working and width changed
+    // FIXME: if chat title too long, truncate not working. but if hovered, truncate working and width changed
+    // components that called inside loadChatHistory
     const loadChatHistoryComponent = (chat: ChatHistory, idx: number) => {
         return (
             <div
                 key={idx}
-                className={`flex flex-col py-1 pl-5 ml-3 rounded-xl text-xl truncate hover:cursor-pointer ${
+                className={`flex items-center py-1 px-5 rounded-xl text-xl hover:cursor-pointer ${
                     selectedChatID === chat.chatId
                         ? "bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-500 text-white dark:text-white"
                         : "dark:hover:bg-darkPrimary hover:bg-gray-200 bg-transparent text-black dark:text-white"
                 }`}
                 onClick={() => setSelectedChatID(chat.chatId)}
-                onMouseEnter={() => setHoveredChatID(chat.chatId)} // Set hovered chat on mouse enter
-                onMouseLeave={() => setHoveredChatID(null)} // Reset hovered chat on mouse leave
+                onMouseEnter={() =>
+                    !isRenaming && setHoveredChatID(chat.chatId)
+                } // Set hovered chat on mouse enter only if not renaming
+                onMouseLeave={() => !isRenaming && setHoveredChatID(null)} // Reset hovered chat on mouse leave only if not renaming
             >
-                <div className="flex justify-between group">
+                <div className="flex items-center w-full">
+                    {/* Chat title or input */}
                     {isRenaming && chatToRename === chat.chatId ? (
-                        // When renaming, show an input field instead of title
-                        <div className="flex flex-col items-center p-4 w-full bg-blue-600 rounded-lg">
-                            {" "}
-                            {/* Adjusted container */}
+                        <div className="flex-grow">
                             <input
                                 type="text"
                                 value={newTitle}
                                 onChange={(e) => setNewTitle(e.target.value)}
-                                className="px-2 py-1 w-full max-w-xs text-black bg-white rounded border" // Adjusted input
+                                className="px-3 py-2 mb-2 w-full text-black bg-white rounded border"
                                 placeholder="Enter new title"
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") {
@@ -373,10 +382,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 }}
                             />
                             <div className="flex gap-4 mt-2">
-                                {" "}
-                                {/* Center buttons and add gap */}
                                 <button
-                                    className="px-3 py-1 text-white bg-blue-500 rounded"
+                                    className="px-3 py-1 text-white bg-green-500 rounded"
                                     onClick={() =>
                                         handleRenameChat(chatToRename!)
                                     }
@@ -392,34 +399,37 @@ const Sidebar: React.FC<SidebarProps> = ({
                             </div>
                         </div>
                     ) : (
-                        // Show the chat title normally and enable click to rename
-                        <span
-                            className="truncate cursor-pointer"
-                            onClick={() => {
+                        <div
+                            className="flex-grow truncate cursor-pointer"
+                            onDoubleClick={() => {
                                 setIsRenaming(true);
                                 setChatToRename(chat.chatId);
                                 setNewTitle(chat.title);
                             }}
                         >
                             {chat.title}
-                        </span>
-                    )}
-                    {hoveredChatID === chat.chatId && ( // Show icon only if hovered
-                        <div ref={dotRef}>
-                            <AiOutlineMore
-                                onClick={(event) => {
-                                    event.stopPropagation(); // Prevent click from bubbling up to the document
-                                    setShowOptionsMenu(
-                                        (prev) =>
-                                            prev === chat.chatId
-                                                ? null
-                                                : chat.chatId // Toggle the options menu for the specific chat
-                                    );
-                                }}
-                                className="pr-2 text-2xl"
-                            />
                         </div>
                     )}
+
+                    {/* Three-dot menu icon */}
+                    {!isRenaming &&
+                        (hoveredChatID === chat.chatId ||
+                            selectedChatID === chat.chatId) && (
+                            <div ref={dotRef} className="flex-shrink-0 ml-auto">
+                                <AiOutlineMore
+                                    onClick={(event) => {
+                                        event.stopPropagation(); // Prevent click from bubbling up to the document
+                                        setShowOptionsMenu(
+                                            (prev) =>
+                                                prev === chat.chatId
+                                                    ? null
+                                                    : chat.chatId // Toggle the options menu for the specific chat
+                                        );
+                                    }}
+                                    className="text-2xl cursor-pointer"
+                                />
+                            </div>
+                        )}
                 </div>
                 {showOptionsMenu === chat.chatId && threeDotsMenu(chat)}
             </div>
