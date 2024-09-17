@@ -1,5 +1,9 @@
-// updated for new main.py
+// useDeleteChat.tsx
+// Updated to use axios via apiClient
+
 import { useState } from "react";
+// Importing apiClient from utilities folder
+import apiClient from "../utilities/apiClient";
 
 // Define the return types of the hook
 interface UseDeleteChatHook {
@@ -8,7 +12,7 @@ interface UseDeleteChatHook {
     error: string | null;
 }
 
-export const useDeleteChat = (user_id: string): UseDeleteChatHook => {
+export const useDeleteChat = (userId: string): UseDeleteChatHook => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -16,15 +20,15 @@ export const useDeleteChat = (user_id: string): UseDeleteChatHook => {
         setLoading(true);
         setError(null); // Clear any previous error
         try {
-            const response = await fetch(`http://localhost:8000/api/chats/${chatID}/delete?userId=${user_id}`, {
-                method: "DELETE",
+            // Using apiClient to send a DELETE request
+            const response = await apiClient.delete(`/chats/${chatID}/delete`, {
+                params: { userId },
             });
 
-            if (!response.ok) throw new Error("Failed to delete chat");
+            if (response.status !== 200) throw new Error("Failed to delete chat");
 
             // You can add any additional logic here if needed, e.g., notifying the user
             console.log(`Chat ${chatID} deleted successfully`);
-
         } catch (err) {
             setError((err as Error).message);
         } finally {

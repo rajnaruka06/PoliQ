@@ -1,8 +1,12 @@
-// updated for new main.py
+// useSearchChats.tsx
+// Updated to use axios via apiClient
+
 import { useState, useEffect } from "react";
+// Importing apiClient from utilities folder
+import apiClient from "../utilities/apiClient";
 
 interface ChatHistory {
-    chatId: string;  // Updated to use chatId instead of chat_id
+    chatId: string;
     date: string;
     title: string;
     pinned: boolean;
@@ -31,14 +35,17 @@ export const useSearchChats = (userId: string, searchTerm: string): UseSearchCha
 
             setLoading(true);
             try {
-                const response = await fetch(
-                    `http://localhost:8000/api/chats/search?term=${encodeURIComponent(
-                        searchTerm
-                    )}&userId=${userId}`  // Corrected query parameter to match API endpoint
-                );
-                if (!response.ok) throw new Error("Failed to search chats");
+                // Using apiClient to send a GET request
+                const response = await apiClient.get<ChatHistory[]>(`/chats/search`, {
+                    params: {
+                        term: searchTerm,
+                        userId,
+                    },
+                });
 
-                const data: ChatHistory[] = await response.json();
+                if (response.status !== 200) throw new Error("Failed to search chats");
+
+                const data = response.data;
                 setSearchResults(data);
             } catch (err) {
                 setError((err as Error).message);

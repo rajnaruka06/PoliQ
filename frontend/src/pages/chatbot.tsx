@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-// oi add this
+// oi adding
 import Sidebar from "./sidebar.tsx";
 import {
     AiOutlineArrowUp,
@@ -33,12 +33,15 @@ const ChatBot: React.FC = () => {
     const [showPopup, setShowPopup] = useState(false); // adds state for popup visibility
     const userId = "example_user_id"; // Update later with a user details hook
     const popupRef = useRef<HTMLDivElement | null>(null); // Reference for the popup
+    // Reference to refresh chat history
+    const refreshChatHistoryRef = useRef<() => void>(() => {});
 
     // Using useFetchMessages to fetch messages for the selected chat
     const {
         messages: fetchedMessages,
         loading,
         error,
+        fetchMessages,
     } = useFetchMessages(selectedChatID, userId);
 
     // Using useSendMessage to send messages
@@ -67,7 +70,7 @@ const ChatBot: React.FC = () => {
         };
     }, [popupRef]);
 
-    // New handleSend to use the correct format and reflect messages immediately.
+    // **Modified handleSend function**
     const handleSend = async () => {
         if (input.trim()) {
             // Optimistically add the user's message to the UI
@@ -75,40 +78,43 @@ const ChatBot: React.FC = () => {
                 ...messages,
                 { sender: "user", text: input, user: "user" },
             ]);
-    
-            // Send the message using the hook and await the response
-            await sendMessage({ chatId: selectedChatID || '', content: input });
-    
-            // Fetch the latest messages for the selected chat after sending
-            if (selectedChatID) {
-                const updatedMessages = await fetchUpdatedMessages(selectedChatID);
-                setConvMessages(updatedMessages);
+
+            try {
+                // Send the message using the sendMessage hook
+                const newChatId = await sendMessage({
+                    chatId: selectedChatID || null, // Use null instead of undefined
+                    content: input,
+                });
+
+                if (!selectedChatID && newChatId) {
+                    // If it's a new chat, set the new chat ID
+                    setSelectedChatID(newChatId);
+                }
+
+                // **Re-fetch messages after sending**
+                await fetchMessages();
+
+                // **Re-fetch chat history to update sidebar**
+                if (refreshChatHistoryRef.current) {
+                    refreshChatHistoryRef.current();
+                }
+
+                // Clear the input after sending
+                setInput("");
+            } catch (error) {
+                console.error("Error sending message or fetching messages:", error);
             }
-    
-            // Clear the input after sending
-            setInput("");
+        } else {
+            console.warn("Cannot send message: Input is empty.");
         }
     };
-    
-    // New fetchUpdatedMessages to retrieve updated messages after handleSend
-    const fetchUpdatedMessages = async (chatId: string) => {
-        // Call the same logic you use to fetch messages, which could be
-        // reused from your `useFetchMessages` hook
-        const response = await fetch(`http://localhost:8000/api/chats/${chatId}/messages?userId=${userId}`);
-        
-        if (!response.ok) throw new Error('Failed to fetch messages');
-        
-        const data: MessageHistory[] = await response.json();
-        return data;
-    };
-    
 
-    // Effect to update conversation messages when new messages are fetched
+    // **Effect to update conversation messages when new messages are fetched**
     useEffect(() => {
-        if (selectedChatID && fetchedMessages) {
+        if (fetchedMessages) {
             setConvMessages(fetchedMessages);
         }
-    }, [selectedChatID, fetchedMessages]);
+    }, [fetchedMessages]);
 
     // Hero for welcome screen
     // TODO: If user click opt x, the content will be send as user input
@@ -213,6 +219,7 @@ const ChatBot: React.FC = () => {
                 selectedChatID={selectedChatID}
                 setSelectedChatID={setSelectedChatID}
                 setMessages={setMessages} //passes setMessages as a prop
+                refreshChatHistoryRef={refreshChatHistoryRef} // **Pass the ref to Sidebar**
             />
 
             {/* Chat area */}

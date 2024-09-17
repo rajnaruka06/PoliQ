@@ -1,47 +1,50 @@
-// updated for main.py
-import { useState } from "react";
+import { useState } from 'react';
+import apiClient from '../utilities/apiClient';
 
-// Define the interface for the message request
-interface MessageRequest {
-    chatId?: string;  // Correctly using chatId
-    content: string;
-}
-
-// Define the return types of the hook
 interface UseSendMessageHook {
-    sendMessage: (message: MessageRequest) => Promise<void>;
-    response: string | null;
+    sendMessage: (params: { chatId: string | null; content: string }) => Promise<string | undefined>;
     loading: boolean;
     error: string | null;
 }
 
-// PMJ 23/8/2024: This hook sends a message and gets a response from the backend workflow.
 export const useSendMessage = (userId: string): UseSendMessageHook => {
-    const [response, setResponse] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const sendMessage = async (message: MessageRequest) => {
-        setLoading(true); // PMJ 23/8/2024: Loading is set to true when the API call starts.
+    const sendMessage = async ({
+        chatId,
+        content,
+    }: {
+        chatId: string | null;
+        content: string;
+    }) => {
+        setLoading(true);
+        setError(null); // Clear any previous error
         try {
-            const res = await fetch(`http://localhost:8000/api/messages/send?userId=${userId}`, {  // Updated to use userId instead of user_id
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(message), // PMJ 23/8/2024: The message is sent as a JSON object in the request body.
-            });
+            console.log('Sending message with data:', { chatId, content, userId });
 
-            if (!res.ok) throw new Error("Failed to send message");
-            const data = await res.json();
-            setResponse(data.response); // PMJ 23/8/2024: The response from the backend is stored in state.
+            const response = await apiClient.post(
+                '/messages/send',
+                {
+                    chatId,
+                    content,
+                },
+                {
+                    params: { userId }, // Include userId as query parameter
+                }
+            );
+
+            console.log('Message sent successfully', response.data);
+            // Return the chatId from the response
+            return response.data.chatId;
         } catch (err) {
-            setError((err as Error).message); // PMJ 23/8/2024: If there's an error, it gets stored in state.
+            // Handle error
+            console.error('Error sending message:', err);
+            throw err; // Rethrow the error to be caught in handleSend
         } finally {
-            setLoading(false); // PMJ 23/8/2024: Once the API call is done, loading is set to false.
+            setLoading(false);
         }
     };
 
-    // PMJ 23/8/2024: The hook returns the sendMessage function, response, loading status, and any errors encountered.
-    return { sendMessage, response, loading, error };
+    return { sendMessage, loading, error };
 };

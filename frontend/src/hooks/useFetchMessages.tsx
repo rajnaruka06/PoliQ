@@ -1,58 +1,55 @@
-// Updated for main.py
+// useFetchMessages.tsx
 import { useState, useEffect } from "react";
+import axios from "axios";
 
-// Define the message structure based on your backend response
 interface MessageHistory {
-    messageId: string;  // Changed from messageID to messageId for consistency
+    messageID: string;
     user: string;
     content: string;
     date: string;
     time: string;
 }
 
-// Define the return types of the hook
 interface UseFetchMessagesHook {
-    messages: MessageHistory[];
+    messages: MessageHistory[] | null;
     loading: boolean;
     error: string | null;
+    fetchMessages: () => Promise<void>; // Function to manually re-fetch messages
 }
 
-// This hook fetches all messages for a specified chat using the chatId and userId.
-export const useFetchMessages = (chatId: string | null, userId: string): UseFetchMessagesHook => {
-    const [messages, setMessages] = useState<MessageHistory[]>([]);
-    const [loading, setLoading] = useState(true);
+export const useFetchMessages = (
+    chatId: string | null,
+    userId: string
+): UseFetchMessagesHook => {
+    const [messages, setMessages] = useState<MessageHistory[] | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
+    const fetchMessages = async () => {
+        if (!chatId) return;
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.get<MessageHistory[]>(
+                `http://localhost:8000/api/chats/${chatId}/messages`,
+                {
+                    params: { userId },
+                }
+            );
+
+            setMessages(response.data);
+        } catch (err) {
+            console.error("Error fetching messages:", err);
+            setError((err as Error).message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        if (!chatId) return; // If there's no chatId, do not attempt to fetch messages
-
-        //  This function makes the API call to fetch messages for a specific chat.
-        const fetchMessages = async () => {
-            try {
-                // Fetches messages for the specified chat from the backend
-                const response = await fetch(`http://localhost:8000/api/chats/${chatId}/messages?userId=${userId}`);
-                
-                // If the response is not OK, throw an error
-                if (!response.ok) throw new Error("Failed to fetch messages");
-
-                // Parse the response as JSON
-                const data: MessageHistory[] = await response.json();
-
-                // Update the messages state with the fetched data
-                setMessages(data);
-            } catch (err) {
-                // If there's an error, store the error message in state
-                setError((err as Error).message);
-            } finally {
-                // Set loading to false once the operation is complete
-                setLoading(false);
-            }
-        };
-
-        // Call the fetchMessages function
         fetchMessages();
     }, [chatId, userId]);
 
-    // Return the messages, loading status, and any errors encountered
-    return { messages, loading, error };
+    return { messages, loading, error, fetchMessages };
 };

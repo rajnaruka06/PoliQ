@@ -1,7 +1,8 @@
-//new hook to unarchive a chat
 import { useState } from "react";
+// using Axios now
+// Import apiClient from utilities
+import apiClient from "../utilities/apiClient";
 
-// Define the return types of the hook
 interface UseUnarchiveChatHook {
     unarchiveChat: (chatID: string) => Promise<void>;
     loading: boolean;
@@ -15,6 +16,8 @@ export const useUnarchiveChat = (userId: string): UseUnarchiveChatHook => {
     const unarchiveChat = async (chatID: string) => {
         setLoading(true);
         try {
+            // Use apiClient instead of fetch
+            /*
             const response = await fetch(`http://localhost:8000/api/chats/${chatID}/unarchive?userId=${userId}`, {
                 method: "PUT",
                 headers: {
@@ -23,6 +26,16 @@ export const useUnarchiveChat = (userId: string): UseUnarchiveChatHook => {
             });
 
             if (!response.ok) throw new Error("Failed to unarchive chat");
+            */
+
+            // Replace fetch with apiClient PUT request
+            await apiClient.put(
+                `/chats/${chatID}/unarchive`,
+                {}, // No data in the body
+                {
+                    params: { userId },
+                }
+            );
 
             console.log(`Chat ${chatID} unarchived successfully`);
         } catch (err) {

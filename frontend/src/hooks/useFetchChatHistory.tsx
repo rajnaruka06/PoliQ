@@ -1,45 +1,46 @@
-// updated for main.py
+// useFetchChatHistory.tsx
 import { useState, useEffect } from "react";
+import apiClient from "../utilities/apiClient";
 
-// Define the structure of a chat session and the chat history response
 interface ChatSession {
     date: string;
-    chat: { title: string; chatId: string }[];  // Updated chatID to chatId
+    chat: { title: string; chatId: string }[];
 }
 
-// Define the return types of the hook
 interface UseFetchChatHistoryHook {
     chatHistory: ChatSession[];
     loading: boolean;
     error: string | null;
+    fetchChatHistory: () => void; // Function to manually re-fetch chat history
 }
 
-export const useFetchChatHistory = (userId: string): UseFetchChatHistoryHook => {  // Changed user_id to userId
+export const useFetchChatHistory = (userId: string): UseFetchChatHistoryHook => {
     const [chatHistory, setChatHistory] = useState<ChatSession[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const fetchChatHistory = async () => {
+        setLoading(true);
+        try {
+            const response = await apiClient.get<ChatSession[]>('/chats/all', {
+                params: { userId },
+            });
+
+            const data = response.data;
+
+            if (!Array.isArray(data)) throw new Error("Invalid data format received");
+            setChatHistory(data);
+        } catch (err) {
+            console.error("Error fetching chat history:", err);
+            setError((err as Error).message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchChatHistory = async () => {
-            try {
-                const response = await fetch(`http://localhost:8000/api/chats/all?userId=${userId}`);  // Updated endpoint with userId
-                
-                if (!response.ok) throw new Error("Failed to fetch chat history");
-
-                const data: ChatSession[] = await response.json();
-
-                if (!Array.isArray(data)) throw new Error("Invalid data format received");
-                setChatHistory(data);
-            } catch (err) {
-                console.error("Error fetching chat history:", err);
-                setError((err as Error).message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchChatHistory();
-    }, [userId]);  // Updated dependency to userId
+    }, [userId]);
 
-    return { chatHistory, loading, error };
+    return { chatHistory, loading, error, fetchChatHistory };
 };

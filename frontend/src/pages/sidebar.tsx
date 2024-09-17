@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-// oi add this
+// oi adding this
 import {
     BiChevronLeftCircle,
     BiChevronRightCircle,
@@ -28,18 +28,21 @@ interface ChatHistory {
     date: string;
     title: string;
     pinned: boolean;
+    archived?: boolean;
 }
 
 interface SidebarProps {
     selectedChatID: string | null;
     setSelectedChatID: (chatID: string | null) => void;
     setMessages: React.Dispatch<React.SetStateAction<MessageCurrent[]>>;
+    refreshChatHistoryRef: React.MutableRefObject<() => void>; // **Added this prop**
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
     selectedChatID,
     setSelectedChatID,
-    setMessages
+    setMessages,
+    refreshChatHistoryRef,
 }) => {
     // TODO: Proper commenting to explain
 
@@ -50,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
     const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
-    const { chatHistory, loading, error } = useFetchChatHistory(userId);
+    const { chatHistory, loading, error, fetchChatHistory } = useFetchChatHistory(userId);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     // State to manage filtered chat history
@@ -95,33 +98,21 @@ const Sidebar: React.FC<SidebarProps> = ({
         // loading: deleteLoading,
         // error: deleteError,
     } = useDeleteChat(userId);
-    //Use the useArchiveChat hook
-    const {
-        archiveChat,
-        // loading: archiveLoading,
-        // error: archiveError,
-    } = useArchiveChat(userId);
     // Use the pin and unpin chat hooks
-    const {
-        pinChat,
-        // loading: pinLoading,
-        // error: pinError,
-    } = usePinChat(userId);
-    const {
-        unpinChat,
-        // loading: unpinLoading,
-        // error: unpinError,
-    } = useUnpinChat(userId);
+    const { 
+        pinChat, /* loading: pinLoading, error: pinError */ } = usePinChat(userId);
+    const { 
+        unpinChat, /* loading: unpinLoading, error: unpinError */ } = useUnpinChat(userId); 
     const {
         searchResults,
         // loading: searchLoading,
         // error: searchError,
     } = useSearchChats(userId, searchTerm);
-    const {
-        unarchiveChat,
-        // loading: unarchiveLoading,
-        // error: unarchiveError
-    } = useUnarchiveChat(userId);
+    // Use the archive and unarchive chat hooks
+    const { 
+        archiveChat, /* loading: archiveLoading, error: archiveError */ } = useArchiveChat(userId);
+    const { 
+        unarchiveChat, /* loading: unarchiveLoading, error: unarchiveError */ } = useUnarchiveChat(userId);
 
     // Effect to determine whether to use serach results or the full chat history
     // Function to handle search -> changed again to use hook
@@ -167,6 +158,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         : chat
                 )
             );
+            fetchChatHistory();
         } catch (error) {
             console.error("Error pinning/unpinning chat:", error);
         }
@@ -181,6 +173,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 prevHistory.filter((chat) => chat.chatId !== chatID)
             );
             setPinnedChats((prev) => prev.filter((id) => id !== chatID)); // Remove from pinned chats if necessary
+            fetchChatHistory();
             if (selectedChatID === chatID) {
                 setSelectedChatID(null);
             }
@@ -201,10 +194,18 @@ const Sidebar: React.FC<SidebarProps> = ({
                     chat.chatId === chatID ? { ...chat, archived: !isArchived } : chat
                 )
             );
+            fetchChatHistory();
         } catch (error) {
             console.error("Error archiving/unarchiving chat:", error);
         }
     };
+
+        // **Expose fetchChatHistory via refreshChatHistoryRef**
+        useEffect(() => {
+            if (refreshChatHistoryRef) {
+                refreshChatHistoryRef.current = fetchChatHistory;
+            }
+        }, [fetchChatHistory, refreshChatHistoryRef]);
 
     // Function to handle the three dots menu
     const threeDotsMenu = (chat: {

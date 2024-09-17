@@ -1,5 +1,9 @@
-// updated for new main.py
+// useArchiveChat.tsx
+// Updated to use axios via apiClient
+
 import { useState } from "react";
+// Importing apiClient from utilities folder
+import apiClient from "../utilities/apiClient";
 
 // Define the return types of the hook
 interface UseArchiveChatHook {
@@ -15,14 +19,17 @@ export const useArchiveChat = (userId: string): UseArchiveChatHook => {
     const archiveChat = async (chatID: string) => {
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8000/api/chats/${chatID}/archive?userId=${userId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            // Using apiClient to send a PUT request
+            const response = await apiClient.put(
+                `/chats/${chatID}/archive`,
+                {}, // No data in the body
+                {
+                    params: { userId }, // Send userId as a query parameter
+                }
+            );
 
-            if (!response.ok) throw new Error("Failed to archive chat");
+            // Check if response status is not OK
+            if (response.status !== 200) throw new Error("Failed to archive chat");
 
             console.log(`Chat ${chatID} archived successfully`);
         } catch (err) {

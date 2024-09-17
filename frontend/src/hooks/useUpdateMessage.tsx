@@ -1,5 +1,8 @@
 // hooks/useUpdateMessage.tsx
 import { useState } from "react";
+// using Axios now
+// Import apiClient from utilities
+import apiClient from "../utilities/apiClient";
 
 interface UseUpdateMessageHook {
     updateMessage: (chatId: string, messageId: string, newContent: string) => Promise<void>;
@@ -15,6 +18,8 @@ export const useUpdateMessage = (user_id: string): UseUpdateMessageHook => {
         setLoading(true);
         setError(null); // Clear any previous error
         try {
+            // Use apiClient instead of fetch
+            /*
             const response = await fetch(
                 `http://localhost:8000/api/chats/${chatId}/messages/${messageId}?newContent=${encodeURIComponent(newContent)}&userId=${user_id}`,
                 {
@@ -33,6 +38,27 @@ export const useUpdateMessage = (user_id: string): UseUpdateMessageHook => {
             }
 
             console.log("Message updated and new response generated", result);
+            */
+
+            // Replace fetch with apiClient PUT request
+            const response = await apiClient.put(
+                `/chats/${chatId}/messages/${messageId}`,
+                {}, // No data in the body
+                {
+                    params: {
+                        userId: user_id,
+                        newContent: newContent,
+                    },
+                }
+            );
+
+            // Check if response status is not OK
+            if (response.status !== 200) {
+                console.error("Error Response:", response.data);
+                throw new Error("Failed to update the message and regenerate response");
+            }
+
+            console.log("Message updated and new response generated", response.data);
         } catch (err) {
             setError((err as Error).message);
         } finally {
