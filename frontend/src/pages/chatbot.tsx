@@ -6,17 +6,21 @@ import {
     AiOutlineClose,
     AiOutlinePaperClip,
     AiOutlineUpload,
+    AiFillSun,
+    AiFillMoon,
 } from "react-icons/ai";
 import FeedbackButton from "../components/FeedbackButton.tsx";
 import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
+import SettingsOptionOverlay from "../components/SettingsOptionOverlay.tsx";
+import Hero from "../components/Hero.tsx";
+import LevelRegions from "../components/LevelsRegions.tsx";
 
 interface MessageCurrent {
     sender: string;
     text: string;
     user: string;
 }
-
 interface MessageHistory {
     messageID: string;
     user: string;
@@ -33,7 +37,17 @@ const ChatBot: React.FC = () => {
     const [showPopup, setShowPopup] = useState(false); // adds state for popup visibility
     const userId = "example_user_id"; // Update later with a user details hook
     const popupRef = useRef<HTMLDivElement | null>(null); // Reference for the popup
-    // Reference to refresh chat history
+    const paperclipRef = useRef<HTMLDivElement | null>(null); // Reference for the paperclip icon
+    const [showHero, setShowHero] = useState(true);
+
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        // Dark mode state
+        // Check local storage or use system preference
+        if (localStorage.getItem("theme")) {
+            return localStorage.getItem("theme") === "dark";
+        }
+        return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }); // Reference to refresh chat history
     const refreshChatHistoryRef = useRef<() => void>(() => {});
 
     // Using useFetchMessages to fetch messages for the selected chat
@@ -43,12 +57,12 @@ const ChatBot: React.FC = () => {
         error,
         fetchMessages,
     } = useFetchMessages(selectedChatID, userId);
-
     // Using useSendMessage to send messages
     const {
         sendMessage,
-        loading: sending,
-        error: sendError,
+        // commented to remove red prompt
+        // loading: sending,
+        // error: sendError,
     } = useSendMessage(userId);
 
     // Reference for the popup
@@ -56,22 +70,36 @@ const ChatBot: React.FC = () => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
                 popupRef.current &&
-                !popupRef.current.contains(event.target as Node) // Check if click is outside the popup
+                !popupRef.current.contains(event.target as Node) && // Check if click is outside the popup
+                !(
+                    paperclipRef.current &&
+                    paperclipRef.current.contains(event.target as Node)
+                ) // Check if click is on the paperclip icon
             ) {
                 setShowPopup(false); // Close the popup if clicked outside
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
-
         // Cleanup event listener when component unmounts
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [popupRef]);
+    }, [popupRef, paperclipRef]);
+
+    useEffect(() => {
+        if (isDarkMode) {
+            document.documentElement.classList.add("dark");
+            localStorage.setItem("theme", "dark");
+        } else {
+            document.documentElement.classList.remove("dark");
+            localStorage.setItem("theme", "light");
+        }
+    }, [isDarkMode]);
 
     // **Modified handleSend function**
     const handleSend = async () => {
+        setShowHero(false);
+
         if (input.trim()) {
             // Optimistically add the user's message to the UI
             setMessages([
@@ -102,7 +130,10 @@ const ChatBot: React.FC = () => {
                 // Clear the input after sending
                 setInput("");
             } catch (error) {
-                console.error("Error sending message or fetching messages:", error);
+                console.error(
+                    "Error sending message or fetching messages:",
+                    error
+                );
             }
         } else {
             console.warn("Cannot send message: Input is empty.");
@@ -116,25 +147,29 @@ const ChatBot: React.FC = () => {
         }
     }, [fetchedMessages]);
 
-    // Hero for welcome screen
-    // TODO: If user click opt x, the content will be send as user input
-    const hero = () => {
-        return (
-            <div className="flex flex-col flex-grow justify-center items-center h-full">
-                <div className="text-5xl">Hello World</div>
-                <div className="flex gap-3 mt-4">
-                    <button className="text-2xl">Opt 1</button>
-                    <button className="text-2xl">Opt 2</button>
-                    <button className="text-2xl">Opt 3</button>
-                    <button className="text-2xl">Opt 4</button>
-                </div>
-            </div>
-        );
-    };
+    // Sends predefined questions as messages upon click
+    const handleOptionClick = async (optionText: string) => {
+        setShowHero(false);
+        // Adds the message
+        setMessages([
+            ...messages,
+            { sender: "user", text: optionText, user: "user" },
+        ]);
 
+        // Send the message using the sendMessage hook and await the response
+        await sendMessage({
+            chatId: selectedChatID || "",
+            content: optionText,
+        });
+
+        // Fetch the latest messages for the selected chat after sending
+        if (selectedChatID) {
+            const updatedMessages = await fetchUpdatedMessages(selectedChatID);
+            setConvMessages(updatedMessages);
+        }
+    };
     // Chat Area right hand side
     // TODO: need to change logic
-    // FIXME: rounded bug if message too long
     const ChatArea = selectedChatID
         ? detailedMessages.map((msg, index) => (
               <div
@@ -144,10 +179,10 @@ const ChatBot: React.FC = () => {
                   } group`}
               >
                   <div
-                      className={`inline-block p-2 max-w-7xl break-words rounded-xl px-7 ${
+                      className={`inline-block p-2 break-words rounded-xl px-7 ${
                           msg.user === "user"
-                              ? "bg-zinc-700 text-white"
-                              : " text-white"
+                              ? "bg-lightTertiary text-black dark:text-white dark:bg-darkSecondary"
+                              : "text-black dark:text-white dark:bg-darkPrimary bg-lightPrimary"
                       } text-justify`} // Added text-justify for justification
                   >
                       {msg.content}
@@ -155,8 +190,17 @@ const ChatBot: React.FC = () => {
                           {msg.date} {msg.time}
                       </div>
                   </div>
-                  {/* Feedback Button */}
-                  {msg.user !== "user" && <FeedbackButton />}
+                  {/* Copy and Feedback Buttons */}
+                  {msg.user !== "user" && (
+                      <div className="flex gap-2 mt-2">
+                          <FeedbackButton
+                              chatId={selectedChatID || ""}
+                              messageId={msg.messageID}
+                              userId={userId}
+                              content={msg.content} // Pass the content for the copy functionality
+                          />
+                      </div>
+                  )}
               </div>
           ))
         : messages.map((msg, index) => (
@@ -180,21 +224,19 @@ const ChatBot: React.FC = () => {
 
     // Popup for Upload File
     const UploadPopup = showPopup && (
-        // TODO: Highlight icon when hover
         <div
             ref={popupRef}
-            className="absolute bottom-full z-10 p-2 mb-2 rounded shadow-lg"
+            className="absolute bottom-full z-10 p-2 mb-2 rounded-2xl shadow-lg bg-lightSecondary dark:bg-darkSecondary dark:text-white"
         >
             {/* Upload Button */}
             <button
-                className="flex gap-2 items-center text-xl font-bold"
+                className="flex gap-2 items-center p-2 text-xl font-semibold rounded-lg bg-lightSecondary dark:bg-darkSecondary"
                 onClick={() => document.getElementById("fileInput")?.click()} // Trigger file input click
             >
-                <AiOutlineUpload />
+                <AiOutlineUpload className="text-black dark:text-white" />
                 {/* Upload icon with margin */}
-                Upload Dataset
+                <div className="text-black dark:text-white">Upload Dataset</div>
             </button>
-
             <input
                 type="file"
                 id="fileInput"
@@ -211,64 +253,109 @@ const ChatBot: React.FC = () => {
         </div>
     );
 
+    // Toggle Dark Mode
+    const toggleDarkMode = () => {
+        setIsDarkMode((prevMode) => !prevMode);
+    };
+
+    const [showSettingsOverlay, setShowSettingsOverlay] = useState(false);
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    const handleSettingsOverlay = (option: string | null) => {
+        if (option) {
+            setSelectedOption(option);
+            setShowSettingsOverlay(true);
+        } else {
+            setShowSettingsOverlay(false);
+            setSelectedOption(null);
+        }
+    };
+
+    const inputArea = (
+        <div className="flex gap-2 mx-auto mt-4 w-full max-w-7xl text-xl">
+            {/* Input box */}
+            <div className="relative flex-grow">
+                {UploadPopup}
+                <div ref={paperclipRef}>
+                    <AiOutlinePaperClip
+                        className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
+                        onClick={(event) => {
+                            event.stopPropagation(); // Prevent click from bubbling up to the document
+                            setShowPopup((prev) => !prev); // Toggle the popup visibility
+                        }}
+                    />
+                </div>
+                {/* Input Area */}
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)} // Update input state on change
+                    onKeyUp={(e) => e.key === "Enter" && handleSend()} // Send message on Enter key press
+                    className="flex-grow p-3 pr-3 pl-12 w-full text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                    placeholder="Type your message..."
+                />
+            </div>
+            {/* Send button */}
+            <button
+                onClick={handleSend}
+                className="px-4 py-2 text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+            >
+                <AiOutlineArrowUp />
+            </button>
+            {/* Clear button */}
+            <button
+                onClick={() => setInput("")}
+                className="px-4 py-2 text-black rounded-full bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+            >
+                <AiOutlineClose />
+            </button>
+        </div>
+    );
+
     // Return
     return (
-        <div className="flex p-4 w-screen h-screen bg-primary">
-            {/* sidebar.tsx */}
-            <Sidebar
-                selectedChatID={selectedChatID}
-                setSelectedChatID={setSelectedChatID}
-                setMessages={setMessages} //passes setMessages as a prop
-                refreshChatHistoryRef={refreshChatHistoryRef} // **Pass the ref to Sidebar**
-            />
+        <div className={`${isDarkMode && "dark"}`}>
+            <div className="flex p-4 w-screen h-screen bg-white dark:bg-darkPrimary">
+                {/* sidebar.tsx */}
+                <Sidebar
+                    selectedChatID={selectedChatID}
+                    setSelectedChatID={setSelectedChatID}
+                    setMessages={setMessages}
+                    onOptionClick={handleSettingsOverlay}
+                    refreshChatHistoryRef={refreshChatHistoryRef} // **Pass the ref to Sidebar**
+                />
+                {/* Settings Option Overlay */}
+                <SettingsOptionOverlay
+                    showSettingsOverlay={showSettingsOverlay}
+                    handleSettingsOverlay={handleSettingsOverlay}
+                    selectedOption={selectedOption}
+                />
+                {/*Levels and Regions */}
+                <LevelRegions /> {/* Call the LevelRegions function here */}
+                {/* Chat area */}
+                <div className="flex flex-col w-full">
+                    {/* light dark mode button */}
+                    <button
+                        onClick={toggleDarkMode}
+                        className={`absolute top-4 right-9 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                    >
+                        {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
+                    </button>
 
-            {/* Chat area */}
-            <div className="flex flex-col mx-auto w-3/5">
-                {/* Hero for welcoming page */}
-                {!selectedChatID && hero()}
+                    {/* Hero for welcoming page */}
+                    {showHero && !selectedChatID && (
+                        <Hero handleOptionClick={handleOptionClick} />
+                    )}
 
-                <div className="overflow-y-auto flex-grow p-4 text-2xl rounded-lg">
-                    {/* Messages */}
-                    {ChatArea}
-                </div>
-                {/* Input bar */}
-                <div className="flex gap-2 mt-4 text-xl">
-                    {/* Input box */}
-                    <div className="relative flex-grow">
-                        {UploadPopup}
-                        {/* FIXME: upload bug, useref broken */}
-                        <AiOutlinePaperClip
-                            className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
-                            onClick={() => setShowPopup(true)} // Show popup on click of the paperclip icon
-                        />
-                        {/* Add the icon */}
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)} // Update input state on change
-                            onKeyUp={(e) => e.key === "Enter" && handleSend()} // Send message on Enter key press
-                            className="flex-grow p-3 pr-3 pl-10 w-full rounded-full border border-gray-300" // Set width to increase length
-                            placeholder="Type your message..." // Placeholder text for the input
-                        />
+                    <div className="flex overflow-y-auto flex-col flex-grow">
+                        {/* Chat Area Container */}
+                        <div className="mx-auto w-full max-w-7xl">
+                            {ChatArea}
+                        </div>
                     </div>
-                    {/* Send button */}
-                    <button
-                        onClick={handleSend}
-                        className="px-4 py-2 font-extrabold text-white rounded-full"
-                    >
-                        <AiOutlineArrowUp />
-                    </button>
-                    {/* Clear button */}
-                    <button
-                        onClick={() => setInput("")}
-                        className="px-4 py-2 text-white rounded-full"
-                    >
-                        <AiOutlineClose />
-                    </button>
+                    {inputArea}
                 </div>
             </div>
         </div>
     );
 };
-
 export default ChatBot;

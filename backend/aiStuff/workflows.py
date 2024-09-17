@@ -1,17 +1,32 @@
 ## workflows.py
 
-from .agentHelpers import loadPostgresDatabase, cleanSqlQuery, cleanSummaryResponse, QuerySQLTool, InvalidUserQueryException, NoDataFoundException, loadLLM
-from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent
+from .agentHelpers import (
+    loadPostgresDatabase
+    , cleanSqlQuery
+    , cleanSummaryResponse
+    , QuerySQLTool
+    , InvalidUserQueryException
+    , NoDataFoundException
+    , loadLLM
+    , loadMetadata
+)
+from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent, DatasetRegionMatcherAgent
 import sys
 import os
+import re
+from typing import Dict, List, Any
 from dotenv import load_dotenv
 import logging
+from langchain.base_language import BaseLanguageModel
+import json
 
 sys.path.append(os.path.dirname(__file__))
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-env_path = os.path.join(os.path.dirname(__file__), '../resources/.ENV')
-load_dotenv(dotenv_path=env_path)
+
+recourcesPath = os.path.join(os.path.dirname(__file__), '../resources')
+envPath = os.path.join(recourcesPath, '.ENV')
+load_dotenv(dotenv_path=envPath)
 
 class ElecDataWorkflow:
     """
@@ -107,4 +122,16 @@ class ElecDataWorkflow:
             logger.exception(f"An error occurred: {str(e)}")
             return f"An error occurred: {str(e)}"
 
+class DatasetRegionMatcher:
+    def __init__(self):
+        self.llm = loadLLM()
+        self.datasetsMetadata = loadMetadata('metadata', 'Datasets')
+        self.regionsMetadata = loadMetadata('metadata', 'Regions')
+        self.agent = DatasetRegionMatcherAgent(llm = self.llm)
 
+    def match(self, userQuery):
+        return self.agent.match(
+            userQuery,
+            self.regionsMetadata,
+            self.datasetsMetadata
+        )

@@ -29,7 +29,8 @@ export const useArchiveChat = (userId: string): UseArchiveChatHook => {
             );
 
             // Check if response status is not OK
-            if (response.status !== 200) throw new Error("Failed to archive chat");
+            if (response.status !== 200)
+                throw new Error("Failed to archive chat");
 
             console.log(`Chat ${chatID} archived successfully`);
         } catch (err) {

@@ -1,0 +1,261 @@
+Database Overview:
+1. ABS Data (Census years: 2011, 2016, 2021)
+   - Demographics
+   - Socio-economic factors
+   - Housing
+   - Employment
+   - Education
+   - Cultural diversity
+
+2. AEC Data
+   - Federal elections
+   - Voting patterns
+   - Candidates and political parties
+   - Electoral divisions
+
+Table Naming Conventions:
+- ABS tables: abs_[year]_[topic] or abs_dp_[year]_[code]_CED
+- AEC tables: aec_[topic]
+
+Key Abbreviations:
+ABS	Australian Bureau of Statistics
+AEC	Australian Electoral Commission
+AGEP	Age
+ANC1P	Ancestry (1st response)
+ANC2P	Ancestry (2nd response)
+Aust	Australia
+BCP	Basic Community Profile
+CACF	Country of birth of father
+CDI	Customised Data and Information
+CED	Commonwealth Electoral Divisions
+DWTD	Dwellings
+FMCF	Family composition
+GCCSA	Greater Capital City Statistical Areas
+GCP	General Community Profile
+HCFMF	Household composition
+IARE	Indigenous Areas
+ILOC	Indigenous Locations
+INCP	Income
+INDP	Industry
+INGP	Indigenous status
+IP	Indigenous Profile
+IREG	Indigenous Regions
+LANP	Language spoken at home
+LFSP	Labor force status
+LGA	Local Government Areas
+LLDD	Long-term health conditions
+MRERD	Mortgage repayments
+MTWP	Method of travel to work
+NPRD	Non-private dwellings
+OCCP	Occupation
+PEP	Place of Enumeration Profile
+POA	Postal Areas
+QALLP	Qualification
+RA	Remoteness Areas
+RELP	Relationship status
+RLFP	Registered locality labor force status
+RNTRD	Renters
+SA1	Statistical Area Level 1
+SA2	Statistical Area Level 2
+SA3	Statistical Area Level 3
+SA4	Statistical Area Level 4
+SED	State Electoral Divisions
+SLA	Statistical Local Areas
+SOS	Section of State
+SOSR	Section of State Ranges
+SSC	State Suburbs
+SSCF	Socio-economic status
+STE	States and Territories
+STRD	Structural characteristics
+STUP	Study participation
+SUA	Significant Urban Areas
+TEND	Tenure
+TSP	Time Series Profile
+UAI1P	Unpaid assistance to a person with a disability (1 hour or more per week)
+UAI5P	Unpaid assistance to a person with a disability (5 hours or more per week)
+UC/L	Urban Centres and Localities
+WPP	Working Population Profile
+XCP	Expanded Community Profile
+YARRP	Year of arrival in Australia
+
+list of DP codes organized by topics and their details:
+
+1. ABORIGINAL AND TORRES STRAIT ISLANDER PEOPLES
+   - G01: Selected person characteristics by sex (2021, 2016)
+   - G07: Indigenous status by age by sex (2021, 2016)
+   - B01: Selected person characteristics by sex (2011)
+   - B07: Indigenous status by age by sex (2011)
+
+2. AUSTRALIAN DEFENCE FORCE SERVICE (2021 only)
+   - G21: Type of long-term health condition by selected person characteristics
+   - G22: Australian Defence Force service by age by sex
+
+3. CULTURAL DIVERSITY
+   - G01: Selected person characteristics by sex (2021, 2016)
+   - G08: Ancestry by country of birth of parents (2021, 2016)
+   - G09: Country of birth of person by age by sex (2021, 2016)
+   - G10: Country of birth of person by year of arrival in Australia (2021, 2016)
+   - G11: Proficiency in spoken English/Language by year of arrival in Australia by age (2021, 2016)
+   - G12: Proficiency in spoken English/Language of parents by age of dependent children (2021, 2016)
+   - G13: Language used at home by proficiency in spoken English/Language by sex (2021, 2016)
+   - G14: Religious affiliation by sex (2021, 2016)
+   - G43 (2021), G40 (2016): Selected labour force, education and migration characteristics by sex
+   - B01: Selected person characteristics by sex (2011)
+   - B08: Ancestry by birthplace of parents (2011)
+   - B09: Country of birth of person by sex (2011)
+   - B10: Country of birth of person by year of arrival in Australia (2011)
+   - B11: Proficiency in spoken English/Language by year of arrival in Australia by sex (2011)
+   - B12: Proficiency in spoken English/Language of parents by age of dependent children (2011)
+   - B13: Language spoken at home by sex (2011)
+   - B14: Religious affiliation by sex (2011)
+   - B37: Selected labour force, education and migration characteristics by sex (2011)
+
+4. DEMOGRAPHICS
+   - G01: Selected person characteristics by sex (2021, 2016)
+   - G02: Selected medians and averages (2021, 2016)
+   - G03: Place of usual residence by place of enumeration on Census Night by age (2021)
+   - G03: Place of usual residence on Census Night by age (2016)
+   - G04: Age by sex (2021, 2016)
+   - B01: Selected person characteristics by sex (2011)
+   - B02: Selected medians and averages (2011)
+   - B03: Place of usual residence on Census Night by age (2011)
+   - B04: Age by sex (2011)
+
+5. DISTANCE AND METHOD OF TRAVEL TO WORK
+   - G62 (2021), G59 (2016): Method of travel to work by sex
+   - B46: Method of travel to work by sex (2011)
+
+6. DWELLING AND HOUSEHOLD CHARACTERISTICS
+   - G02: Selected medians and averages (2021, 2016)
+   - G27 (2021), G23 (2016): Relationship in household by age by sex
+   - G33 (2021), G29 (2016): Total household income (weekly) by household composition
+   - G34 (2021), G30 (2016): Number of motor vehicles by dwellings
+   - G35 (2021), G31 (2016): Household composition by number of persons usually resident
+   - G36 (2021), G32 (2016): Dwelling structure
+   - G37 (2021), G33 (2016): Tenure and landlord type by dwelling structure
+   - G38 (2021), G34 (2016): Mortgage repayment (monthly) by dwelling structure
+   - G39 (2021), G35 (2016): Mortgage repayment (monthly) by family composition
+   - G40 (2021), G36 (2016): Rent (weekly) by landlord type
+   - G41 (2021), G38 (2016): Dwelling structure by number of bedrooms
+   - G42 (2021), G39 (2016): Dwelling structure by household composition and family composition
+   - G37 (2016 only): Dwelling Internet Connection by Dwelling Structure
+   - B02: Selected medians and averages (2011)
+   - B23: Relationship in household by age by sex (2011)
+   - B28: Total household income (weekly) by household composition (2011)
+   - B29: Number of motor vehicles by dwellings (2011)
+   - B30: Household composition by number of persons usually resident (2011)
+   - B31: Dwelling structure (2011)
+   - B32: Tenure type and landlord type by dwelling structure (2011)
+   - B33: Mortgage repayment (monthly) by dwelling structure (2011)
+   - B34: Rent (weekly) by landlord type (2011)
+   - B35: Type of internet connection by dwelling structure (2011)
+   - B36: Dwelling structure by number of bedrooms (2011)
+
+7. EDUCATION AND QUALIFICATIONS
+   - G01: Selected person characteristics by sex (2021, 2016)
+   - G15: Type of education institution attending (full-time/part-time student status by age) by sex (2021, 2016)
+   - G16: Highest year of school completed by age by sex (2021, 2016)
+   - G43 (2021), G40 (2016): Selected labour force, education and migration characteristics by sex
+   - G49 (2021), G46 (2016): Highest non-school qualification: level of education by age by sex
+   - G50 (2021), G47 (2016): Highest non-school qualification: field of study by age by sex
+   - G51 (2021), G48 (2016): Highest non-school qualification: field of study by occupation by sex
+   - G52 (2021), G49 (2016): Highest non-school qualification: level of education by occupation by sex
+   - G53 (2021), G50 (2016): Highest non-school qualification: level of education by industry of employment by sex
+   - B01: Selected person characteristics by sex (2011)
+   - B15: Type of educational institution attending (full-time/part-time student status by age) by sex (2011)
+   - B16: Highest year of school completed by age by sex (2011)
+   - B37: Selected labour force, education and migration characteristics by sex (2011)
+   - B40: Non-school qualification: level of education by age by sex (2011)
+   - B41: Non-school qualification: field of study by age by sex (2011)
+
+8. EMPLOYMENT AND INCOME
+   - G02: Selected medians and averages (2021, 2016)
+   - G17: Total personal income (weekly) by age by sex (2021, 2016)
+   - G43 (2021), G40 (2016): Selected labour force, education and migration characteristics by sex
+   - G46 (2021), G43 (2016): Labour force status by age by sex
+   - G47 (2021), G44 (2016): Labour force status by sex of parents by age of dependent children for couple families
+   - G48 (2021), G45 (2016): Labour force status by sex of parent by age of dependent children for one parent families
+   - G51 (2021), G48 (2016): Highest non-school qualification: field of study by occupation by sex
+   - G52 (2021), G49 (2016): Highest non-school qualification: level of education by occupation by sex
+   - G53 (2021), G50 (2016): Highest non-school qualification: level of education by industry of employment by sex
+   - G54 (2021), G51 (2016): Industry of employment by age by sex
+   - G55 (2021), G52 (2016): Industry of employment by hours worked by sex
+   - G56 (2021), G53 (2016): Industry of employment by occupation
+   - G57 (2021), G54 (2016): Total family income (weekly) by labour force status of partners for couple families with no children
+   - G58 (2021), G55 (2016): Total family income (weekly) by labour force status of parents/partners for couple families with children
+   - G59 (2021), G56 (2016): Total family income (weekly) by labour force status of parent for one parent families
+   - G60 (2021), G57 (2016): Occupation by age by sex
+   - G61 (2021), G58 (2016): Occupation by hours worked by sex
+   - B02: Selected medians and averages (2011)
+   - B17: Total personal income (weekly) by age by sex (2011)
+   - B37: Selected labour force, education and migration characteristics by sex (2011)
+   - B42: Labour force status by age by sex (2011)
+   - B43: Industry of employment by age by sex (2011)
+   - B44: Industry of employment by occupation (2011)
+   - B45: Occupation by age by sex (2011)
+
+9. FAMILY CHARACTERISTICS
+   - G02: Selected medians and averages (2021, 2016)
+   - G29 (2021), G25 (2016): Family composition
+   - G30 (2021), G26 (2016): Family composition and country of birth of parents by age of dependent children
+   - G31 (2021), G27 (2016): Family blending
+   - G32 (2021), G28 (2016): Total family income (weekly) by family composition
+   - G47 (2021), G44 (2016): Labour force status by sex of parents by age of dependent children for couple families
+   - G48 (2021), G45 (2016): Labour force status by sex of parent by age of dependent children for one parent families
+   - G57 (2021), G54 (2016): Total family income (weekly) by labour force status of partners for couple families with no children
+   - G58 (2021), G55 (2016): Total family income (weekly) by labour force status of parents/partners for couple families with children
+   - G59 (2021), G56 (2016): Total family income (weekly) by labour force status of parent for one parent families
+   - B02: Selected medians and averages (2011)
+   - B25: Family composition (2011)
+   - B26: Total family income (weekly) by family composition (2011)
+   - B27: Family blending (2011)
+
+10. HOUSEHOLD INCOME AND HOUSING COSTS
+    - G02: Selected medians and averages (2021, 2016)
+    - G33 (2021), G29 (2016): Total household income (weekly) by household composition
+    - G38 (2021), G34 (2016): Mortgage repayment (monthly) by dwelling structure
+    - G40 (2021), G36 (2016): Rent (weekly) by landlord type
+    - B02: Selected medians and averages (2011)
+    - B28: Total household income (weekly) by household composition (2011)
+    - B33: Mortgage repayment (monthly) by dwelling structure (2011)
+    - B34: Rent (weekly) by landlord type (2011)
+
+11. NEED FOR ASSISTANCE
+    - G18: Core activity need for assistance by age by sex (2021, 2016)
+    - B18: Core activity need for assistance by age by sex (2011)
+
+12. RELATIONSHIPS AND CHILDREN
+    - G05: Registered marital status by age by sex (2021, 2016)
+    - G06: Social marital status by age by sex (2021, 2016)
+    - G12: Proficiency in spoken English/Language of parents by age of dependent children (2021, 2016)
+    - G27 (2021), G23 (2016): Relationship in household by age by sex
+    - G28 (2021), G24 (2016): Number of children ever born
+    - B05: Registered marital status by age by sex (2011)
+    - B06: Social marital status by age by sex (2011)
+    - B12: Proficiency in spoken English/Language of parents by age of dependent children (2011)
+    - B23: Relationship in household by age by sex (2011)
+    - B24: Number of children ever born by age of parent (2011)
+
+13. USUAL ADDRESS AND INTERNAL MIGRATION
+    - G03: Place of usual residence by place of enumeration on Census Night by age (2021)
+    - G03: Place of usual residence on Census Night by age (2016)
+    - G44 (2021), G41 (2016): Place of usual residence 1 year ago by sex
+    - G45 (2021), G42 (2016): Place of usual residence 5 years ago by sex
+    - B03: Place of usual residence on Census Night by age (2011)
+    - B38: Place of usual residence 1 year ago by sex (2011)
+    - B39: Place of usual residence 5 years ago by sex (2011)
+
+14. HEALTH (2021 only)
+    - G19: Type of long-term health condition by age by sex
+    - G20: Count of selected long-term health conditions by age by sex
+    - G21: Type of long-term health condition by selected person characteristics
+
+15. UNPAID WORK AND CARE
+    - G23 (2021), G19 (2016): Voluntary work for an organisation or group by age by sex
+    - G24 (2021), G20 (2016): Unpaid domestic work: number of hours by age by sex
+    - G25 (2021), G21 (2016): Unpaid assistance to a person with a disability, health condition or due to old age by age by sex
+    - G26 (2021), G22 (2016): Unpaid child care by age by sex
+    - B19: Voluntary work for an organisation or group by age by sex (2011)
+    - B20: Unpaid domestic work: number of hours by age by sex (2011)
+    - B21: Unpaid assistance to a person with a disability by age by sex (2011)
+    - B22: Unpaid child care by age by sex (2011)

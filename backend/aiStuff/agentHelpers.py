@@ -8,17 +8,23 @@ import json
 import logging
 from typing import List, Dict, Any, Tuple, Optional, TypedDict
 from decimal import Decimal
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 import sqlparse
 from sqlparse.sql import IdentifierList, Identifier
 from sqlparse.tokens import Keyword, DML
 from dotenv import load_dotenv
 from contextlib import contextmanager
 from sqlalchemy import create_engine
+from contextlib import asynccontextmanager
+from motor.motor_asyncio import AsyncIOMotorClient
+from sqlalchemy.sql import text
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
 
 import pandas as pd
 import tiktoken
 from PyPDF2 import PdfReader
+import pymongo
 from pymongo import MongoClient, TEXT
 from pymongo.errors import OperationFailure
 from bson import ObjectId
@@ -35,8 +41,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 ## Loading environment variables
-env_path = os.path.join(os.path.dirname(__file__), '../resources/.ENV')
-load_dotenv(dotenv_path=env_path)
+recourcesPath = os.path.join(os.path.dirname(__file__), '../resources')
+envPath = os.path.join(recourcesPath, '.ENV')
+load_dotenv(dotenv_path=envPath)
 
 ## Type aliases
 Message = TypedDict('Message', {
@@ -89,6 +96,48 @@ class ChatHistoryError(Exception):
     def __init__(self, message="Chat History Error."):
         self.message = message
         super().__init__(self.message)
+
+def loadMetadata(collectionName: str, fileName: str) -> str:
+    """
+    Load metadata from MongoDB.
+
+    Args:
+        collectionName (str): Name of the MongoDB collection.
+        fileName (str): Name of the file to retrieve metadata for.
+
+    Returns:
+        str: Metadata content as a string.
+
+    Raises:
+        pymongo.errors.PyMongoError: If there's an error connecting to MongoDB or retrieving the metadata.
+        ValueError: If the MONGODB_URI environment variable is not set.
+    """
+    mongodb_uri = os.environ.get('MONGO_URI')
+    if not mongodb_uri:
+        logger.error("MONGODB_URI environment variable is not set")
+        raise ValueError("MONGODB_URI environment variable is not set")
+
+    client = None
+    try:
+        client = MongoClient(mongodb_uri)
+        db = client['Resources']
+        collection = db[collectionName]
+        
+        metadata = collection.find_one({'name': fileName})
+        
+        if metadata and 'content' in metadata:
+            logger.info(f"Successfully loaded metadata for {fileName}")
+            return metadata['content']
+        else:
+            logger.warning(f"No metadata found for: {fileName}")
+            return ''
+    except pymongo.errors.PyMongoError as e:
+        logger.error(f"Error loading metadata for {fileName}: {str(e)}")
+        raise
+    finally:
+        if client:
+            client.close()
+            logger.debug("MongoDB connection closed")
 
 @contextmanager
 def loadPostgresDatabase(dbName: str):
@@ -180,15 +229,11 @@ def cleanSqlQuery(sqlQuery: str) -> str:
     Returns:
         str: The cleaned SQL query string.
     """
-    # sqlQuery = sqlQuery.split("3. FINAL SQL QUERY:")[1].strip()
-    # sqlQuery = sqlQuery.replace("```sql", "").replace("```", "").strip()
-    # if sqlQuery.startswith('SQL Query:'): 
-    #     sqlQuery = sqlQuery[len('SQL Query:'):].strip()
-    # return sqlQuery
 
-    sqlQuery = sqlQuery.lower().strip()
+    # sqlQuery = sqlQuery.lower().strip()
+    sqlQuery = sqlQuery.strip()
     sqlQuery = sqlQuery.replace("```sql", "").replace("```", "").strip()
-    match = re.search(r'\b(with|select)\b', sqlQuery)
+    match = re.search(r'\b(with\s+\w+\s+as|select)\b', sqlQuery, re.IGNORECASE)
     if match:
         sqlQuery = sqlQuery[match.start():]
 
@@ -213,13 +258,136 @@ def cleanSummaryResponse(summary: str) -> str:
         summary = summary.strip()
         return summary
 
+class PostgresDatabase:
+    def __init__(self):
+        self.DATABASE_URL = os.environ.get("POLIMAP_POSTGRESQL_URL", None)
+        self.engine = create_async_engine(self.DATABASE_URL, echo=True)
+        self.AsyncSessionLocal = sessionmaker(
+            autocommit=False,
+            autoflush=False,
+            bind=self.engine,
+            class_=AsyncSession
+        )
+
+    @asynccontextmanager
+    async def get_db_session(self):
+        session = self.AsyncSessionLocal()
+        try:
+            yield session
+        finally:
+            await session.close()
+
+    async def switch_database(self, session: AsyncSession, database_name: str):
+        await session.execute(text(f"SET search_path TO {database_name}"))
+        await session.commit()
+
+## For Testing Purposes
+class DataFetcher:
+    def __init__(self):
+        self.mongo_uri = os.environ.get('MONGO_URI')
+        self.postgres_db_name = os.environ.get('POLIMAP_DB_NAME')
+        self.postgres_db = PostgresDatabase()
+        self.mongo_client = AsyncIOMotorClient(self.mongo_uri)
+
+    @asynccontextmanager
+    async def get_mongo_connection(self):
+        db = self.mongo_client['appdata']
+        try:
+            yield db
+        finally:
+            # await self.mongo_client.close()
+            pass  
+
+    async def fetch_dataset(self, id: int) -> Optional[Dict[str, Any]]:
+        async with self.get_mongo_connection() as db:
+            dataset = await db['datasets'].find_one({"id": id}, {"display_name": 1, "name": 1, "level": 1, "series_name": 1, "query": 1, "id": 1, "_id": 0})
+        return dataset
+
+    async def fetch_region(self, regionId: int) -> Optional[Dict[str, Any]]:
+        if regionId is None:
+            return None
+        async with self.get_mongo_connection() as db:
+            region = await db['regions'].find_one({"id": regionId}, {"display_name": 1, "id": 1,  "aec_id": 1, "series_name": 1, "query": 1, "_id": 0})
+        return region
+
+    async def fetch_data(self, dataset: Dict[str, Any], region: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        if dataset["query"]['query_type'].upper() == "SQL":
+            return await self.fetch_sql_data(dataset, region)
+        elif dataset["query"]['query_type'].upper() == "ELECDATA":
+            return await self.fetch_elec_data(dataset, region)
+        else:
+            raise ValueError(f"Unsupported query type: {dataset['query']['query_type']}")
+
+    async def fetch_sql_data(self, dataset: Dict[str, Any], region: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        sql_query = dataset["query"]['query_text']
+        if region:
+            sql_query += " " + dataset["query"]['filter']
+            sql_query = sql_query.replace("%s", f"'{region['display_name']}'")
+
+        async with self.postgres_db.get_db_session() as session:
+            await self.postgres_db.switch_database(session, self.postgres_db_name)
+            result = await session.execute(text(sql_query))
+            column_data = {col: [] for col in result.keys()}
+            for row in result.mappings():
+                for col in result.keys():
+                    column_data[col].append(row[col])
+
+        return column_data
+
+    async def fetch_elec_data(self, dataset: Dict[str, Any], region: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        filter = {}
+        if region:
+            filter = dataset["query"]["filter"]
+            for k, v in filter['places'].items():
+                if filter['places'][k] == "%s":
+                    filter['places'][k] = [region["display_name"]]
+
+        # Placeholder for elec_data.fetch_data
+        # column_data = await elec_data.fetch_data(dataset['query']['query_text'], filter)
+
+        # Simulated column_data structure
+        column_data = {
+            'series': [
+                {'name': 'locale_id', 'data': []},
+                {'name': 'seat', 'data': []},
+                {'name': dataset['series_name'], 'data': []},
+                {'name': 'year', 'data': []},
+                {'name': 'place', 'data': []}
+            ]
+        }
+
+        series = [x for x in column_data['series'] if x['name'] in ['percent', 'year', 'place']]
+        for col in series:
+            if col['name'] == "percent":
+                col['name'] = dataset['series_name']
+        column_data['series'] = series
+
+        return column_data
+
+    async def get_dataset_with_data(self, datasetId: int, regionId: Optional[int] = None) -> Dict[str, Any]:
+        dataset = await self.fetch_dataset(datasetId)
+        if dataset is None:
+            raise ValueError(f"Dataset {datasetId} not found")
+
+        region = None
+        if regionId is not None:
+            region = await self.fetch_region(regionId)
+            if region is None:
+                raise ValueError(f"Region {regionId} not found")
+
+        column_data = await self.fetch_data(dataset, region)
+
+        dataset['data'] = column_data
+        del dataset['query']
+        return dataset
+
 class QuerySQLTool:
     """
     A tool for executing SQL queries on a database and processing the results.
 
     This class provides methods to execute SQL queries, parse the results,
     and convert them into pandas DataFrames. It includes custom parsing for
-    special data types like Decimal and datetime.
+    special data types like Decimal, datetime, and date.
 
     Attributes:
         db (SQLDatabase): The database connection object.
@@ -234,6 +402,7 @@ class QuerySQLTool:
     Private Methods:
         _parseDecimal(match): Parse Decimal values from query results.
         _parseDatetime(match): Parse datetime values from query results.
+        _parseDate(match): Parse date values from query results.
         _customParser(resStr: str): Custom parser for query result strings.
 
     Raises:
@@ -312,6 +481,11 @@ class QuerySQLTool:
         else:
             dt = datetime(*dateArgs)
         return f"'{dt.isoformat()}'"
+
+    def _parseDate(self, match):
+        dateArgs = list(map(int, match.group(1).split(',')))
+        dt = date(*dateArgs)
+        return f"'{dt.isoformat()}'"
     
     def _customParser(self, resStr: str):
         resStr = re.sub(
@@ -322,6 +496,11 @@ class QuerySQLTool:
         resStr = re.sub(
             r"datetime\.datetime\(([\d, ]+)(, tzinfo=datetime\.timezone\.utc)?\)"
             , self._parseDatetime
+            , resStr
+        )
+        resStr = re.sub(
+            r"datetime\.date\(([\d, ]+)\)"
+            , self._parseDate
             , resStr
         )
         return ast.literal_eval(resStr)
@@ -374,12 +553,16 @@ class ChatHistory:
     - Collection: <user_id> (Each user has a dedicated collection named after their user_id)
     - Document Structure:
       {
-        "chat_id": <str>,             # Unique identifier for the chat session
+        "chatId": <str>,             # Unique identifier for the chat session
         "date": <str>,                # Date the chat was created (YYYY-MM-DD format)
         "title": <str>,               # Short title for the chat (first 30 characters of the first message)
         "pinned": <bool>,             # Indicates if the chat is pinned
         "archived": <bool>,           # Indicates if the chat is archived
-        "last_updated": <datetime>,   # Timestamp of the last update to the chat
+        "lastUpdated": <datetime>,   # Timestamp of the last update to the chat
+        "groupDetails": {
+          "groupName": <str>,        # Name of the group also unique identifier
+          "groupColor": <str>,       # Color of the group (e.g., "red" or "blue")
+        },
         "messages": [                 # Array of message objects
           {
             "messageID": <str>,       # Unique identifier for the message
@@ -403,7 +586,7 @@ class ChatHistory:
     
     Key Features:
     - Each user's chat history is stored in a separate collection, identified by `user_id`.
-    - Each chat session is represented by a document, identified by `chat_id`.
+    - Each chat session is represented by a document, identified by `chatId`.
     - The `messages` field in the document contains an array of chat messages.
     - The `documents` field contains metadata about uploaded documents.
     - Actual document files are stored in GridFS.
@@ -442,21 +625,6 @@ class ChatHistory:
         except Exception as e:
             logger.error(f"Failed to connect to database: {e}")
             raise ChatHistoryError(f"Database connection error: {str(e)}")
-
-    def _ensureTextIndex(self) -> None:
-        """Ensures text index exists for message content."""
-        try:
-            indexes = self.collection.list_indexes()
-            indexNames = [index['name'] for index in indexes]
-
-            indexName = "messagesContentTextIndex"
-            fieldsToIndex = [("messages.content", TEXT)]
-
-            if indexName not in indexNames:
-                self.collection.create_index(fieldsToIndex, name=indexName)
-        except OperationFailure as e:
-            logger.error(f"Failed to create text index: {e}")
-            raise ChatHistoryError(f"Failed to create text index: {str(e)}")
         
     def _ensureTextIndex(self) -> None:
         """Ensures text index exists for message content."""
@@ -680,7 +848,11 @@ class ChatHistory:
                             "date": datetime.now().strftime("%Y-%m-%d"),
                             "title": content[:30],
                             "pinned": False,
-                            "archived": False
+                            "archived": False,
+                            "groupDetails": {
+                                "groupName": "Default",
+                                "groupColor": "gray"
+                            }
                         },
                         "$set": {"lastUpdated": datetime.now()}
                     },
@@ -691,6 +863,28 @@ class ChatHistory:
                 raise ChatHistoryError(f"Failed to add message: {str(e)}")
         
         return chatId
+    
+    def updateGroupStatus(self, chatId: str, groupName: str = 'CustomGroup', groupColor: str = 'red') -> None:
+        """Updates the group status of a chat."""
+        with self._getDbConnection():
+            try:
+                result = self.collection.update_one(
+                    {"chatId": chatId},
+                    {
+                        "$set": {
+                            "groupDetails": {
+                                "groupName": groupName,
+                                "groupColor": groupColor
+                            },
+                            "lastUpdated": datetime.now()
+                        }
+                    }
+                )
+                if result.matched_count == 0:
+                    raise ChatHistoryError(f"No chat found with ID: {chatId}")
+            except Exception as e:
+                logger.error(f"Error updating group status for chat {chatId}: {e}")
+                raise ChatHistoryError(f"Failed to update group status: {str(e)}")
     
     def updateChatTitle(self, chatId: str, newTitle: str) -> None:
         """Updates the title of a chat."""
@@ -720,8 +914,7 @@ class ChatHistory:
                     for i, message in enumerate(chat["messages"]):
                         if message["messageId"] == messageId:
                             message["content"] = newContent
-                            # indexToPrune = i + 1
-                            indexToPrune = i
+                            indexToPrune = i + 1
                             break
 
                     if indexToPrune is not None:
@@ -828,4 +1021,96 @@ class ChatHistory:
             except Exception as e:
                 logger.error(f"Error searching chats for term '{term}': {e}")
                 raise ChatHistoryError(f"Failed to search chats: {str(e)}")
+
+class ResourceManager:
+    def __init__(self):
+        self.client = MongoClient(os.getenv('MONGODB_URI'))
+        self.db = self.client['Resources']
+        self.resourcesPath = recourcesPath
+        self.skipFileNames = ['.ENV']
+        self.skipFileExtensions = ['.xlsx', '.xls', '.md']
+
+    def createMetadata(self):
+        regionsData = self._loadJson('regions.json')
+        regionsDict = self._createRegionsMetadata(regionsData)
+        self._saveJson(regionsDict, 'metadataRegions.json')
+        
+        datasetsData = self._loadJson('datasets.json')
+        datasetsDict = self._createDatasetsMetadata(datasetsData)
+        self._saveJson(datasetsDict, 'metadataDatasets.json')
+
+    def _loadJson(self, filename):
+        with open(os.path.join(self.resourcesPath, filename), 'r') as file:
+            return json.load(file)
+
+    def _saveJson(self, data, filename):
+        with open(os.path.join(self.resourcesPath, filename), 'w') as file:
+            json.dump(data, file, indent=2)
+
+    def _createRegionsMetadata(self, regionsData):
+        territoryDict = {
+            'NSW': 'New South Wales', 'VIC': 'Victoria', 'QLD': 'Queensland',
+            'WA': 'Western Australia', 'SA': 'South Australia', 'TAS': 'Tasmania',
+            'ACT': 'Australian Capital Territory', 'NT': 'Northern Territory',
+            'JBT': 'Jervis Bay Territory', 'NI': 'Norfolk Island',
+            'CX': 'Christmas Island', 'CC': 'Cocos (Keeling) Islands'
+        }
+        regionsDict = {}
+        for region in regionsData['regions']:
+            regionId = region['id']
+            territory = region['name'].split('/')[2]
+            territoryName = territoryDict[territory]
+            description = f"{region['display_name']} - Located in {territoryName} ({territory})"
+            regionsDict[regionId] = description
+        return regionsDict
+
+    def _createDatasetsMetadata(self, datasetsData):
+        datasetsDict = {}
+        for dataset in datasetsData['datasets']:
+            datasetId = dataset['id']
+            sourceName = dataset['source']['name']
+            description = dataset.get('description', '')
+            level = dataset['level']
+            seriesName = dataset['series_name']
+            displayName = dataset['display_name']
+            name = dataset['name']
+            metadata = f"{displayName} - {description} Level: {level}. Source: {sourceName} ({name})."
+            datasetsDict[datasetId] = metadata
+        return datasetsDict
+
+    def uploadToMongodb(self):
+        for filename in os.listdir(self.resourcesPath):
+            filePath = os.path.join(self.resourcesPath, filename)
+            if os.path.isfile(filePath):
+                self._uploadFile(filePath)
+
+    def _uploadFile(self, filePath):
+        fileName = os.path.basename(filePath)
+        fileExtension = os.path.splitext(fileName)[1].lower()
+        fileName = os.path.splitext(fileName)[0]
+
+        if fileName in self.skipFileNames or fileExtension in self.skipFileExtensions:
+            return
+        
+
+        with open(filePath, 'r', encoding='utf-8') as file:
+            content = file.read()
+        
+        if fileName.lower().startswith('_archive'):
+            collection = self.db['archive']
+            fileName = fileName.replace('_archive_', '')
+        elif fileName.lower().startswith('metadata'):
+            collection = self.db['metadata']
+            fileName = fileName.replace('metadata', '')
+        else:
+            collection = self.db[fileName]
+
+        collection.insert_one({
+            'name': fileName,
+            'content': content
+        })
     
+    def processResources(self):
+        self.createMetadata()
+        self.uploadToMongodb()
+        logger.info("All resources have been processed and uploaded to MongoDB.")

@@ -1,35 +1,43 @@
 import React, { useState } from "react";
-// adding this 
 import {
     BiCopy,
     BiRefresh,
     BiConfused,
     BiData,
     BiBarChartSquare,
-} from "react-icons/bi";
+    BiMessageSquareCheck,
+} from "react-icons/bi"; // Include BiCopy icon
 import axios from "axios";
-// importing hook for regenerate chat called useUpdateMessage
+// Importing hook for regenerate chat called useUpdateMessage
 import { useUpdateMessage } from "../hooks/useUpdateMessage";
 
-// creating interface for FeedbackButtonProps
+// Creating interface for FeedbackButtonProps
 interface FeedbackButtonProps {
     chatId: string;
     messageId: string;
     userId: string;
+    content: string; // Add content prop for copying text
 }
 
-
-const FeedbackButton: React.FC<FeedbackButtonProps> = ({ chatId, messageId, userId }) => {
+const FeedbackButton: React.FC<FeedbackButtonProps> = ({
+    chatId,
+    messageId,
+    userId,
+    content, // Add content prop for copying text
+}) => {
     const [showPopup, setShowPopup] = useState(false);
-// Use the custom hook
-const { updateMessage, loading, error } = useUpdateMessage(userId);
-
+    const [popupMessage, setPopupMessage] = useState(""); // For confused popup
+    const [showConfirmation, setShowConfirmation] = useState(false); // For copy confirmation
+    const { updateMessage, loading, error } = useUpdateMessage(userId); // Use the custom hook
 
     // Function to handle the confused icon click
     const handleConfusedClick = () => {
-        setShowPopup(true); // Show the popup when the button is clicked
+        setPopupMessage(
+            "☹️ I am sorry you didn't like this response. I will do better next time boss!"
+        );
+        setShowPopup(true);
         setTimeout(() => {
-            setShowPopup(false); // Hide the popup after 3 seconds
+            setShowPopup(false);
         }, 3000);
     };
 
@@ -39,14 +47,24 @@ const { updateMessage, loading, error } = useUpdateMessage(userId);
         await updateMessage(chatId, messageId, newContent); // Use the hook to call the API
     };
 
+    // Function to handle the copy icon click
+    const handleCopyClick = () => {
+        navigator.clipboard.writeText(content); // Copy the message content to clipboard
+        setShowConfirmation(true); // Show confirmation popup
+        setTimeout(() => {
+            setShowConfirmation(false); // Hide confirmation after 2 seconds
+        }, 2000);
+    };
 
     return (
-        <div className="relative">
+        <div className="relative w-full">
             <div className="absolute left-0 top-full mt-2">
-                <div className="flex gap-1 p-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <div className="flex relative z-10 gap-1 p-1 pt-2 pl-7 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     {/* Copy Icon */}
-                    <button className="px-1 py-1 text-white bg-blue-500 rounded-full">
-                        {/* CHANGE TODO: Allow user to copy response to clipboard */}
+                    <button
+                        className="px-1 py-1 text-white bg-blue-500 rounded-full"
+                        onClick={handleCopyClick} // Call the copy handler
+                    >
                         <BiCopy className="text-xl" />
                     </button>
                     {/* Refresh Icon */}
@@ -58,28 +76,33 @@ const { updateMessage, loading, error } = useUpdateMessage(userId);
                         <BiRefresh className="text-xl" />
                     </button>
                     {/* Confused Icon */}
-                    <button className="px-1 py-1 text-white bg-red-500 rounded-full"
-                    onClick={handleConfusedClick}
+                    <button
+                        className="px-1 py-1 text-white bg-red-500 rounded-full"
+                        onClick={handleConfusedClick}
                     >
-                        {/* CHANGE TODO: Allow user to report bad or confusing response */}
                         <BiConfused className="text-xl" />
                     </button>
                     {/* Data Icon */}
                     <button className="px-1 py-1 text-white bg-yellow-500 rounded-full">
-                        {/* CHANGE TODO: Allow user to upload data specifically for this response - to regenerate response with new date as new context */}
                         <BiData className="text-xl" />
                     </button>
                     {/* Bar Chart Icon */}
                     <button className="px-1 py-1 text-white bg-purple-500 rounded-full">
-                        {/* CHANGE TODO: Allow user to generate a visualisation based on this response */}
                         <BiBarChartSquare className="text-xl" />
                     </button>
                 </div>
             </div>
-            {/* Confused icon click popup message  */}
+            {/* Confirmation Icon (show on copy success) */}
+            {showConfirmation && (
+                <div className="absolute left-0 top-6 p-1 mt-8 ml-7 text-white bg-green-500 rounded shadow-lg">
+                    ✅ Copied to clipboard!
+                </div>
+            )}
+            {/* Confused icon click popup message */}
             {showPopup && (
-                <div className="absolute top-0 left-0 mt-8 ml-10 p-4 bg-red-500 text-white rounded shadow-lg">
-                    ☹️ I am sorry you didn't like this response. I will do better next time boss!
+                <div className="absolute left-0 top-6 p-2 mt-8 ml-7 text-white bg-red-500 rounded shadow-lg">
+                    ☹️ I am sorry you didn't like this response. I will do
+                    better next time, boss!
                 </div>
             )}
         </div>

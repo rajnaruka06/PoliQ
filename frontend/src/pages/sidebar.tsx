@@ -13,8 +13,10 @@ import {
     AiOutlineSearch,
     AiOutlineEllipsis,
     AiOutlineForm,
+    AiOutlineEdit,
 } from "react-icons/ai";
 // Import hooks
+import { useUpdateTitleChat } from "../hooks/useUpdateTitleChat";
 import { useFetchChatHistory } from "../hooks/useFetchChatHistory";
 import { usePinChat } from "../hooks/usePinChat";
 import { useUnpinChat } from "../hooks/useUnpinChat";
@@ -32,6 +34,7 @@ interface ChatHistory {
 }
 
 interface SidebarProps {
+    onOptionClick?: (option: string) => void;
     selectedChatID: string | null;
     setSelectedChatID: (chatID: string | null) => void;
     setMessages: React.Dispatch<React.SetStateAction<MessageCurrent[]>>;
@@ -39,6 +42,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
+    onOptionClick,
     selectedChatID,
     setSelectedChatID,
     setMessages,
@@ -49,13 +53,25 @@ const Sidebar: React.FC<SidebarProps> = ({
     const userId = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
     const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
     const settingsRef = useRef<HTMLDivElement | null>(null);
-    const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
+    const SetRef = useRef<HTMLDivElement | null>(null); // Reference for the settings icon
+    const dotRef = useRef<HTMLDivElement | null>(null); // Reference for the three dots icon
+    // const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs //commented to remove red prompt
+    const [, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
     const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
-    const { chatHistory, loading, error, fetchChatHistory } = useFetchChatHistory(userId);
+    const { chatHistory, loading, error, fetchChatHistory } =
+        useFetchChatHistory(userId);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isRenaming, setIsRenaming] = useState(false); // To control renaming state
+    const [newTitle, setNewTitle] = useState(""); // New title state
+    const [chatToRename, setChatToRename] = useState<string | null>(null); // Chat ID to rename
+    const {
+        updateTitleChat,
+        loading: renameLoading,
+        error: renameError,
+    } = useUpdateTitleChat(userId); // Hook to rename chat
     // State to manage filtered chat history
     const [filteredChatHistory, setFilteredChatHistory] = useState<
         ChatHistory[]
@@ -70,14 +86,22 @@ const Sidebar: React.FC<SidebarProps> = ({
         const handleClickOutside = (event: MouseEvent) => {
             if (
                 menuRef.current &&
-                !menuRef.current.contains(event.target as Node)
+                !menuRef.current.contains(event.target as Node) && // Check if click is outside the popup
+                !(
+                    dotRef.current &&
+                    dotRef.current.contains(event.target as Node)
+                )
             ) {
                 setShowOptionsMenu(null); // Close the menu if clicked outside
             }
 
             if (
                 settingsRef.current &&
-                !settingsRef.current.contains(event.target as Node)
+                !settingsRef.current.contains(event.target as Node) && // Check if click is outside the popup
+                !(
+                    SetRef.current &&
+                    SetRef.current.contains(event.target as Node)
+                )
             ) {
                 setShowSettingsMenu(false); // Close the settings menu if clicked outside
             }
@@ -99,20 +123,21 @@ const Sidebar: React.FC<SidebarProps> = ({
         // error: deleteError,
     } = useDeleteChat(userId);
     // Use the pin and unpin chat hooks
-    const { 
-        pinChat, /* loading: pinLoading, error: pinError */ } = usePinChat(userId);
-    const { 
-        unpinChat, /* loading: unpinLoading, error: unpinError */ } = useUnpinChat(userId); 
+    const { pinChat /* loading: pinLoading, error: pinError */ } =
+        usePinChat(userId);
+    const { unpinChat /* loading: unpinLoading, error: unpinError */ } =
+        useUnpinChat(userId);
     const {
         searchResults,
         // loading: searchLoading,
         // error: searchError,
     } = useSearchChats(userId, searchTerm);
     // Use the archive and unarchive chat hooks
-    const { 
-        archiveChat, /* loading: archiveLoading, error: archiveError */ } = useArchiveChat(userId);
-    const { 
-        unarchiveChat, /* loading: unarchiveLoading, error: unarchiveError */ } = useUnarchiveChat(userId);
+    const { archiveChat /* loading: archiveLoading, error: archiveError */ } =
+        useArchiveChat(userId);
+    const {
+        unarchiveChat /* loading: unarchiveLoading, error: unarchiveError */,
+    } = useUnarchiveChat(userId);
 
     // Effect to determine whether to use serach results or the full chat history
     // Function to handle search -> changed again to use hook
@@ -191,7 +216,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             // Update chat history or UI state
             setFilteredChatHistory((prevHistory) =>
                 prevHistory.map((chat) =>
-                    chat.chatId === chatID ? { ...chat, archived: !isArchived } : chat
+                    chat.chatId === chatID
+                        ? { ...chat, archived: !isArchived }
+                        : chat
                 )
             );
             fetchChatHistory();
@@ -200,120 +227,219 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
     };
 
-        // **Expose fetchChatHistory via refreshChatHistoryRef**
-        useEffect(() => {
-            if (refreshChatHistoryRef) {
-                refreshChatHistoryRef.current = fetchChatHistory;
-            }
-        }, [fetchChatHistory, refreshChatHistoryRef]);
+    // **Expose fetchChatHistory via refreshChatHistoryRef**
+    useEffect(() => {
+        if (refreshChatHistoryRef) {
+            refreshChatHistoryRef.current = fetchChatHistory;
+        }
+    }, [fetchChatHistory, refreshChatHistoryRef]);
+
+    // **Expose fetchChatHistory via refreshChatHistoryRef**
+    useEffect(() => {
+        if (refreshChatHistoryRef) {
+            refreshChatHistoryRef.current = fetchChatHistory;
+        }
+    }, [fetchChatHistory, refreshChatHistoryRef]);
+
+    //to rename a chat title
+    const handleRenameChat = async (chatID: string) => {
+        if (!newTitle.trim()) return; // Prevent empty titles
+        try {
+            await updateTitleChat(chatID, newTitle); // Call the updateTitleChat function from the hook
+            // Update the chat title locally after renaming
+            setFilteredChatHistory((prevHistory) =>
+                prevHistory.map((chat) =>
+                    chat.chatId === chatID ? { ...chat, title: newTitle } : chat
+                )
+            );
+            setIsRenaming(false); // Hide the rename input
+        } catch (error) {
+            console.error("Error renaming chat:", error);
+        }
+    };
 
     // Function to handle the three dots menu
     const threeDotsMenu = (chat: {
         chatId: string;
         title: string;
         pinned: boolean;
+        archived: boolean;
     }) => {
         return (
-            // FIXME: threedots bug, useref can't close
             <div
                 ref={menuRef}
-                className="flex absolute right-4 z-50 flex-col gap-3 items-end p-3 mt-10 text-white rounded-xl shadow-lg bg-primary"
+                className="flex absolute right-4 z-10 flex-col gap-3 items-end p-2 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
             >
                 {/* Pin / Unpin button */}
                 <button
-                    className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
-                    onClick={() => handlePinChat(chat.chatId, chat.pinned)}
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+                    onClick={() => {
+                        handlePinChat(chat.chatId, chat.pinned);
+                        setShowOptionsMenu(null); // Close the menu after action
+                    }}
                 >
                     {chat.pinned ? (
                         <>
+                            <span>Unpin</span>
                             <BiSolidPin />
-                            {/* <span>Unpin</span> */}
                         </>
                     ) : (
                         <>
+                            <span>Pin</span>
                             <BiPin />
-                            {/* <span>Pin</span> */}
                         </>
                     )}
                 </button>
                 {/* Delete chat button */}
                 <button
-                    className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
-                    onClick={() => handleDeleteChat(chat.chatId)}
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+                    onClick={() => {
+                        handleDeleteChat(chat.chatId);
+                        setShowOptionsMenu(null); // Close the menu after action
+                    }}
                 >
+                    <span>Delete</span>
                     <BiTrash />
-                    {/* <span>Delete</span> */}
                 </button>
                 {/* Archive / Unarchive button */}
                 <button
-                    className="flex gap-2 items-center shadow-sm bg-primary shadow-black/90"
-                    onClick={() => handleArchiveChat(chat.chatId, chat.archived || false)} // Pass the correct state
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+                    onClick={() => {
+                        handleArchiveChat(chat.chatId, chat.archived || false);
+                        setShowOptionsMenu(null); // Close the menu after action
+                    }}
                 >
+                    <span>Archive</span>
                     <BiArchive />
-                    {/* <span>Archive</span> */}
                 </button>
-
+                {/* Rename button */}
+                <button
+                    className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+                    onClick={() => {
+                        setIsRenaming(true);
+                        setChatToRename(chat.chatId); // Set the chat ID to rename
+                        setNewTitle(chat.title); // Set the current title as default
+                        setShowOptionsMenu(null); // Close the menu after action
+                    }}
+                >
+                    <span>Rename</span>
+                    <AiOutlineEdit />
+                </button>
             </div>
         );
     };
 
     //  Overlay content on bottom left corner
-    //  TODO: Create a floating window
     const settingsOverlay = showSettingsMenu && (
         <div
             ref={settingsRef}
-            className="absolute right-0 bottom-10 p-2 mb-2 w-full rounded shadow-lg"
+            className="flex absolute right-0 bottom-10 flex-col gap-5 p-5 mb-2 w-full text-lg text-white rounded-md shadow-lg bg-lightTertiary dark:bg-darkPrimary dark:text-black"
         >
-            <ul className="flex flex-col gap-5 content-end p-5 text-lg rounded-lg bg-primary">
-                <button className="text-2xl font-semibold bg-primary">
-                    View all chats
-                </button>
-                <button className="text-2xl font-semibold bg-primary">
-                    Archived chats
-                </button>
-                <button className="text-2xl font-semibold bg-primary">
-                    Memory
-                </button>
-            </ul>
-            {/* <div className="flex justify-end">
-                <button className="text-3xl" onClick={toggleSettingsOverlay}>
-                    <AiOutlineEllipsis />
-                </button>
-            </div> */}
+            <button
+                onClick={() => onOptionClick && onOptionClick("View all chats")}
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+            >
+                View all chats
+            </button>
+            <button
+                onClick={() => onOptionClick && onOptionClick("Archived chats")}
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+            >
+                Archived chats
+            </button>
+            <button
+                onClick={() => onOptionClick && onOptionClick("Memory")}
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+            >
+                Memory
+            </button>
         </div>
     );
 
+    // components that called inside loadChatHistory
+    // FIXME: if chat title too long, truncate not working. but if hovered, truncate working and width changed
     // components that called inside loadChatHistory
     const loadChatHistoryComponent = (chat: ChatHistory, idx: number) => {
         return (
             <div
                 key={idx}
-                className={`flex flex-col py-1 pl-5 ml-3 rounded-xl text-xl truncate hover:bg-zinc-500 hover:cursor-pointer ${
+                className={`flex items-center py-1 px-5 rounded-xl text-xl hover:cursor-pointer ${
                     selectedChatID === chat.chatId
-                        ? "bg-blue-600 text-white"
-                        : "bg-transparent"
+                        ? "bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-500 text-white dark:text-white"
+                        : "dark:hover:bg-darkPrimary hover:bg-gray-200 bg-transparent text-black dark:text-white"
                 }`}
                 onClick={() => setSelectedChatID(chat.chatId)}
-                onMouseEnter={() => setHoveredChatID(chat.chatId)} // Set hovered chat on mouse enter
-                onMouseLeave={() => setHoveredChatID(null)} // Reset hovered chat on mouse leave
+                onMouseEnter={() =>
+                    !isRenaming && setHoveredChatID(chat.chatId)
+                } // Set hovered chat on mouse enter only if not renaming
+                onMouseLeave={() => !isRenaming && setHoveredChatID(null)} // Reset hovered chat on mouse leave only if not renaming
             >
-                <div className="flex justify-between group">
-                    <span className="truncate">{chat.title}</span>
-                    {hoveredChatID === chat.chatId && ( // Show icon only if hovered
-                        <AiOutlineMore
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setShowOptionsMenu(
-                                    showOptionsMenu === chat.chatId
-                                        ? null
-                                        : chat.chatId
-                                );
+                <div className="flex items-center w-full">
+                    {/* Chat title or input */}
+                    {isRenaming && chatToRename === chat.chatId ? (
+                        <div className="flex-grow">
+                            <input
+                                type="text"
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
+                                className="px-3 py-2 mb-2 w-full text-black bg-white rounded border"
+                                placeholder="Enter new title"
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        handleRenameChat(chatToRename!);
+                                    }
+                                }}
+                            />
+                            <div className="flex gap-4 mt-2">
+                                <button
+                                    className="px-3 py-1 text-white bg-green-500 rounded"
+                                    onClick={() =>
+                                        handleRenameChat(chatToRename!)
+                                    }
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    className="px-3 py-1 text-white bg-red-500 rounded"
+                                    onClick={() => setIsRenaming(false)}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div
+                            className="flex-grow truncate cursor-pointer"
+                            onDoubleClick={() => {
+                                setIsRenaming(true);
+                                setChatToRename(chat.chatId);
+                                setNewTitle(chat.title);
                             }}
-                            className="pr-2 text-3xl"
-                        />
+                        >
+                            {chat.title}
+                        </div>
                     )}
+
+                    {/* Three-dot menu icon */}
+                    {!isRenaming &&
+                        (hoveredChatID === chat.chatId ||
+                            selectedChatID === chat.chatId) && (
+                            <div ref={dotRef} className="flex-shrink-0 ml-auto">
+                                <AiOutlineMore
+                                    onClick={(event) => {
+                                        event.stopPropagation(); // Prevent click from bubbling up to the document
+                                        setShowOptionsMenu(
+                                            (prev) =>
+                                                prev === chat.chatId
+                                                    ? null
+                                                    : chat.chatId // Toggle the options menu for the specific chat
+                                        );
+                                    }}
+                                    className="text-2xl cursor-pointer"
+                                />
+                            </div>
+                        )}
                 </div>
-                {/* FIXME: when threedotsmenu hovered, row size changes */}
                 {showOptionsMenu === chat.chatId && threeDotsMenu(chat)}
             </div>
         );
@@ -345,7 +471,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         );
 
         return (
-            <div className="flex overflow-auto flex-col flex-grow gap-2 text-white">
+            <div className="flex overflow-auto flex-col flex-grow gap-2 text-black dark:text-white">
                 {/* Pinned Chats */}
                 {pinnedChatHistory.length > 0 && (
                     <div className="mb-4">
@@ -371,7 +497,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     return (
         <div
-            className={`flex flex-col relative rounded-lg shadow-lg transition-all duration-300 ease-in-out bg-sidebar ${
+            className={`flex flex-col relative rounded-lg shadow-lg transition-all duration-300 ease-in-out bg-lightSecondary dark:bg-darkSecondary ${
                 isSidebarVisible ? "p-4 w-1/6" : "w-0"
             }`}
         >
@@ -380,7 +506,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {/* Title Area*/}
                     <div className="flex relative mb-10">
                         <div className="text-5xl font-bold text-white">
-                            <a href="/" className="text-white hover:text-white">
+                            <a
+                                href="/"
+                                className="font-semibold text-black dark:text-white hover:text-white"
+                            >
                                 PoliQ Chat
                             </a>
                         </div>
@@ -391,16 +520,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                         {/* Search bar with icon */}
                         <div className="relative flex-grow">
                             <input
-                                className="px-4 py-2 pl-10 w-full text-white rounded-full bg-zinc-700 "
+                                className="px-4 py-2 pl-10 w-full text-xl text-black rounded-full dark:text-white bg-lightTertiary dark:bg-lightTertiary"
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={handleSearch}
                             />
-                            <AiOutlineSearch className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2" />
+                            <AiOutlineSearch className="absolute left-3 top-1/2 text-2xl text-black transform -translate-y-1/2 dark:text-white" />
                         </div>
                         {/* New chat button */}
                         <button
-                            className="px-4 py-2 text-white rounded-full bg-zinc-700"
+                            className="px-4 py-2 text-2xl text-black rounded-full bg-lightTertiary dark:text-black"
                             onClick={() => {
                                 setSelectedChatID(null); // Clear the selected chat
                                 setMessages([]);
@@ -409,19 +538,31 @@ const Sidebar: React.FC<SidebarProps> = ({
                             <AiOutlineForm />
                         </button>
                     </div>
-                    {loading && <p>Loading results...</p>}
-                    {error && <p>Error: {error}</p>}
-                    {!loading && !error && loadChatHistory()}
+                    {/* Loading and error handling */}
+                    {loading ? (
+                        <p>Loading results...</p>
+                    ) : error ? (
+                        <p>Error: {error}</p>
+                    ) : (
+                        loadChatHistory()
+                    )}
 
                     {/* Bottom Sidebar Area */}
-                    <div className="flex relative text-3xl bg-sidebar">
-                        <div className="">John Doe</div>
-                        {/* FIXME: settings bug, useref can't close */}
+                    <div className="flex relative text-3xl bg-lightSecondary dark:bg-darkSecondary">
+                        <div className="text-black dark:text-white">
+                            John Doe
+                        </div>
                         {settingsOverlay}
-                        <AiOutlineEllipsis
-                            className="absolute right-0 cursor-pointer"
-                            onClick={() => setShowSettingsMenu(true)}
-                        />
+                        {/* Show settings menu if active */}
+                        <div ref={SetRef}>
+                            <AiOutlineEllipsis
+                                className="absolute right-0 text-black cursor-pointer dark:text-white"
+                                onClick={(event) => {
+                                    event.stopPropagation(); // Prevent click from bubbling up to the document
+                                    setShowSettingsMenu((prev) => !prev); // Toggle the settings menu visibility
+                                }}
+                            />
+                        </div>
                     </div>
                 </>
             )}
@@ -429,7 +570,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <button
                 className={`absolute top-4 ${
                     isSidebarVisible ? "right-0" : "-right-12"
-                } text-2xl text-white rounded-full bg-sidebar`}
+                } text-2xl text-black dark:text-white rounded-full bg-lightSecondary dark:bg-darkSecondary`}
                 onClick={toggleSidebar}
             >
                 {isSidebarVisible ? (

@@ -7,11 +7,12 @@ This is the backend service for our electoral data analysis application. It prov
 - `/aiStuff`: Contains core AI and data processing logic
 - `/api`: Contains the FastAPI application
 - `/resources`: Contains configuration files and environment variables
+- `/tests`: Contains test files for backend components.
 
 ## Setup
 
-1. Ensure you have Python 3.8+ installed (preferrably 3.12)
-2. Install dependencies: `pip install -r requirements.txt`
+1. Ensure you have Python 3.8+ installed (preferably 3.12)
+2. Install dependencies from resources folder: `pip install -r requirements.txt`
 3. Set up your environment variables in `/resources/.ENV`
 4. Run the application: `uvicorn api.main:app --reload`
 
@@ -20,5 +21,17 @@ This is the backend service for our electoral data analysis application. It prov
 - ElecDataWorkflow: Handles electoral data queries and processing
 - ChatHistory: Manages user chat history and document storage
 - FastAPI application: Provides RESTful API endpoints for the frontend
+- CustomAgents: Includes SqlExpert, ResponseSummarizer, ChatAgent, and RouterAgent
+- ResourceManager: Manages metadata and resources
+
+## New Features
+
+- Metadata Automation
+- Workflow Management
+- DatasetRegionMatcherAgent (Not yet being used in the frontend)
+
+## Usage
+
+The backend provides a comprehensive API for managing chats, processing queries, and handling document uploads. Refer to the API documentation for detailed endpoint information.
 
 For more details on each component, please refer to the README files in each subdirectory.

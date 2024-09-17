@@ -1,16 +1,22 @@
 ## CustomAgents.py
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from langchain_core.prompts import PromptTemplate
 from langchain.base_language import BaseLanguageModel
+from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 import pandas as pd
+import json
+import os
+
+resourcesPath = os.path.join(os.path.dirname(__file__), '../resources')
+envPath = os.path.join(resourcesPath, '.ENV')
 
 ## Using CRAG for SQL Generation
 class SqlExpert:
     def __init__(self, llm: BaseLanguageModel):
         self.llm = llm
 
-    def generateAndRefineQuery(self, userQuery: str, dialect: str, tableInfo: str, chatHistory: str = '') -> Dict[str, str]:
+    def generateAndRefineQuery(self, userQuery: str, dialect: str, tableInfo: str, chatHistory: str = '') -> str:
         template = """Given an input question, perform the following steps:
 
         1. Generate a syntactically correct {dialect} SQL query.
@@ -25,7 +31,7 @@ class SqlExpert:
         - Never use * in the SELECT statement. Always specify the columns you want to retrieve.
         - Use GROUP BY instead of DISTINCT where applicable.
         - End the SQL query with a semicolon (;).
-        - Do not include any LIMIT or OFFSET clauses unless the user query requires it.
+        - Do not include any LIMIT, OFFSET, WHERE clauses, or any other filters unless explicitly mentioned in the user query.
 
         Available tables:
         {tableInfo}
@@ -66,7 +72,7 @@ class ResponseSummarizer:
     def __init__(self, llm: BaseLanguageModel):
         self.llm = llm
 
-    def generateSummaryWithReflection(self, response: str, userQuery: str) -> Dict[str, str]:
+    def generateSummaryWithReflection(self, response: str, userQuery: str) -> str:
         template = """Given a user query and a response, perform the following steps:
 
         1. Generate a concise summary of the response.
@@ -88,6 +94,7 @@ class ResponseSummarizer:
         <Write only the updated summary here, nothing else>
 
         Each section should be separated by the delimiter: -----
+        Do not add the delimiter at the end of the response it should be placed between the sections.
         """
 
         result = self._invokeLlm(template, response=response, userQuery=userQuery)
@@ -139,3 +146,64 @@ class RouterAgent:
         prompt = PromptTemplate.from_template(template)
         chain = prompt | self.llm
         return chain.invoke({"userQuery": userQuery, "chatHistory": chatHistory}).content.strip()
+
+class DatasetRegionMatcherAgent:
+    def __init__(self, llm: BaseLanguageModel):
+        self.llm = llm
+        self.outputParser = self._createOutputParser()
+        self.prompt = self._createPrompt()
+        self.chain = self.prompt | self.llm | self.outputParser
+
+    def _createOutputParser(self):
+        return StructuredOutputParser.from_response_schemas([
+            ResponseSchema(
+                name="layers",
+                description="A JSON string representing a list of layers, where each layer is an array [RegionID, DatasetID, Level]. RegionID should be included whenever possible. DatasetID is necessary. Level is one of 'top', 'booth', or 'SA1'. Return an empty list [] if there are no relevant data/regions."
+            )
+        ])
+
+    def _createPrompt(self):
+        template = """You are an AI assistant specializing in electoral and census data. Your task is to identify the minimum set of layers necessary to answer the user's query based on the provided metadata.
+
+        Regions Metadata:
+        {regions_metadata}
+
+        Datasets Metadata:
+        {datasets_metadata}
+
+        User Query: {user_query}
+
+        Based on the user's query and the provided metadata, determine the minimum set of layers required to fully answer the query. Each layer should be represented as [RegionID, DatasetID, Level], where:
+        - RegionID should be included whenever possible. Only omit it if there is absolutely no relevant region for the query.
+        - DatasetID is necessary
+        - Level is one of "top" (for CEDs), "booth" (for polling booths), or "SA1" (for Statistical Areas)
+
+        Only include layers that are absolutely necessary to provide a complete and accurate response.
+
+        Remember:
+        1. Only include layers that are directly relevant to answering the user's specific query.
+        2. Aim for the smallest possible set of layers that can fully address the query.
+        3. Do not include any layer unless you are certain it will contribute to answering the user's question.
+        4. More than one layer might be needed to answer the user query correctly, but look for the least number of layers possible.
+        5. If there are no relevant data or regions to answer the query, return an empty list [].
+        6. Always try to include a specific RegionID. Only omit the RegionID if the query doesn't specify or imply any particular region and no region from the metadata is relevant.
+
+        {format_instructions}
+        """
+        
+        return PromptTemplate(
+            template=template,
+            input_variables=["regions_metadata", "datasets_metadata", "user_query"],
+            partial_variables={"format_instructions": self.outputParser.get_format_instructions()}
+        )
+
+    def match(self, userQuery, regionsMetadata, datasetsMetadata):
+        try:
+            result = self.chain.invoke({
+                "regions_metadata": regionsMetadata,
+                "datasets_metadata": datasetsMetadata,
+                "user_query": userQuery
+            })
+            return result
+        except Exception as e:
+            raise RuntimeError(f"Error processing LLM output: {str(e)}")
