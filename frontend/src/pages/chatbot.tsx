@@ -8,6 +8,7 @@ import {
     AiOutlineUpload,
     AiFillSun,
     AiFillMoon,
+    AiOutlineQuestionCircle,
 } from "react-icons/ai";
 import FeedbackButton from "../components/FeedbackButton.tsx";
 import { useSendMessage } from "../hooks/useSendMessage";
@@ -15,6 +16,7 @@ import { useFetchMessages } from "../hooks/useFetchMessages";
 import SettingsOptionOverlay from "../components/SettingsOptionOverlay.tsx";
 import Hero from "../components/Hero.tsx";
 import LevelRegions from "../components/LevelsRegions.tsx";
+import HelpOverlay from "../components/HelpOverlay";
 
 interface MessageCurrent {
     sender: string;
@@ -49,6 +51,8 @@ const ChatBot: React.FC = () => {
         return window.matchMedia("(prefers-color-scheme: dark)").matches;
     }); // Reference to refresh chat history
     const refreshChatHistoryRef = useRef<() => void>(() => {});
+
+    const [showHelp, setShowHelp] = useState(false); // The state for Help overlay
 
     // Using useFetchMessages to fetch messages for the selected chat
     const {
@@ -258,6 +262,11 @@ const ChatBot: React.FC = () => {
         setIsDarkMode((prevMode) => !prevMode);
     };
 
+    // Toggle the Help overlay
+    const toggleHelp = () => {
+        setShowHelp((prev) => !prev);
+    };
+
     const [showSettingsOverlay, setShowSettingsOverlay] = useState(false);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const handleSettingsOverlay = (option: string | null) => {
@@ -333,10 +342,22 @@ const ChatBot: React.FC = () => {
                 <LevelRegions /> {/* Call the LevelRegions function here */}
                 {/* Chat area */}
                 <div className="flex flex-col w-full">
+                    {/* help button */}
+                    <button
+                        onClick={toggleHelp}
+                        className={`absolute top-4 right-9 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                    >
+                        {/* Use the Help question mark icon */}
+                        <AiOutlineQuestionCircle />
+                    </button>
+
+                    {/* Help Overlay */}
+                    <HelpOverlay showHelp={showHelp} closeHelp={toggleHelp} />
+
                     {/* light dark mode button */}
                     <button
                         onClick={toggleDarkMode}
-                        className={`absolute top-4 right-9 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                        className={`absolute top-4 right-20 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
                     >
                         {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
                     </button>

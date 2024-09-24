@@ -11,7 +11,7 @@ import {
 import {
     AiOutlineMore,
     AiOutlineSearch,
-    AiOutlineEllipsis,
+    AiOutlineBook,
     AiOutlineForm,
     AiOutlineEdit,
 } from "react-icons/ai";
@@ -555,7 +555,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         {settingsOverlay}
                         {/* Show settings menu if active */}
                         <div ref={SetRef}>
-                            <AiOutlineEllipsis
+                            <AiOutlineBook
                                 className="absolute right-0 text-black cursor-pointer dark:text-white"
                                 onClick={(event) => {
                                     event.stopPropagation(); // Prevent click from bubbling up to the document
