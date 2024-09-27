@@ -377,7 +377,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div className="flex items-center w-full">
                     {/* Chat title or input */}
                     {isRenaming && chatToRename === chat.chatId ? (
-                        <div className="flex-grow">
+                        <div className="flex-grow w-full">
                             <input
                                 type="text"
                                 value={newTitle}
@@ -390,7 +390,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     }
                                 }}
                             />
-                            <div className="flex gap-4 mt-2">
+                            <div className="flex flex-col xl:flex-row gap-4 mt-2">
                                 <button
                                     className="px-3 py-1 text-white bg-green-500 rounded"
                                     onClick={() =>
@@ -520,7 +520,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         {/* Search bar with icon */}
                         <div className="relative flex-grow">
                             <input
-                                className="px-4 py-2 pl-10 w-full text-xl text-black rounded-full dark:text-white bg-lightTertiary dark:bg-lightTertiary"
+                                className="px-4 py-2 pl-10 w-full text-xl text-black rounded-full bg-lightTertiary dark:bg-darkTertiary dark:text-white"
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={handleSearch}
@@ -529,7 +529,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                         {/* New chat button */}
                         <button
-                            className="px-4 py-2 text-2xl text-black rounded-full bg-lightTertiary dark:text-black"
+                            className="px-4 py-2 text-2xl text-black rounded-full bg-lightTertiary dark:bg-darkTertiary dark:text-white"
                             onClick={() => {
                                 setSelectedChatID(null); // Clear the selected chat
                                 setMessages([]);

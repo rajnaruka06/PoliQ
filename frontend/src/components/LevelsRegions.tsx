@@ -78,7 +78,7 @@ const LevelsRegion: React.FC = () => {
         <div className="flex relative gap-2 mx-5 mt-auto mb-2">
             <button
                 ref={levelsButtonRef}
-                className="p-3 w-32 text-white rounded-full bg-lightTertiary dark:bg-darkSecondary"
+                className="p-3 w-32 text-black rounded-full bg-lightTertiary dark:text-white dark:bg-darkSecondary"
                 onClick={(event) => {
                     event.stopPropagation(); // Prevent click from bubbling up to the document
                     setShowLevelsDropdown((prev) => !prev); // Toggle the popup visibility
@@ -90,7 +90,7 @@ const LevelsRegion: React.FC = () => {
 
             <button
                 ref={regionButtonRef}
-                className="p-3 w-32 text-white rounded-full bg-lightTertiary dark:bg-darkSecondary"
+                className="p-3 w-32 text-black rounded-full bg-lightTertiary dark:text-white dark:bg-darkSecondary"
                 onClick={(event) => {
                     event.stopPropagation(); // Prevent click from bubbling up to the document
                     setShowRegionDropdown((prev) => !prev); // Toggle the popup visibility
@@ -122,7 +122,7 @@ const LevelsRegion: React.FC = () => {
                             .map((region, index) => (
                                 <li
                                     key={index}
-                                    className="px-2 py-1 text-white cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+                                    className="px-2 py-1 text-black cursor-pointer hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
                                 >
                                     {region}
                                 </li>
@@ -153,7 +153,7 @@ const LevelsRegion: React.FC = () => {
                             .map((level, index) => (
                                 <li
                                     key={index}
-                                    className="px-2 py-1 text-white cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+                                    className="px-2 py-1 text-black cursor-pointer hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
                                 >
                                     {level}
                                 </li>

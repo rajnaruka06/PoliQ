@@ -286,7 +286,7 @@ const ChatBot: React.FC = () => {
                 {UploadPopup}
                 <div ref={paperclipRef}>
                     <AiOutlinePaperClip
-                        className="absolute left-3 top-1/2 text-2xl text-white transform -translate-y-1/2 cursor-pointer"
+                        className="absolute left-3 top-1/2 text-2xl text-black transform -translate-y-1/2 cursor-pointer dark:text-white"
                         onClick={(event) => {
                             event.stopPropagation(); // Prevent click from bubbling up to the document
                             setShowPopup((prev) => !prev); // Toggle the popup visibility
@@ -342,25 +342,27 @@ const ChatBot: React.FC = () => {
                 <LevelRegions /> {/* Call the LevelRegions function here */}
                 {/* Chat area */}
                 <div className="flex flex-col w-full">
-                    {/* help button */}
-                    <button
-                        onClick={toggleHelp}
-                        className={`absolute top-4 right-9 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
-                    >
-                        {/* Use the Help question mark icon */}
-                        <AiOutlineQuestionCircle />
-                    </button>
+                    {/* New container for Help and Dark Mode buttons */}
+                    <div className="flex justify-end space-x-4 p-4">
+                        {/* help button */}
+                        <button
+                            onClick={toggleHelp}
+                            className={`p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                        >
+                            <AiOutlineQuestionCircle />
+                        </button>
+
+                        {/* light dark mode button */}
+                        <button
+                            onClick={toggleDarkMode}
+                            className={`p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                        >
+                            {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
+                        </button>
+                    </div>
 
                     {/* Help Overlay */}
                     <HelpOverlay showHelp={showHelp} closeHelp={toggleHelp} />
-
-                    {/* light dark mode button */}
-                    <button
-                        onClick={toggleDarkMode}
-                        className={`absolute top-4 right-20 p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
-                    >
-                        {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
-                    </button>
 
                     {/* Hero for welcoming page */}
                     {showHero && !selectedChatID && (
