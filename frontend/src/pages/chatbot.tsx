@@ -360,18 +360,18 @@ const ChatBot: React.FC = () => {
                     {inputArea}
                 </div>
                 {/* New container for Help and Dark Mode buttons */}
-                <div className="flex flex-col mb-auto ml-4">
+                <div className="flex flex-col gap-2 mb-auto ml-4">
                     {/* light dark mode button */}
                     <button
                         onClick={toggleDarkMode}
-                        className={`p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                        className={`p-2 text-2xl 3xl:text-3xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
                     >
                         {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
                     </button>
                     {/* help button */}
                     <button
                         onClick={toggleHelp}
-                        className={`p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                        className={`p-2 text-2xl 3xl:text-3xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
                     >
                         <AiOutlineQuestionCircle />
                     </button>

@@ -6,12 +6,12 @@ const Hero: React.FC<{
 }> = ({ handleOptionClick }) => {
     return (
         <div className="flex flex-col flex-grow justify-center items-center mx-auto max-w-7xl h-full">
-            <div className="text-5xl font-semibold text-black text-text dark:text-white">
+            <div className="font-semibold text-black lg:text-4xl 3xl:text-5xl text-text dark:text-white">
                 Welcome to PoliQ
             </div>
             <div className="flex gap-3 mt-4">
                 <button
-                    className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                    className="text-xl text-black 3xl:text-2xl bg-lightTertiary dark:bg-darkSecondary dark:text-white"
                     onClick={() =>
                         handleOptionClick(
                             "What is the age distribution demographic of Greens voters?"
@@ -21,7 +21,7 @@ const Hero: React.FC<{
                     What is the age distribution demographic of Greens voters?
                 </button>
                 <button
-                    className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                    className="text-xl text-black 3xl:text-2xl bg-lightTertiary dark:bg-darkSecondary dark:text-white"
                     onClick={() =>
                         handleOptionClick(
                             "Which electorates of AEC did the Greens have most success in the recent election?"
@@ -32,7 +32,7 @@ const Hero: React.FC<{
                     the recent election?
                 </button>
                 <button
-                    className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                    className="text-xl text-black 3xl:text-2xl bg-lightTertiary dark:bg-darkSecondary dark:text-white"
                     onClick={() =>
                         handleOptionClick(
                             "Which electorates in Victoria can the Greens improve their performance?"
@@ -43,7 +43,7 @@ const Hero: React.FC<{
                     performance?
                 </button>
                 <button
-                    className="text-2xl text-black bg-lightTertiary dark:bg-darkSecondary dark:text-white"
+                    className="text-xl text-black 3xl:text-2xl bg-lightTertiary dark:bg-darkSecondary dark:text-white"
                     onClick={() =>
                         handleOptionClick(
                             "Which electorates in New South Wales can the Greens improve their performance?"

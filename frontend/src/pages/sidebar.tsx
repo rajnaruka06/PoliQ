@@ -363,7 +363,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         return (
             <div
                 key={idx}
-                className={`flex items-center py-1 px-5 rounded-xl text-xl hover:cursor-pointer ${
+                className={`flex items-center py-1 px-5 rounded-xl text-lg 3xl:text-xl hover:cursor-pointer ${
                     selectedChatID === chat.chatId
                         ? "bg-blue-600 hover:bg-blue-500 dark:hover:bg-blue-500 text-white dark:text-white"
                         : "dark:hover:bg-darkPrimary hover:bg-gray-200 bg-transparent text-black dark:text-white"
@@ -390,7 +390,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     }
                                 }}
                             />
-                            <div className="flex flex-col xl:flex-row gap-4 mt-2">
+                            <div className="flex flex-col gap-4 mt-2 xl:flex-row">
                                 <button
                                     className="px-3 py-1 text-white bg-green-500 rounded"
                                     onClick={() =>
@@ -475,7 +475,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 {/* Pinned Chats */}
                 {pinnedChatHistory.length > 0 && (
                     <div className="mb-4">
-                        <div className="text-2xl font-semibold">Pinned</div>
+                        <div className="text-xl font-semibold 3xl:text-2xl">
+                            Pinned
+                        </div>
                         {pinnedChatHistory.map((chat, idx) =>
                             loadChatHistoryComponent(chat, idx)
                         )}
@@ -484,11 +486,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                 {/* Regular Chats grouped by date */}
                 {sortedDates.map((date) => (
-                    <div key={date} className="mb-4">
-                        <div className="text-xl font-semibold">{date}</div>
-                        {groupedByDate[date].map((chat, idx) =>
-                            loadChatHistoryComponent(chat, idx)
-                        )}
+                    <div key={date} className="mb-1">
+                        <div className="text-lg font-semibold 3xl:text-xl">
+                            {date}
+                        </div>
+                        {groupedByDate[date]
+                            .reverse()
+                            .map((chat, idx) =>
+                                loadChatHistoryComponent(chat, idx)
+                            )}
                     </div>
                 ))}
             </div>
@@ -504,11 +510,11 @@ const Sidebar: React.FC<SidebarProps> = ({
             {isSidebarVisible && (
                 <>
                     {/* Title Area*/}
-                    <div className="flex relative mb-10">
-                        <div className="text-5xl font-bold text-white">
+                    <div className="flex relative mb-6">
+                        <div className="">
                             <a
                                 href="/"
-                                className="font-semibold text-black dark:text-white hover:text-white"
+                                className="font-semibold text-black lg:text-4xl 3xl:text-5xl dark:text-white hover:text-white"
                             >
                                 PoliQ Chat
                             </a>
@@ -516,20 +522,20 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </div>
 
                     {/* Chat History Area */}
-                    <div className="flex relative gap-2 mb-8">
+                    <div className="flex gap-2 mb-4">
                         {/* Search bar with icon */}
-                        <div className="relative flex-grow">
+                        <div className="flex flex-grow text-2xl rounded-full 3xl:text-4xl bg-lightTertiary dark:bg-darkTertiary">
+                            <AiOutlineSearch className="mx-2 my-auto" />
                             <input
-                                className="px-4 py-2 pl-10 w-full text-xl text-black rounded-full bg-lightTertiary dark:bg-darkTertiary dark:text-white"
+                                className="w-full text-xl text-black dark:text-white"
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={handleSearch}
                             />
-                            <AiOutlineSearch className="absolute left-3 top-1/2 text-2xl text-black transform -translate-y-1/2 dark:text-white" />
                         </div>
                         {/* New chat button */}
                         <button
-                            className="px-4 py-2 text-2xl text-black rounded-full bg-lightTertiary dark:bg-darkTertiary dark:text-white"
+                            className="px-4 py-2 text-2xl text-black rounded-full 3xl:text-3xl bg-lightTertiary dark:bg-darkTertiary dark:text-white"
                             onClick={() => {
                                 setSelectedChatID(null); // Clear the selected chat
                                 setMessages([]);
@@ -548,21 +554,21 @@ const Sidebar: React.FC<SidebarProps> = ({
                     )}
 
                     {/* Bottom Sidebar Area */}
-                    <div className="flex relative text-3xl bg-lightSecondary dark:bg-darkSecondary">
-                        <div className="text-black dark:text-white">
+                    <div className="flex p-2 text-3xl rounded-lg 3xl:p-4 bg-lightSecondary dark:bg-darkTertiary">
+                        <div className="mr-auto text-2xl text-black 3xl:text-3xl dark:text-white">
                             John Doe
                         </div>
-                        {settingsOverlay}
                         {/* Show settings menu if active */}
                         <div ref={SetRef}>
                             <AiOutlineBook
-                                className="absolute right-0 text-black cursor-pointer dark:text-white"
+                                className="text-black cursor-pointer dark:text-white"
                                 onClick={(event) => {
                                     event.stopPropagation(); // Prevent click from bubbling up to the document
                                     setShowSettingsMenu((prev) => !prev); // Toggle the settings menu visibility
                                 }}
                             />
                         </div>
+                        {settingsOverlay}
                     </div>
                 </>
             )}
@@ -570,7 +576,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <button
                 className={`absolute top-4 ${
                     isSidebarVisible ? "right-0" : "-right-12"
-                } text-2xl text-black dark:text-white rounded-full bg-lightSecondary dark:bg-darkSecondary`}
+                } text-xl 3xl:text-2xl text-black dark:text-white rounded-full bg-lightSecondary dark:bg-darkSecondary`}
                 onClick={toggleSidebar}
             >
                 {isSidebarVisible ? (
