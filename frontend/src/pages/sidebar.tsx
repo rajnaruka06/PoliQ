@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-// oi adding this
 import {
     BiChevronLeftCircle,
     BiChevronRightCircle,
@@ -48,14 +47,11 @@ const Sidebar: React.FC<SidebarProps> = ({
     setMessages,
     refreshChatHistoryRef,
 }) => {
-    // TODO: Proper commenting to explain
-
     const userId = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
     const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
     const settingsRef = useRef<HTMLDivElement | null>(null);
     const SetRef = useRef<HTMLDivElement | null>(null); // Reference for the settings icon
     const dotRef = useRef<HTMLDivElement | null>(null); // Reference for the three dots icon
-    // const [pinnedChats, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs //commented to remove red prompt
     const [, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
     const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
@@ -116,31 +112,16 @@ const Sidebar: React.FC<SidebarProps> = ({
     }, [menuRef, settingsRef]);
 
     //Delete chat using useDeleteChat hook
-    //KW 27/08: commented unused because it gives red prompt
-    const {
-        deleteChat,
-        // loading: deleteLoading,
-        // error: deleteError,
-    } = useDeleteChat(userId);
+    const { deleteChat } = useDeleteChat(userId);
     // Use the pin and unpin chat hooks
-    const { pinChat /* loading: pinLoading, error: pinError */ } =
-        usePinChat(userId);
-    const { unpinChat /* loading: unpinLoading, error: unpinError */ } =
-        useUnpinChat(userId);
-    const {
-        searchResults,
-        // loading: searchLoading,
-        // error: searchError,
-    } = useSearchChats(userId, searchTerm);
+    const { pinChat } = usePinChat(userId);
+    const { unpinChat } = useUnpinChat(userId);
+    const { searchResults } = useSearchChats(userId, searchTerm);
     // Use the archive and unarchive chat hooks
-    const { archiveChat /* loading: archiveLoading, error: archiveError */ } =
-        useArchiveChat(userId);
-    const {
-        unarchiveChat /* loading: unarchiveLoading, error: unarchiveError */,
-    } = useUnarchiveChat(userId);
+    const { archiveChat } = useArchiveChat(userId);
+    const { unarchiveChat } = useUnarchiveChat(userId);
 
-    // Effect to determine whether to use serach results or the full chat history
-    // Function to handle search -> changed again to use hook
+    // Effect to determine whether to use search results or the full chat history
     useEffect(() => {
         if (searchTerm === "") {
             setFilteredChatHistory(chatHistory); // Show full chat history if no search term
@@ -234,13 +215,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
     }, [fetchChatHistory, refreshChatHistoryRef]);
 
-    // **Expose fetchChatHistory via refreshChatHistoryRef**
-    useEffect(() => {
-        if (refreshChatHistoryRef) {
-            refreshChatHistoryRef.current = fetchChatHistory;
-        }
-    }, [fetchChatHistory, refreshChatHistoryRef]);
-
     //to rename a chat title
     const handleRenameChat = async (chatID: string) => {
         if (!newTitle.trim()) return; // Prevent empty titles
@@ -309,7 +283,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         setShowOptionsMenu(null); // Close the menu after action
                     }}
                 >
-                    <span>Archive</span>
+                    <span>{chat.archived ? "Unarchive" : "Archive"}</span>
                     <BiArchive />
                 </button>
                 {/* Rename button */}
@@ -356,9 +330,74 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
     );
 
-    // components that called inside loadChatHistory
-    // FIXME: if chat title too long, truncate not working. but if hovered, truncate working and width changed
-    // components that called inside loadChatHistory
+    // Populate chat history - changed to group unpinned chats by date
+    const loadChatHistory = () => {
+        // Separate pinned, archived, and regular chats based on the actual chat data
+        const pinnedChatHistory = filteredChatHistory.filter(
+            (chat) => chat.pinned
+        );
+        const archivedChatHistory = filteredChatHistory.filter(
+            (chat) => chat.archived
+        );
+        const regularChatHistory = filteredChatHistory.filter(
+            (chat) => !chat.pinned && !chat.archived
+        );
+
+        // Group regular chats by date
+        const groupedByDate: { [key: string]: ChatHistory[] } = {};
+        regularChatHistory.forEach((chat) => {
+            const date = formatDate(chat.date); // Format the date
+            if (!groupedByDate[date]) {
+                groupedByDate[date] = [];
+            }
+            groupedByDate[date].push(chat);
+        });
+
+        // Sort dates from newest to oldest
+        const sortedDates = Object.keys(groupedByDate).sort(
+            (a, b) => new Date(b).getTime() - new Date(a).getTime()
+        );
+
+        return (
+            <div className="flex overflow-auto flex-col flex-grow gap-2 text-black dark:text-white">
+                {/* Pinned Chats */}
+                {pinnedChatHistory.length > 0 && (
+                    <div className="mb-4">
+                        <div className="text-2xl font-semibold">Pinned</div>
+                        {pinnedChatHistory.map((chat, idx) =>
+                            loadChatHistoryComponent(chat, idx)
+                        )}
+                    </div>
+                )}
+
+                {/* Archived Chats */}
+                {archivedChatHistory.length > 0 && (
+                    <div className="mb-4">
+                        <div className="text-2xl font-semibold">Archived</div>
+                        {archivedChatHistory.map((chat, idx) =>
+                            loadChatHistoryComponent(chat, idx)
+                        )}
+                    </div>
+                )}
+
+                {/* Regular Chats grouped by date */}
+                {sortedDates.map((date) => (
+                    <div key={date} className="mb-1">
+                        <div className="text-lg font-semibold 3xl:text-xl">
+                            {date}
+                        </div>
+                        {groupedByDate[date]
+                            .reverse()
+                            .map((chat, idx) =>
+                                loadChatHistoryComponent(chat, idx)
+                            )}
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
+    // Function to load individual chat history component
     const loadChatHistoryComponent = (chat: ChatHistory, idx: number) => {
         return (
             <div
@@ -445,62 +484,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         );
     };
 
-    // Populate chat history - changed to group unpinned chats by date
-    const loadChatHistory = () => {
-        // Separate pinned and regular chats based on the actual chat data
-        const pinnedChatHistory = filteredChatHistory.filter(
-            (chat) => chat.pinned
-        );
-        const regularChatHistory = filteredChatHistory.filter(
-            (chat) => !chat.pinned
-        );
-
-        // Group regular chats by date
-        const groupedByDate: { [key: string]: ChatHistory[] } = {};
-        regularChatHistory.forEach((chat) => {
-            const date = formatDate(chat.date); // Format the date
-            if (!groupedByDate[date]) {
-                groupedByDate[date] = [];
-            }
-            groupedByDate[date].push(chat);
-        });
-
-        // Sort dates from newest to oldest
-        const sortedDates = Object.keys(groupedByDate).sort(
-            (a, b) => new Date(b).getTime() - new Date(a).getTime()
-        );
-
-        return (
-            <div className="flex overflow-auto flex-col flex-grow gap-2 text-black dark:text-white">
-                {/* Pinned Chats */}
-                {pinnedChatHistory.length > 0 && (
-                    <div className="mb-4">
-                        <div className="text-xl font-semibold 3xl:text-2xl">
-                            Pinned
-                        </div>
-                        {pinnedChatHistory.map((chat, idx) =>
-                            loadChatHistoryComponent(chat, idx)
-                        )}
-                    </div>
-                )}
-
-                {/* Regular Chats grouped by date */}
-                {sortedDates.map((date) => (
-                    <div key={date} className="mb-1">
-                        <div className="text-lg font-semibold 3xl:text-xl">
-                            {date}
-                        </div>
-                        {groupedByDate[date]
-                            .reverse()
-                            .map((chat, idx) =>
-                                loadChatHistoryComponent(chat, idx)
-                            )}
-                    </div>
-                ))}
-            </div>
-        );
-    };
-
     return (
         <div
             className={`flex flex-col relative rounded-lg shadow-lg transition-all duration-300 ease-in-out bg-lightSecondary dark:bg-darkSecondary ${
@@ -524,10 +507,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {/* Chat History Area */}
                     <div className="flex gap-2 mb-4">
                         {/* Search bar with icon */}
-                        <div className="flex flex-grow text-2xl rounded-full 3xl:text-4xl bg-lightTertiary dark:bg-darkTertiary">
+                        <div className="flex flex-grow text-2xl rounded-full 3xl:text-4xl bg-lightTertiary dark:bg-darkPrimary">
                             <AiOutlineSearch className="mx-2 my-auto" />
                             <input
-                                className="w-full text-xl text-black dark:text-white"
+                                className="w-full text-xl text-black rounded-full dark:bg-darkPrimary dark:text-white"
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={handleSearch}
@@ -535,7 +518,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                         {/* New chat button */}
                         <button
-                            className="px-4 py-2 text-2xl text-black rounded-full 3xl:text-3xl bg-lightTertiary dark:bg-darkTertiary dark:text-white"
+                            className="px-4 py-2 text-2xl text-black rounded-full 3xl:text-3xl bg-lightTertiary dark:bg-darkPrimary dark:text-white"
                             onClick={() => {
                                 setSelectedChatID(null); // Clear the selected chat
                                 setMessages([]);
@@ -554,7 +537,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     )}
 
                     {/* Bottom Sidebar Area */}
-                    <div className="flex p-2 text-3xl rounded-lg 3xl:p-4 bg-lightSecondary dark:bg-darkTertiary">
+                    <div className="flex p-2 text-3xl rounded-2xl shadow-lg 3xl:p-4 bg-lightSecondary dark:bg-darkPrimary">
                         <div className="mr-auto text-2xl text-black 3xl:text-3xl dark:text-white">
                             John Doe
                         </div>
