@@ -17,6 +17,7 @@ import SettingsOptionOverlay from "../components/SettingsOptionOverlay.tsx";
 import Hero from "../components/Hero.tsx";
 import LevelRegions from "../components/LevelsRegions.tsx";
 import HelpOverlay from "../components/HelpOverlay";
+import SideButton from "../components/SideButton.tsx";
 
 interface MessageCurrent {
     sender: string;
@@ -342,25 +343,6 @@ const ChatBot: React.FC = () => {
                 <LevelRegions /> {/* Call the LevelRegions function here */}
                 {/* Chat area */}
                 <div className="flex flex-col w-full">
-                    {/* New container for Help and Dark Mode buttons */}
-                    <div className="flex justify-end space-x-4 p-4">
-                        {/* help button */}
-                        <button
-                            onClick={toggleHelp}
-                            className={`p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
-                        >
-                            <AiOutlineQuestionCircle />
-                        </button>
-
-                        {/* light dark mode button */}
-                        <button
-                            onClick={toggleDarkMode}
-                            className={`p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
-                        >
-                            {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
-                        </button>
-                    </div>
-
                     {/* Help Overlay */}
                     <HelpOverlay showHelp={showHelp} closeHelp={toggleHelp} />
 
@@ -376,6 +358,23 @@ const ChatBot: React.FC = () => {
                         </div>
                     </div>
                     {inputArea}
+                </div>
+                {/* New container for Help and Dark Mode buttons */}
+                <div className="flex flex-col mb-auto ml-4">
+                    {/* light dark mode button */}
+                    <button
+                        onClick={toggleDarkMode}
+                        className={`p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                    >
+                        {isDarkMode ? <AiFillSun /> : <AiFillMoon />}
+                    </button>
+                    {/* help button */}
+                    <button
+                        onClick={toggleHelp}
+                        className={`p-2 text-2xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                    >
+                        <AiOutlineQuestionCircle />
+                    </button>
                 </div>
             </div>
         </div>

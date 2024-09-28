@@ -28,9 +28,9 @@ const HelpOverlay: React.FC<HelpOverlayProps> = ({ showHelp, closeHelp }) => {
     if (!showHelp) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="flex fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
             <div
-                className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full text-black bg-lightTertiary dark:text-white dark:bg-darkSecondary"
+                className="p-8 w-full max-w-lg text-black bg-white rounded-lg shadow-lg dark:text-white dark:bg-darkSecondary"
                 style={{
                     maxHeight: "80vh",
                     display: "flex",
@@ -38,14 +38,14 @@ const HelpOverlay: React.FC<HelpOverlayProps> = ({ showHelp, closeHelp }) => {
                 }}
             >
                 {/* Anchoring title at the top */}
-                <h2 className="text-2xl font-bold mb-4">
+                <h2 className="mb-4 text-2xl font-bold">
                     Help Guide for PoliQ Chat
                 </h2>
 
                 {/* Scrollable area for content */}
                 <div style={{ overflowY: "auto", flex: 1 }}>
                     {/* Explanation of icons/symbols */}
-                    <ul className="list-disc ml-5">
+                    <ul className="ml-5 list-disc">
                         <li className="mb-2">
                             <span className="font-semibold">
                                 Create a New Chat
@@ -149,7 +149,7 @@ const HelpOverlay: React.FC<HelpOverlayProps> = ({ showHelp, closeHelp }) => {
                 {/* Anchoring Close Button */}
                 <button
                     onClick={closeHelp}
-                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    className="px-4 py-2 mt-4 text-white bg-blue-500 rounded-lg"
                 >
                     Close
                 </button>

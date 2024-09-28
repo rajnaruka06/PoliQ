@@ -110,7 +110,7 @@ const LevelsRegion: React.FC = () => {
                         placeholder="Search Region..."
                         value={searchRegion}
                         onChange={(e) => setSearchRegion(e.target.value)}
-                        className="p-2 mb-2 w-full rounded border border-gray-300"
+                        className="p-2 mb-2 w-full bg-white rounded border border-gray-300 dark:bg-darkPrimary"
                     />
                     <ul className="overflow-y-auto p-2 max-h-48">
                         {regions
@@ -141,7 +141,7 @@ const LevelsRegion: React.FC = () => {
                         placeholder="Search Level..."
                         value={searchLevel}
                         onChange={(e) => setSearchLevel(e.target.value)}
-                        className="p-2 mb-2 w-full rounded border border-gray-300"
+                        className="p-2 mb-2 w-full bg-white rounded border border-gray-300 dark:bg-darkPrimary"
                     />
                     <ul className="overflow-y-auto p-2 max-h-48">
                         {levels
