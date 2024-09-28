@@ -5,6 +5,8 @@ import {
     BiPin,
     BiSolidPin,
     BiTrash,
+    BiChevronDown, 
+    BiChevronUp,
     BiArchive,
 } from "react-icons/bi";
 import {
@@ -59,6 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const { chatHistory, loading, error, fetchChatHistory } =
         useFetchChatHistory(userId);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+    const [expandedDates, setExpandedDates] = useState<{ [key: string]: boolean }>({});
     const [searchTerm, setSearchTerm] = useState("");
     const [isRenaming, setIsRenaming] = useState(false); // To control renaming state
     const [newTitle, setNewTitle] = useState(""); // New title state
@@ -132,6 +135,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
+    };
+
+    const toggleDateExpansion = (date: string) => {
+        setExpandedDates((prevState) => ({
+            ...prevState,
+            [date]: !prevState[date], // Toggle the expansion state for the clicked date
+        }));
     };
 
     // Function to format date
@@ -232,6 +242,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
     };
 
+    
+    
+
     // Function to handle the three dots menu
     const threeDotsMenu = (chat: {
         chatId: string;
@@ -330,73 +343,76 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
     );
 
-    // Populate chat history - changed to group unpinned chats by date
-    const loadChatHistory = () => {
-        // Separate pinned, archived, and regular chats based on the actual chat data
-        const pinnedChatHistory = filteredChatHistory.filter(
-            (chat) => chat.pinned
-        );
-        const archivedChatHistory = filteredChatHistory.filter(
-            (chat) => chat.archived
-        );
-        const regularChatHistory = filteredChatHistory.filter(
-            (chat) => !chat.pinned && !chat.archived
-        );
+    // Updated loadChatHistory function
+const loadChatHistory = () => {
+    const pinnedChatHistory = filteredChatHistory.filter((chat) => chat.pinned);
+    const archivedChatHistory = filteredChatHistory.filter((chat) => chat.archived);
+    const regularChatHistory = filteredChatHistory.filter(
+        (chat) => !chat.pinned && !chat.archived
+    );
 
-        // Group regular chats by date
-        const groupedByDate: { [key: string]: ChatHistory[] } = {};
-        regularChatHistory.forEach((chat) => {
-            const date = formatDate(chat.date); // Format the date
-            if (!groupedByDate[date]) {
-                groupedByDate[date] = [];
-            }
-            groupedByDate[date].push(chat);
-        });
+    // Group regular chats by date
+    const groupedByDate: { [key: string]: ChatHistory[] } = {};
+    regularChatHistory.forEach((chat) => {
+        const date = formatDate(chat.date);
+        if (!groupedByDate[date]) {
+            groupedByDate[date] = [];
+        }
+        groupedByDate[date].push(chat);
+    });
 
-        // Sort dates from newest to oldest
-        const sortedDates = Object.keys(groupedByDate).sort(
-            (a, b) => new Date(b).getTime() - new Date(a).getTime()
-        );
+    // Sort dates from newest to oldest
+    const sortedDates = Object.keys(groupedByDate).sort(
+        (a, b) => new Date(b).getTime() - new Date(a).getTime()
+    );
 
-        return (
-            <div className="flex overflow-auto flex-col flex-grow gap-2 text-black dark:text-white">
-                {/* Pinned Chats */}
-                {pinnedChatHistory.length > 0 && (
-                    <div className="mb-4">
-                        <div className="text-2xl font-semibold">Pinned</div>
-                        {pinnedChatHistory.map((chat, idx) =>
-                            loadChatHistoryComponent(chat, idx)
-                        )}
-                    </div>
-                )}
+    return (
+        <div className="flex overflow-auto flex-col flex-grow gap-2 text-black dark:text-white">
+            {/* Pinned Chats */}
+            {pinnedChatHistory.length > 0 && (
+                <div className="mb-4">
+                    <div className="text-2xl font-semibold">Pinned</div>
+                    {pinnedChatHistory.map((chat, idx) => loadChatHistoryComponent(chat, idx))}
+                </div>
+            )}
 
-                {/* Archived Chats */}
-                {archivedChatHistory.length > 0 && (
-                    <div className="mb-4">
-                        <div className="text-2xl font-semibold">Archived</div>
-                        {archivedChatHistory.map((chat, idx) =>
-                            loadChatHistoryComponent(chat, idx)
-                        )}
-                    </div>
-                )}
+            {/* Archived Chats */}
+            {archivedChatHistory.length > 0 && (
+                <div className="mb-4">
+                    <div className="text-2xl font-semibold">Archived</div>
+                    {archivedChatHistory.map((chat, idx) => loadChatHistoryComponent(chat, idx))}
+                </div>
+            )}
 
-                {/* Regular Chats grouped by date */}
-                {sortedDates.map((date) => (
-                    <div key={date} className="mb-1">
-                        <div className="text-lg font-semibold 3xl:text-xl">
-                            {date}
-                        </div>
-                        {groupedByDate[date]
-                            .reverse()
-                            .map((chat, idx) =>
-                                loadChatHistoryComponent(chat, idx)
+            {/* Regular Chats grouped by date */}
+            {sortedDates.map((date) => (
+                <div key={date} className="mb-1">
+                    {/* Date Header with Toggle Icon */}
+                    <div
+                        className="flex items-center justify-between text-lg font-semibold cursor-pointer"
+                        onClick={() => toggleDateExpansion(date)}
+                    >
+                        <span>{date}</span>
+                        {/* Toggle Icon to Expand/Collapse Chats */}
+                        <div>
+                            {expandedDates[date] ? (
+                                <BiChevronUp className="text-xl" />
+                            ) : (
+                                <BiChevronDown className="text-xl" />
                             )}
+                        </div>
                     </div>
-                ))}
-            </div>
-        );
-    };
 
+                    {/* Render Chats under the Date if Expanded */}
+                    {expandedDates[date] &&
+                        groupedByDate[date].reverse().map((chat, idx) =>
+                            loadChatHistoryComponent(chat, idx)
+                        )}
+                </div>
+            ))}
+        </div>
+    );
+};
     // Function to load individual chat history component
     const loadChatHistoryComponent = (chat: ChatHistory, idx: number) => {
         return (
