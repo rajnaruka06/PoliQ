@@ -1,3 +1,4 @@
+// frontend/src/components/Sidebar.tsx
 import React, { useRef, useState, useEffect } from "react";
 import {
     BiChevronLeftCircle,
@@ -14,7 +15,6 @@ import {
     AiOutlineForm,
     AiOutlineEdit,
 } from "react-icons/ai";
-// Import hooks
 import { useUpdateTitleChat } from "../hooks/useUpdateTitleChat";
 import { useFetchChatHistory } from "../hooks/useFetchChatHistory";
 import { usePinChat } from "../hooks/usePinChat";
@@ -23,6 +23,7 @@ import { useDeleteChat } from "../hooks/useDeleteChat";
 import { useArchiveChat } from "../hooks/useArchiveChat";
 import { useSearchChats } from "../hooks/useSearchChats";
 import { useUnarchiveChat } from "../hooks/useUnarchiveChat";
+import ConfirmationModal from "./ConfirmationModal"; // Import the modal
 
 interface ChatHistory {
     chatId: string;
@@ -37,7 +38,7 @@ interface SidebarProps {
     selectedChatID: string | null;
     setSelectedChatID: (chatID: string | null) => void;
     setMessages: React.Dispatch<React.SetStateAction<MessageCurrent[]>>;
-    refreshChatHistoryRef: React.MutableRefObject<() => void>; // **Added this prop**
+    refreshChatHistoryRef: React.MutableRefObject<() => void>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -47,31 +48,45 @@ const Sidebar: React.FC<SidebarProps> = ({
     setMessages,
     refreshChatHistoryRef,
 }) => {
-    const userId = "example_user_id"; // Placeholder for user ID, replace with dynamic user ID
-    const menuRef = useRef<HTMLDivElement | null>(null); // Reference for the menu
+    const userId = "example_user_id"; // Placeholder for user ID
+    const menuRef = useRef<HTMLDivElement | null>(null);
     const settingsRef = useRef<HTMLDivElement | null>(null);
-    const SetRef = useRef<HTMLDivElement | null>(null); // Reference for the settings icon
-    const dotRef = useRef<HTMLDivElement | null>(null); // Reference for the three dots icon
-    const [, setPinnedChats] = useState<string[]>([]); // Tracks pinned chat IDs
-    const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null); // State to manage the visibility of the options menu for each chat
+    const SetRef = useRef<HTMLDivElement | null>(null);
+    const dotRef = useRef<HTMLDivElement | null>(null);
+    const [, setPinnedChats] = useState<string[]>([]);
+    const [showOptionsMenu, setShowOptionsMenu] = useState<string | null>(null);
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
-    const [hoveredChatID, setHoveredChatID] = useState<string | null>(null); // State to track hovered chat
+    const [hoveredChatID, setHoveredChatID] = useState<string | null>(null);
     const { chatHistory, loading, error, fetchChatHistory } =
         useFetchChatHistory(userId);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const [isRenaming, setIsRenaming] = useState(false); // To control renaming state
-    const [newTitle, setNewTitle] = useState(""); // New title state
-    const [chatToRename, setChatToRename] = useState<string | null>(null); // Chat ID to rename
+    const [isRenaming, setIsRenaming] = useState(false);
+    const [newTitle, setNewTitle] = useState("");
+    const [chatToRename, setChatToRename] = useState<string | null>(null);
     const {
         updateTitleChat,
         loading: renameLoading,
         error: renameError,
-    } = useUpdateTitleChat(userId); // Hook to rename chat
-    // State to manage filtered chat history
+    } = useUpdateTitleChat(userId);
     const [filteredChatHistory, setFilteredChatHistory] = useState<
         ChatHistory[]
     >([]);
+
+    // Modal state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const [actionToConfirm, setActionToConfirm] =
+        useState<() => void | null>(null);
+
+    // Function to handle confirmation
+    const handleConfirmAction = () => {
+        if (actionToConfirm) {
+            actionToConfirm();
+            setActionToConfirm(null);
+        }
+        setIsModalOpen(false);
+    };
 
     // Function to toggle sidebar
     const toggleSidebar = () => {
@@ -82,51 +97,46 @@ const Sidebar: React.FC<SidebarProps> = ({
         const handleClickOutside = (event: MouseEvent) => {
             if (
                 menuRef.current &&
-                !menuRef.current.contains(event.target as Node) && // Check if click is outside the popup
+                !menuRef.current.contains(event.target as Node) &&
                 !(
                     dotRef.current &&
                     dotRef.current.contains(event.target as Node)
                 )
             ) {
-                setShowOptionsMenu(null); // Close the menu if clicked outside
+                setShowOptionsMenu(null);
             }
 
             if (
                 settingsRef.current &&
-                !settingsRef.current.contains(event.target as Node) && // Check if click is outside the popup
+                !settingsRef.current.contains(event.target as Node) &&
                 !(
                     SetRef.current &&
                     SetRef.current.contains(event.target as Node)
                 )
             ) {
-                setShowSettingsMenu(false); // Close the settings menu if clicked outside
+                setShowSettingsMenu(false);
             }
         };
 
         document.addEventListener("mousedown", handleClickOutside);
 
-        // Cleanup event listener when component unmounts
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [menuRef, settingsRef]);
 
-    //Delete chat using useDeleteChat hook
     const { deleteChat } = useDeleteChat(userId);
-    // Use the pin and unpin chat hooks
     const { pinChat } = usePinChat(userId);
     const { unpinChat } = useUnpinChat(userId);
     const { searchResults } = useSearchChats(userId, searchTerm);
-    // Use the archive and unarchive chat hooks
     const { archiveChat } = useArchiveChat(userId);
     const { unarchiveChat } = useUnarchiveChat(userId);
 
-    // Effect to determine whether to use search results or the full chat history
     useEffect(() => {
         if (searchTerm === "") {
-            setFilteredChatHistory(chatHistory); // Show full chat history if no search term
+            setFilteredChatHistory(chatHistory);
         } else {
-            setFilteredChatHistory(searchResults); // Show search results if there is a search term
+            setFilteredChatHistory(searchResults);
         }
     }, [chatHistory, searchResults, searchTerm]);
 
@@ -134,7 +144,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         setSearchTerm(e.target.value);
     };
 
-    // Function to format date
     const formatDate = (dateString: string): string => {
         const [day, month, year] = dateString.split("/");
         const date = new Date(`${year}-${month}-${day}`);
@@ -145,18 +154,14 @@ const Sidebar: React.FC<SidebarProps> = ({
         });
     };
 
-    // updated function to pin or unpin based on chat's current state
     const handlePinChat = async (chatID: string, isPinned: boolean) => {
         try {
             if (isPinned) {
-                // Unpin the chat
-                await unpinChat(chatID); // Call the API to unpin
+                await unpinChat(chatID);
             } else {
-                // Pin the chat
-                await pinChat(chatID); // Call the API to pin
+                await pinChat(chatID);
             }
 
-            // Optionally, update the local chat history state if needed
             setFilteredChatHistory((prevHistory) =>
                 prevHistory.map((chat) =>
                     chat.chatId === chatID
@@ -170,31 +175,25 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
     };
 
-    // Function to handle deleting a chat
     const handleDeleteChat = async (chatID: string) => {
-        if (window.confirm("Are you sure you want to delete this chat?")) {
-            await deleteChat(chatID); // Call the deleteChat function from the hook
-            // Update the chat history locally
-            setFilteredChatHistory((prevHistory) =>
-                prevHistory.filter((chat) => chat.chatId !== chatID)
-            );
-            setPinnedChats((prev) => prev.filter((id) => id !== chatID)); // Remove from pinned chats if necessary
-            fetchChatHistory();
-            if (selectedChatID === chatID) {
-                setSelectedChatID(null);
-            }
+        await deleteChat(chatID);
+        setFilteredChatHistory((prevHistory) =>
+            prevHistory.filter((chat) => chat.chatId !== chatID)
+        );
+        setPinnedChats((prev) => prev.filter((id) => id !== chatID));
+        fetchChatHistory();
+        if (selectedChatID === chatID) {
+            setSelectedChatID(null);
         }
     };
 
-    // Update archive/unarchive handling in threeDotsMenu function
     const handleArchiveChat = async (chatID: string, isArchived: boolean) => {
         try {
             if (isArchived) {
-                await unarchiveChat(chatID); // Call unarchive if currently archived
+                await unarchiveChat(chatID);
             } else {
-                await archiveChat(chatID); // Call archive otherwise
+                await archiveChat(chatID);
             }
-            // Update chat history or UI state
             setFilteredChatHistory((prevHistory) =>
                 prevHistory.map((chat) =>
                     chat.chatId === chatID
@@ -208,31 +207,27 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
     };
 
-    // **Expose fetchChatHistory via refreshChatHistoryRef**
     useEffect(() => {
         if (refreshChatHistoryRef) {
             refreshChatHistoryRef.current = fetchChatHistory;
         }
     }, [fetchChatHistory, refreshChatHistoryRef]);
 
-    //to rename a chat title
     const handleRenameChat = async (chatID: string) => {
-        if (!newTitle.trim()) return; // Prevent empty titles
+        if (!newTitle.trim()) return;
         try {
-            await updateTitleChat(chatID, newTitle); // Call the updateTitleChat function from the hook
-            // Update the chat title locally after renaming
+            await updateTitleChat(chatID, newTitle);
             setFilteredChatHistory((prevHistory) =>
                 prevHistory.map((chat) =>
                     chat.chatId === chatID ? { ...chat, title: newTitle } : chat
                 )
             );
-            setIsRenaming(false); // Hide the rename input
+            setIsRenaming(false);
         } catch (error) {
             console.error("Error renaming chat:", error);
         }
     };
 
-    // Function to handle the three dots menu
     const threeDotsMenu = (chat: {
         chatId: string;
         title: string;
@@ -244,12 +239,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                 ref={menuRef}
                 className="flex absolute right-4 z-10 flex-col gap-3 items-end p-2 mt-10 rounded-2xl dark:bg-darkPrimary bg-lightPrimary"
             >
-                {/* Pin / Unpin button */}
                 <button
                     className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() => {
                         handlePinChat(chat.chatId, chat.pinned);
-                        setShowOptionsMenu(null); // Close the menu after action
+                        setShowOptionsMenu(null);
                     }}
                 >
                     {chat.pinned ? (
@@ -264,36 +258,50 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </>
                     )}
                 </button>
-                {/* Delete chat button */}
                 <button
                     className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() => {
-                        handleDeleteChat(chat.chatId);
-                        setShowOptionsMenu(null); // Close the menu after action
+                        setModalMessage(
+                            "Are you sure you want to delete this chat?"
+                        );
+                        setActionToConfirm(
+                            () => () => handleDeleteChat(chat.chatId)
+                        );
+                        setIsModalOpen(true);
+                        setShowOptionsMenu(null);
                     }}
                 >
                     <span>Delete</span>
                     <BiTrash />
                 </button>
-                {/* Archive / Unarchive button */}
                 <button
                     className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() => {
-                        handleArchiveChat(chat.chatId, chat.archived || false);
-                        setShowOptionsMenu(null); // Close the menu after action
+                        setModalMessage(
+                            chat.archived
+                                ? "Are you sure you want to unarchive this chat?"
+                                : "Are you sure you want to archive this chat?"
+                        );
+                        setActionToConfirm(() =>
+                            handleArchiveChat(
+                                chat.chatId,
+                                chat.archived || false
+                            )
+                        );
+                        setIsModalOpen(true);
+                        setShowOptionsMenu(null);
                     }}
                 >
                     <span>{chat.archived ? "Unarchive" : "Archive"}</span>
                     <BiArchive />
                 </button>
-                {/* Rename button */}
                 <button
                     className="flex gap-2 items-center text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
                     onClick={() => {
                         setIsRenaming(true);
-                        setChatToRename(chat.chatId); // Set the chat ID to rename
-                        setNewTitle(chat.title); // Set the current title as default
-                        setShowOptionsMenu(null); // Close the menu after action
+                        setChatToRename(chat.chatId);
+                        setNewTitle(chat.title);
+                        setShowOptionsMenu(null);
                     }}
                 >
                     <span>Rename</span>
@@ -303,17 +311,55 @@ const Sidebar: React.FC<SidebarProps> = ({
         );
     };
 
-    //  Overlay content on bottom left corner
     const settingsOverlay = showSettingsMenu && (
         <div
             ref={settingsRef}
             className="flex absolute right-0 bottom-10 flex-col gap-5 p-5 mb-2 w-full text-lg text-white rounded-md shadow-lg bg-lightTertiary dark:bg-darkPrimary dark:text-black"
         >
             <button
-                onClick={() => onOptionClick && onOptionClick("View all chats")}
+                onClick={() => {
+                    setModalMessage(
+                        "Are you sure you want to delete all chats?"
+                    );
+                    setActionToConfirm(() => async () => {
+                        // Delete all chats logic
+                        await Promise.all(
+                            filteredChatHistory.map((chat) =>
+                                deleteChat(chat.chatId)
+                            )
+                        );
+                        setFilteredChatHistory([]); // Clear the chat history
+                    });
+                    setIsModalOpen(true);
+                }}
                 className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
             >
-                View all chats
+                Delete All chats
+            </button>
+            <button
+                onClick={() => {
+                    setModalMessage(
+                        "Are you sure you want to archive all chats?"
+                    );
+                    setActionToConfirm(() => async () => {
+                        // Archive all chats logic
+                        await Promise.all(
+                            filteredChatHistory.map((chat) =>
+                                archiveChat(chat.chatId)
+                            )
+                        );
+                        setFilteredChatHistory((prevHistory) =>
+                            prevHistory.map((chat) => ({
+                                ...chat,
+                                archived: true,
+                            }))
+                        ); // Set all chats to archived
+                    });
+                    setIsModalOpen(true);
+                }}
+                className="text-2xl font-semibold text-black bg-lightPrimary dark:bg-darkPrimary dark:text-white"
+            >
+                Archive All chats
             </button>
             <button
                 onClick={() => onOptionClick && onOptionClick("Archived chats")}
@@ -330,9 +376,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
     );
 
-    // Populate chat history - changed to group unpinned chats by date
     const loadChatHistory = () => {
-        // Separate pinned, archived, and regular chats based on the actual chat data
         const pinnedChatHistory = filteredChatHistory.filter(
             (chat) => chat.pinned
         );
@@ -343,24 +387,21 @@ const Sidebar: React.FC<SidebarProps> = ({
             (chat) => !chat.pinned && !chat.archived
         );
 
-        // Group regular chats by date
         const groupedByDate: { [key: string]: ChatHistory[] } = {};
         regularChatHistory.forEach((chat) => {
-            const date = formatDate(chat.date); // Format the date
+            const date = formatDate(chat.date);
             if (!groupedByDate[date]) {
                 groupedByDate[date] = [];
             }
             groupedByDate[date].push(chat);
         });
 
-        // Sort dates from newest to oldest
         const sortedDates = Object.keys(groupedByDate).sort(
             (a, b) => new Date(b).getTime() - new Date(a).getTime()
         );
 
         return (
             <div className="flex overflow-auto flex-col flex-grow gap-2 text-black dark:text-white">
-                {/* Pinned Chats */}
                 {pinnedChatHistory.length > 0 && (
                     <div className="mb-4">
                         <div className="text-2xl font-semibold">Pinned</div>
@@ -370,7 +411,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </div>
                 )}
 
-                {/* Archived Chats */}
                 {archivedChatHistory.length > 0 && (
                     <div className="mb-4">
                         <div className="text-2xl font-semibold">Archived</div>
@@ -380,7 +420,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </div>
                 )}
 
-                {/* Regular Chats grouped by date */}
                 {sortedDates.map((date) => (
                     <div key={date} className="mb-4">
                         <div className="text-xl font-semibold">{date}</div>
@@ -393,7 +432,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         );
     };
 
-    // Function to load individual chat history component
     const loadChatHistoryComponent = (chat: ChatHistory, idx: number) => {
         return (
             <div
@@ -406,11 +444,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setSelectedChatID(chat.chatId)}
                 onMouseEnter={() =>
                     !isRenaming && setHoveredChatID(chat.chatId)
-                } // Set hovered chat on mouse enter only if not renaming
-                onMouseLeave={() => !isRenaming && setHoveredChatID(null)} // Reset hovered chat on mouse leave only if not renaming
+                }
+                onMouseLeave={() => !isRenaming && setHoveredChatID(null)}
             >
                 <div className="flex items-center w-full">
-                    {/* Chat title or input */}
                     {isRenaming && chatToRename === chat.chatId ? (
                         <div className="flex-grow">
                             <input
@@ -455,19 +492,17 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                     )}
 
-                    {/* Three-dot menu icon */}
                     {!isRenaming &&
                         (hoveredChatID === chat.chatId ||
                             selectedChatID === chat.chatId) && (
                             <div ref={dotRef} className="flex-shrink-0 ml-auto">
                                 <AiOutlineMore
                                     onClick={(event) => {
-                                        event.stopPropagation(); // Prevent click from bubbling up to the document
-                                        setShowOptionsMenu(
-                                            (prev) =>
-                                                prev === chat.chatId
-                                                    ? null
-                                                    : chat.chatId // Toggle the options menu for the specific chat
+                                        event.stopPropagation();
+                                        setShowOptionsMenu((prev) =>
+                                            prev === chat.chatId
+                                                ? null
+                                                : chat.chatId
                                         );
                                     }}
                                     className="text-2xl cursor-pointer"
@@ -488,7 +523,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         >
             {isSidebarVisible && (
                 <>
-                    {/* Title Area*/}
                     <div className="flex relative mb-10">
                         <div className="text-5xl font-bold text-white">
                             <a
@@ -500,9 +534,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                     </div>
 
-                    {/* Chat History Area */}
                     <div className="flex relative gap-2 mb-8">
-                        {/* Search bar with icon */}
                         <div className="relative flex-grow">
                             <input
                                 className="px-4 py-2 pl-10 w-full text-xl text-black rounded-full dark:text-white bg-lightTertiary dark:bg-lightTertiary"
@@ -512,18 +544,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                             />
                             <AiOutlineSearch className="absolute left-3 top-1/2 text-2xl text-black transform -translate-y-1/2 dark:text-white" />
                         </div>
-                        {/* New chat button */}
                         <button
                             className="px-4 py-2 text-2xl text-black rounded-full bg-lightTertiary dark:text-black"
                             onClick={() => {
-                                setSelectedChatID(null); // Clear the selected chat
+                                setSelectedChatID(null);
                                 setMessages([]);
                             }}
                         >
                             <AiOutlineForm />
                         </button>
                     </div>
-                    {/* Loading and error handling */}
                     {loading ? (
                         <p>Loading results...</p>
                     ) : error ? (
@@ -532,26 +562,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                         loadChatHistory()
                     )}
 
-                    {/* Bottom Sidebar Area */}
                     <div className="flex relative text-3xl bg-lightSecondary dark:bg-darkSecondary">
                         <div className="text-black dark:text-white">
                             John Doe
                         </div>
                         {settingsOverlay}
-                        {/* Show settings menu if active */}
                         <div ref={SetRef}>
                             <AiOutlineBook
                                 className="absolute right-0 text-black cursor-pointer dark:text-white"
                                 onClick={(event) => {
-                                    event.stopPropagation(); // Prevent click from bubbling up to the document
-                                    setShowSettingsMenu((prev) => !prev); // Toggle the settings menu visibility
+                                    event.stopPropagation();
+                                    setShowSettingsMenu((prev) => !prev);
                                 }}
                             />
                         </div>
                     </div>
                 </>
             )}
-            {/* Hide/Show Sidebar Button */}
             <button
                 className={`absolute top-4 ${
                     isSidebarVisible ? "right-0" : "-right-12"
@@ -564,6 +591,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <BiChevronRightCircle />
                 )}
             </button>
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                message={modalMessage}
+                onConfirm={handleConfirmAction}
+                onCancel={() => setIsModalOpen(false)}
+            />
         </div>
     );
 };
