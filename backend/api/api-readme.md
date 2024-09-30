@@ -17,6 +17,9 @@ This directory contains the FastAPI application that serves as the backend API f
   - Updating chat titles and messages
   - Uploading documents
   - Updating group status
+  - Fetching uploaded files
+  - Downloading files
+  - Deleting documents
 
 ## API Routes
 
@@ -35,6 +38,9 @@ This directory contains the FastAPI application that serves as the backend API f
 - PUT `/api/chats/{chatId}/messages/{messageId}`: Update a specific message and generate a new response
 - POST `/api/{chatId}/upload`: Upload a document to a chat
 - PUT `/api/chats/{chatId}/group`: Update group status of a chat
+- GET `/api/chats/{chatId}/files`: Fetch uploaded files for a chat
+- GET `/api/files/{docId}/download`: Download a specific file
+- DELETE `/api/chats/{chatId}/documents/{docId}`: Delete a specific document
 
 ## Request Models
 

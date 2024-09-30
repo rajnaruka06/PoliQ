@@ -8,7 +8,8 @@ from .agentHelpers import (
     , InvalidUserQueryException
     , NoDataFoundException
     , loadLLM
-    , loadMetadata
+    , loadFromMongo
+    , cleanWhereConditions
 )
 from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent, DatasetRegionMatcherAgent
 import sys
@@ -103,7 +104,24 @@ class ElecDataWorkflow:
             queryType = self.routerAgent.determineQueryType(userQuery, chatHistory)
             if queryType.strip().upper() == "DATABASE":
                 sqlQuery = self._generateQuery(userQuery, chatHistory)
-                data = self._executeSqlQuery(sqlQuery)
+                logger.info(f"Generated SQL Query: {sqlQuery}")
+
+                whereColumns = self.sqlCoderAgent.extractWhereColumns(sqlQuery)
+                whereColumns = cleanWhereConditions(whereColumns)
+                logger.info(f"Extracted WHERE columns: {whereColumns}")
+                context = ""
+                for column in whereColumns:
+                    selectQuery = f"SELECT DISTINCT {column['column']} FROM {column['table']};"
+                    result = self.sqlQueryTool.executeQuery(selectQuery)
+                    result = result.to_string()
+                    context += f"{selectQuery}\n{result}\n\n"
+                
+                logger.info(f"Context: {context}")
+                updatedQuery = self.sqlCoderAgent.updateWhereConditions(sqlQuery, userQuery, context)
+                updatedQuery = cleanSqlQuery(updatedQuery)
+                logger.info(f"Updated SQL Query: {updatedQuery}")
+
+                data = self._executeSqlQuery(updatedQuery)
                 response = self.responseSummarizerAgent.generateSummaryWithReflection(response=data.to_string(), userQuery=userQuery)
                 response = cleanSummaryResponse(response)
             elif queryType.strip().upper() == "CHAT":
@@ -125,8 +143,8 @@ class ElecDataWorkflow:
 class DatasetRegionMatcher:
     def __init__(self):
         self.llm = loadLLM()
-        self.datasetsMetadata = loadMetadata('metadata', 'Datasets')
-        self.regionsMetadata = loadMetadata('metadata', 'Regions')
+        self.datasetsMetadata = loadFromMongo('metadata', 'Datasets')
+        self.regionsMetadata = loadFromMongo('metadata', 'Regions')
         self.agent = DatasetRegionMatcherAgent(llm = self.llm)
 
     def match(self, userQuery):
@@ -135,3 +153,5 @@ class DatasetRegionMatcher:
             self.regionsMetadata,
             self.datasetsMetadata
         )
+    
+    

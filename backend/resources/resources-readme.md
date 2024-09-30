@@ -8,8 +8,8 @@ This directory contains configuration files, environment variables, and metadata
 - `.ENV.example`: Example environment file with placeholder values (for documentation purposes)
 - `regions.json`: JSON file containing region data
 - `datasets.json`: JSON file containing dataset information
-- `metadataRegions.json`: Generated metadata for regions
-- `metadataDatasets.json`: Generated metadata for datasets
+- `datasetsVectorDB.json`: JSON file containing dataset embeddings
+- `regionsVectorDB.json`: JSON file containing region embeddings
 
 ## Environment Variables
 
@@ -24,6 +24,10 @@ The `.ENV` file should contain the following variables:
 - `MONGO_DB_NAME`: MongoDB database name
 - `CONTEXT_TOKEN_LIMIT`: Token limit for recent messages context (default: 4096)
 - `CORS_ORIGINS`: Comma-separated list of allowed CORS origins
+- `VECTORDB_CONNECTION_STRING`: Connection string for the vector database
+- `VECTORDB_COLLECTION_NAMES`: Comma-separated list of vector database collection names
+- `VECTORDB_COLLECTION_NAME_DATASETS`: Name of the datasets collection in the vector database
+- `VECTORDB_COLLECTION_NAME_REGIONS`: Name of the regions collection in the vector database
 
 ## Metadata Generation
 
