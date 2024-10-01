@@ -75,10 +75,10 @@ const LevelsRegion: React.FC = () => {
     }, []);
 
     return (
-        <div className="flex relative gap-2 mx-5 mt-auto mb-2">
+        <div className="flex relative gap-2 mx-5 mt-auto">
             <button
                 ref={levelsButtonRef}
-                className="p-3 w-32 text-white rounded-full bg-lightTertiary dark:bg-darkSecondary"
+                className="w-24 text-black rounded-full 3xl:p-3 3xl:w-32 bg-lightTertiary dark:text-white dark:bg-darkSecondary"
                 onClick={(event) => {
                     event.stopPropagation(); // Prevent click from bubbling up to the document
                     setShowLevelsDropdown((prev) => !prev); // Toggle the popup visibility
@@ -90,7 +90,7 @@ const LevelsRegion: React.FC = () => {
 
             <button
                 ref={regionButtonRef}
-                className="p-3 w-32 text-white rounded-full bg-lightTertiary dark:bg-darkSecondary"
+                className="w-24 text-black rounded-full 3xl:p-3 3xl:w-32 bg-lightTertiary dark:text-white dark:bg-darkSecondary"
                 onClick={(event) => {
                     event.stopPropagation(); // Prevent click from bubbling up to the document
                     setShowRegionDropdown((prev) => !prev); // Toggle the popup visibility
@@ -100,17 +100,50 @@ const LevelsRegion: React.FC = () => {
                 Region
             </button>
 
+            {/* levels dropdown */}
+            {showLevelsDropdown && (
+                <div
+                    ref={levelsRef}
+                    className="absolute bottom-full mb-2 bg-white rounded shadow-lg w-50 3xl:w-64 dark:bg-darkPrimary"
+                >
+                    <input
+                        type="text"
+                        placeholder="Search Level..."
+                        value={searchLevel}
+                        onChange={(e) => setSearchLevel(e.target.value)}
+                        className="p-2 mb-2 w-full bg-white rounded border border-gray-300 dark:bg-darkPrimary"
+                    />
+                    <ul className="overflow-y-auto p-2 max-h-48 3xl:max-h-72">
+                        {levels
+                            .filter((level) =>
+                                level
+                                    .toLowerCase()
+                                    .includes(searchLevel.toLowerCase())
+                            )
+                            .map((level, index) => (
+                                <li
+                                    key={index}
+                                    className="px-2 py-1 text-black cursor-pointer 3xl:text-lg text-md hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
+                                >
+                                    {level}
+                                </li>
+                            ))}
+                    </ul>
+                </div>
+            )}
+
+            {/* region dropdown */}
             {showRegionDropdown && (
                 <div
                     ref={regionRef}
-                    className="absolute bottom-full mb-2 w-64 bg-white rounded shadow-lg dark:bg-darkPrimary"
+                    className="absolute bottom-full mb-2 w-52 bg-white rounded shadow-lg 3xl:w-64 dark:bg-darkPrimary"
                 >
                     <input
                         type="text"
                         placeholder="Search Region..."
                         value={searchRegion}
                         onChange={(e) => setSearchRegion(e.target.value)}
-                        className="p-2 mb-2 w-full rounded border border-gray-300"
+                        className="p-2 mb-2 w-full bg-white rounded border border-gray-300 dark:bg-darkPrimary"
                     />
                     <ul className="overflow-y-auto p-2 max-h-48">
                         {regions
@@ -122,40 +155,9 @@ const LevelsRegion: React.FC = () => {
                             .map((region, index) => (
                                 <li
                                     key={index}
-                                    className="px-2 py-1 text-white cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+                                    className="px-2 py-1 text-black cursor-pointer hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
                                 >
                                     {region}
-                                </li>
-                            ))}
-                    </ul>
-                </div>
-            )}
-
-            {showLevelsDropdown && (
-                <div
-                    ref={levelsRef}
-                    className="absolute bottom-full mb-2 w-64 bg-white rounded shadow-lg dark:bg-darkPrimary"
-                >
-                    <input
-                        type="text"
-                        placeholder="Search Level..."
-                        value={searchLevel}
-                        onChange={(e) => setSearchLevel(e.target.value)}
-                        className="p-2 mb-2 w-full rounded border border-gray-300"
-                    />
-                    <ul className="overflow-y-auto p-2 max-h-48">
-                        {levels
-                            .filter((level) =>
-                                level
-                                    .toLowerCase()
-                                    .includes(searchLevel.toLowerCase())
-                            )
-                            .map((level, index) => (
-                                <li
-                                    key={index}
-                                    className="px-2 py-1 text-white cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
-                                >
-                                    {level}
                                 </li>
                             ))}
                     </ul>
