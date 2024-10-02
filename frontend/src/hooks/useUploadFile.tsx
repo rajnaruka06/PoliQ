@@ -32,7 +32,7 @@ export const useUploadFile = (): UseUploadFileReturn => {
       formData.append('file', file);
 
       // Use absolute URL for the backend
-      const backendUrl = 'http://localhost:8000'; // Replace with your backend URL if different
+      const backendUrl = 'http://localhost:8000'; 
 
       const response = await axios.post(
         `${backendUrl}/api/${chatId}/upload`,
