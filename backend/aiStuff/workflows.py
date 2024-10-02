@@ -55,7 +55,9 @@ class ElecDataWorkflow:
 
     def _setTableInfo(self):
         with loadPostgresDatabase(self.dbName) as db:
-            self.tableInfo = db.get_table_info()
+            table_list = db.get_usable_table_names()
+            table_list = [table for table in table_list if not (table.lower().startswith('auth') or table.lower().startswith('django'))]
+            self.tableInfo = db.get_table_info(table_list)
     
     def _setDialect(self):
         with loadPostgresDatabase(self.dbName) as db:

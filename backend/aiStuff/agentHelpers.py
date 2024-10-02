@@ -286,39 +286,40 @@ def cleanSummaryResponse(summary: str) -> str:
         summary = summary.strip()
         return summary
 
+## Currenly only applying RAG to Datasets --> Can be extended to Regions as well
 def populate_vectordb():
     VECTORDB_CONNECTION_STRING = os.getenv('VECTORDB_CONNECTION_STRING')
-    VECTORDB_COLLECTION_NAMES = os.getenv('VECTORDB_COLLECTION_NAMES')
+    VECTORDB_COLLECTION_NAME = os.getenv('VECTORDB_COLLECTION_NAME_DATASETS')
     embeddings = OpenAIEmbeddings()
-    collectionNames = VECTORDB_COLLECTION_NAMES.split(',')
 
-    for collectionName in collectionNames:
-        try:
-            db = PGVector(
-                collection_name=collectionName,
-                connection_string=VECTORDB_CONNECTION_STRING,
-                embedding_function=embeddings
-            )
-            db.delete_collection()
-            logger.info(f"Previous Vector DB: {collectionName} deleted")
-        except:
-            logger.info(f"No previous Vector DB: {collectionName} to delete")
-            pass
-        
-        datasets = loadFromMongo('datasetsVectorDB', 'datasetsVectorDB')
-        
-        logger.info(f"Populating Vector DB: {collectionName} with {len(datasets['datasets'])} documents")
-        
-        documents = [Document(page_content=dataset['context'], metadata={'id': dataset['id']}) for dataset in datasets['datasets']]
-
-        db = PGVector.from_documents(
-            embedding=embeddings,
-            documents=documents,
-            collection_name=collectionName,
+    try:
+        db = PGVector(
+            collection_name=VECTORDB_COLLECTION_NAME,
             connection_string=VECTORDB_CONNECTION_STRING,
+            embedding_function=embeddings
         )
+        db.delete_collection()
+        logger.info(f"Previous Vector DB: {VECTORDB_COLLECTION_NAME} deleted")
+    except:
+        logger.info(f"No previous Vector DB: {VECTORDB_COLLECTION_NAME} to delete")
+        pass
+    
+    datasets = loadFromMongo('datasetsVectorDB', 'datasetsVectorDB')
+    datasets = json.loads(datasets)
 
-        logger.info(f"Vector DB {collectionName} populated with {len(documents)} documents")
+    logger.info(f"Populating Vector DB: {VECTORDB_COLLECTION_NAME} with {len(datasets['datasets'])} documents")
+    
+    documents = [Document(page_content=dataset['context'], metadata={'id': dataset['id']}) for dataset in datasets['datasets']]
+
+    db = PGVector.from_documents(
+        embedding=embeddings,
+        documents=documents,
+        collection_name=VECTORDB_COLLECTION_NAME,
+        connection_string=VECTORDB_CONNECTION_STRING,
+    )
+
+    logger.info(f"Vector DB {VECTORDB_COLLECTION_NAME} populated with {len(documents)} documents")
+    return db
 
 def get_relevant_documents(query, k=10):
     VECTORDB_CONNECTION_STRING = os.getenv('VECTORDB_CONNECTION_STRING')

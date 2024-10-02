@@ -31,6 +31,7 @@ class SqlExpert:
         - Use GROUP BY instead of DISTINCT where applicable.
         - End the SQL query with a semicolon (;).
         - Do not include any LIMIT, OFFSET unless explicitly mentioned in the user query.
+        - While filtering using subquery use 'in' instead of '='.
 
         Available tables:
         {tableInfo}
@@ -71,7 +72,12 @@ class SqlExpert:
         {sqlQuery}
         
         Extract the distinct column names and their corresponding table names used in the WHERE clause.
-        
+        Use column that are hardcoded for filtering.
+
+        example:
+        SELECT * FROM table1 WHERE column1 = 'value1' AND column2 IN (SELECT column3 FROM table2 WHERE column4 = 'value2');
+        Here, we want to extract column1 and column4 but not column2.
+
         Respond in the following JSON format:
         [
             {{
