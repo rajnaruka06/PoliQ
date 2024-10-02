@@ -29,6 +29,15 @@ const FeedbackButton: React.FC<FeedbackButtonProps> = ({
     const [popupMessage, setPopupMessage] = useState(""); // For confused popup
     const [showConfirmation, setShowConfirmation] = useState(false); // For copy confirmation
     const { updateMessage, loading, error } = useUpdateMessage(userId); // Use the custom hook
+    const [showVisualization, setShowVisualization] = useState(false); // For visualization confirmation
+
+    // Function to handle the visualization icon click
+    const handleVisualizationClick = () => {
+        setShowVisualization(true); // Show visualization confirmation
+        setTimeout(() => {
+            setShowVisualization(false); // Hide confirmation after 2 seconds
+        }, 2000);
+    };
 
     // Function to handle the confused icon click
     const handleConfusedClick = () => {
@@ -87,7 +96,10 @@ const FeedbackButton: React.FC<FeedbackButtonProps> = ({
                         <BiData className="text-xl" />
                     </button>
                     {/* Bar Chart Icon */}
-                    <button className="px-1 py-1 text-white bg-purple-500 rounded-full">
+                    <button
+                        className="px-1 py-1 text-white bg-purple-500 rounded-full"
+                        onClick={handleVisualizationClick} // Call the visualization handler
+                    >
                         <BiBarChartSquare className="text-xl" />
                     </button>
                 </div>
@@ -103,6 +115,12 @@ const FeedbackButton: React.FC<FeedbackButtonProps> = ({
                 <div className="absolute left-0 top-6 p-2 mt-8 ml-7 text-white bg-red-500 rounded shadow-lg">
                     ☹️ I am sorry you didn't like this response. I will do
                     better next time, boss!
+                </div>
+            )}
+            {/* Visualization confirmation message */}
+            {showVisualization && (
+                <div className="absolute left-0 top-6 p-1 mt-8 ml-7 text-white bg-purple-500 rounded shadow-lg">
+                    Visualization generated!
                 </div>
             )}
         </div>
