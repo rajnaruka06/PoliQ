@@ -50,11 +50,11 @@ const LevelsRegion: React.FC = () => {
                 !levelsButtonRef.current.contains(target);
 
             // Debugging logs
-            console.log("Clicked target:", target);
-            console.log("Is outside region dropdown:", isOutsideRegionDropdown);
-            console.log("Is outside levels dropdown:", isOutsideLevelsDropdown);
-            console.log("Is outside region button:", isOutsideRegionButton);
-            console.log("Is outside levels button:", isOutsideLevelsButton);
+            // console.log("Clicked target:", target);
+            // console.log("Is outside region dropdown:", isOutsideRegionDropdown);
+            // console.log("Is outside levels dropdown:", isOutsideLevelsDropdown);
+            // console.log("Is outside region button:", isOutsideRegionButton);
+            // console.log("Is outside levels button:", isOutsideLevelsButton);
 
             // Close dropdowns if clicking outside of both dropdowns and their buttons
             if (

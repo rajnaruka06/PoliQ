@@ -13,7 +13,7 @@ import {
 import FeedbackButton from "../components/FeedbackButton.tsx";
 import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
-import { useUploadFile } from '../hooks/useUploadFile';
+import { useUploadFile } from "../hooks/useUploadFile";
 import SettingsOptionOverlay from "../components/SettingsOptionOverlay.tsx";
 import Hero from "../components/Hero.tsx";
 import LevelRegions from "../components/LevelsRegions.tsx";
@@ -43,7 +43,7 @@ const ChatBot: React.FC = () => {
     const popupRef = useRef<HTMLDivElement | null>(null); // Reference for the popup
     const paperclipRef = useRef<HTMLDivElement | null>(null); // Reference for the paperclip icon
     const [showHero, setShowHero] = useState(true);
-    const { uploadFile} = useUploadFile();
+    const { uploadFile } = useUploadFile();
 
     const [isDarkMode, setIsDarkMode] = useState(() => {
         // Dark mode state
@@ -253,7 +253,11 @@ const ChatBot: React.FC = () => {
                     const file = e.target.files?.[0];
                     if (file) {
                         console.log("Selected file:", file.name);
-                        uploadFile({ file, chatId: selectedChatID || '', userId });
+                        uploadFile({
+                            file,
+                            chatId: selectedChatID || "",
+                            userId,
+                        });
                     }
                 }}
             />
@@ -373,7 +377,7 @@ const ChatBot: React.FC = () => {
                     {/* help button */}
                     <button
                         onClick={toggleHelp}
-                        className={`p-2 text-2xl 3xl:text-3xl rounded-full ${isDarkMode ? "text-yellow-300 bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
+                        className={`p-2 text-2xl 3xl:text-3xl rounded-full ${isDarkMode ? "text-white bg-darkPrimary" : "text-gray-400 bg-lightPrimary"} rounded`}
                     >
                         <AiOutlineQuestionCircle />
                     </button>
