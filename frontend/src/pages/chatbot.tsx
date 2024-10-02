@@ -13,6 +13,7 @@ import {
 import FeedbackButton from "../components/FeedbackButton.tsx";
 import { useSendMessage } from "../hooks/useSendMessage";
 import { useFetchMessages } from "../hooks/useFetchMessages";
+import { useUploadFile } from '../hooks/useUploadFile';
 import SettingsOptionOverlay from "../components/SettingsOptionOverlay.tsx";
 import Hero from "../components/Hero.tsx";
 import LevelRegions from "../components/LevelsRegions.tsx";
@@ -42,6 +43,7 @@ const ChatBot: React.FC = () => {
     const popupRef = useRef<HTMLDivElement | null>(null); // Reference for the popup
     const paperclipRef = useRef<HTMLDivElement | null>(null); // Reference for the paperclip icon
     const [showHero, setShowHero] = useState(true);
+    const { uploadFile} = useUploadFile();
 
     const [isDarkMode, setIsDarkMode] = useState(() => {
         // Dark mode state
@@ -251,7 +253,7 @@ const ChatBot: React.FC = () => {
                     const file = e.target.files?.[0];
                     if (file) {
                         console.log("Selected file:", file.name);
-                        // Add further processing for the selected file
+                        uploadFile({ file, chatId: selectedChatID || '', userId });
                     }
                 }}
             />
