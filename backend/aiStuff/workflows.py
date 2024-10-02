@@ -10,6 +10,7 @@ from .agentHelpers import (
     , loadLLM
     , loadFromMongo
     , cleanWhereConditions
+    , get_relevant_documents
 )
 from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent, DatasetRegionMatcherAgent
 import sys
@@ -142,18 +143,28 @@ class ElecDataWorkflow:
             logger.exception(f"An error occurred: {str(e)}")
             return f"An error occurred: {str(e)}"
 
+## Returns Layers in the format of [RegionID, DatasetID, Level]
 class DatasetRegionMatcher:
     def __init__(self):
         self.llm = loadLLM()
         self.datasetsMetadata = loadFromMongo('metadata', 'Datasets')
+        self.datasetsMetadata = json.loads(self.datasetsMetadata)
         self.regionsMetadata = loadFromMongo('metadata', 'Regions')
         self.agent = DatasetRegionMatcherAgent(llm = self.llm)
 
     def match(self, userQuery):
-        return self.agent.match(
-            userQuery,
-            self.regionsMetadata,
-            self.datasetsMetadata
-        )
-    
-    
+        relevent_docs = get_relevant_documents(userQuery, k = 350)
+        relevent_docs = [str(doc.metadata['id']) for doc, score in relevent_docs]
+
+        relevent_datasets = {id_: self.datasetsMetadata[id_] for id_ in relevent_docs}
+        relevent_datasets = str(relevent_datasets)
+
+        try:
+            return self.agent.match(
+                userQuery,
+                self.regionsMetadata,
+                relevent_datasets
+            )
+        except Exception as e:
+            logger.exception(f"An error occurred: {str(e)}")
+            return f"An error occurred: {str(e)}"

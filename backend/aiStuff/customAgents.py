@@ -234,6 +234,7 @@ class DatasetRegionMatcherAgent:
         4. More than one layer might be needed to answer the user query correctly, but look for the least number of layers possible.
         5. If there are no relevant data or regions to answer the query, return an empty list [].
         6. Always try to include a specific RegionID. Only omit the RegionID if the query doesn't specify or imply any particular region and no region from the metadata is relevant.
+        7. Do not return any other information apart from the JSON array.
 
         {format_instructions}
         """
