@@ -1,0 +1,36 @@
+This database is designed to manage and analyze election data for both House of Representatives and Senate elections in Australia. It contains comprehensive information about candidates, parties, electoral districts (seats), voting booths, election results, and preference flows. The system supports multiple elections across different years and allows for detailed analysis of voting patterns, preference distributions, and electoral outcomes.
+
+Key Features:
+1. Supports both House of Representatives and Senate elections
+2. Tracks candidates, parties, and their affiliations
+3. Manages electoral geography (seats, booths, and locations)
+4. Records detailed voting results, including primary votes and two-party preferred votes
+5. Handles preference flows and vote transfers in Senate elections
+6. Supports historical data and election comparisons
+
+Metadata:
+1. Total number of tables: 30
+2. Key tables:
+   - elecdata_houseelection: House of Representatives elections
+   - elecdata_senateelection: Senate elections
+   - elecdata_seat: Electoral districts
+   - elecdata_booth: Voting locations
+   - elecdata_party: Political parties
+   - elecdata_person: Candidates and politicians
+   - elecdata_votetally: Detailed voting results
+   - elecdata_senatepreference: Senate preference flows
+
+3. Data coverage:
+   - Includes elections from at least 2013 to 2022
+   - Covers all Australian states and territories
+
+4. Special features:
+   - Supports tracking of boundary changes and redistribution (elecdata_seatchange)
+   - Handles complex preference flows in Senate elections (elecdata_senatepreference)
+   - Allows for detailed analysis of voting patterns at booth level (elecdata_votetally)
+
+5. Data granularity:
+   - House of Representatives: Results available at booth level
+   - Senate: Results available at state level with detailed preference flows
+
+This database provides a robust foundation for analyzing Australian federal elections, allowing for in-depth study of voting patterns, candidate performance, and electoral trends over time. It can be used for various purposes, including electoral analysis, political research, and historical comparisons of election results.

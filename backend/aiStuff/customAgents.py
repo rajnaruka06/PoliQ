@@ -5,7 +5,6 @@ from langchain_core.prompts import PromptTemplate
 from langchain.base_language import BaseLanguageModel
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 import pandas as pd
-import json
 import os
 
 resourcesPath = os.path.join(os.path.dirname(__file__), '../resources')
@@ -31,7 +30,8 @@ class SqlExpert:
         - Never use * in the SELECT statement. Always specify the columns you want to retrieve.
         - Use GROUP BY instead of DISTINCT where applicable.
         - End the SQL query with a semicolon (;).
-        - Do not include any LIMIT, OFFSET, WHERE clauses, or any other filters unless explicitly mentioned in the user query.
+        - Do not include any LIMIT, OFFSET unless explicitly mentioned in the user query.
+        - While filtering using subquery use 'in' instead of '='.
 
         Available tables:
         {tableInfo}
@@ -66,6 +66,52 @@ class SqlExpert:
             return chain.invoke(kwargs).content.strip()
         except Exception as e:
             raise RuntimeError(f"Error invoking language model: {str(e)}")
+
+    def extractWhereColumns(self, sqlQuery: str) -> List[Dict[str, str]]:
+        template = """Given the following SQL query:
+        {sqlQuery}
+        
+        Extract the distinct column names and their corresponding table names used in the WHERE clause.
+        Use column that are hardcoded for filtering.
+
+        example:
+        SELECT * FROM table1 WHERE column1 = 'value1' AND column2 IN (SELECT column3 FROM table2 WHERE column4 = 'value2');
+        Here, we want to extract column1 and column4 but not column2.
+
+        Respond in the following JSON format:
+        [
+            {{
+                "table": "table_name",
+                "column": "column_name"
+            }},
+            ...
+        ]
+        """
+        
+        response = self._invokeChain(template, sqlQuery=sqlQuery)
+        return response
+
+    def updateWhereConditions(self, originalQuery: str, userQuery: str, context: str) -> str:
+        template = """Given the following information:
+        
+        Original SQL Query:
+        {originalQuery}
+        
+        User Query:
+        {userQuery}
+        
+        Context:
+        {context}
+        
+        Update the WHERE conditions in the original SQL query based on the user query and the provided context.
+        Only modify the WHERE conditions, keeping the rest of the query unchanged.
+        Only return the updated SQL query, nothing else.
+        
+        Updated SQL Query:
+        """
+        
+        response = self._invokeChain(template, originalQuery=originalQuery, userQuery=userQuery, context=context)
+        return response.strip()
 
 ## Using Self - Refelction
 class ResponseSummarizer:
@@ -164,6 +210,7 @@ class DatasetRegionMatcherAgent:
 
     def _createPrompt(self):
         template = """You are an AI assistant specializing in electoral and census data. Your task is to identify the minimum set of layers necessary to answer the user's query based on the provided metadata.
+        Metadata is in format: [ID]: [Description]
 
         Regions Metadata:
         {regions_metadata}
@@ -187,6 +234,7 @@ class DatasetRegionMatcherAgent:
         4. More than one layer might be needed to answer the user query correctly, but look for the least number of layers possible.
         5. If there are no relevant data or regions to answer the query, return an empty list [].
         6. Always try to include a specific RegionID. Only omit the RegionID if the query doesn't specify or imply any particular region and no region from the metadata is relevant.
+        7. Do not return any other information apart from the JSON array.
 
         {format_instructions}
         """
@@ -207,3 +255,35 @@ class DatasetRegionMatcherAgent:
             return result
         except Exception as e:
             raise RuntimeError(f"Error processing LLM output: {str(e)}")
+        
+class AnalystAgent:
+    def __init__(self, llm):
+        self.llm = llm
+
+    def generateAnalysis(self, userQuery: str, dataframes_info: List[Dict[str, str]]) -> str:
+        template = """You are a data analysis expert. Analyze the datasets based on the user query and provide only executable Python code as your response.
+
+        Context:
+        - User query: {userQuery}
+        - Datasets: Available as a list of DataFrames named 'dfs'
+        - Pre-imported modules: pandas as pd, numpy as np
+
+        Datasets Overview:
+        {dataframes_overview}
+
+        Instructions:
+        1. Read the user query and datasets information carefully.
+        2. Write Python code that directly answers the query using the 'dfs' list of DataFrames.
+        3. Use only pandas (pd) and numpy (np) operations.
+        4. Do not import any libraries or define the datasets.
+        5. Ensure the code is complete, correct, and can be executed as-is.
+        6. Return only the Python code, without any explanations or comments.
+        7. Only use the Columns in the DataFrames provided.
+        8. The python code should always return a dataframe as the result.
+        9. Do not assume any dataframes except the ones provided in the dataframes_overview.
+
+        Python Code:
+        """
+        prompt = PromptTemplate.from_template(template)
+        chain = prompt | self.llm
+        return chain.invoke({"userQuery": userQuery, "dataframes_overview": dataframes_info})

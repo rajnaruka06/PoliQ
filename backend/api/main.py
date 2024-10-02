@@ -2,6 +2,7 @@
 
 from fastapi import FastAPI, HTTPException, Path, Query, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 import logging
 import sys
@@ -202,5 +203,38 @@ async def updateGroupStatus(chatId: str = Path(...), userId: str = Query(...), g
         chatHistory = ChatHistory(userId=userId)
         chatHistory.updateGroupStatus(chatId, groupUpdate.groupName, groupUpdate.groupColor)
         return {"status": "Group status updated successfully"}
+    except ChatHistoryError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/api/chats/{chatId}/files")
+async def fetchUploadedFiles(chatId: str = Path(...), userId: str = Query(...)):
+    try:
+        chatHistory = ChatHistory(userId=userId)
+        files = chatHistory.getUploadedFiles(chatId)
+        return {"files": files}
+    except ChatHistoryError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/files/{docId}/download")
+async def downloadFile(docId: str = Path(...), userId: str = Query(...)):
+    try:
+        chatHistory = ChatHistory(userId=userId)
+        filename, content, content_type = chatHistory.getFileContent(docId)
+        if filename and content and content_type:
+            headers = {
+                'Content-Disposition': f'attachment; filename="{filename}"'
+            }
+            return Response(content=content, media_type=content_type, headers=headers)
+        else:
+            raise HTTPException(status_code=404, detail="File not found")
+    except ChatHistoryError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/chats/{chatId}/documents/{docId}")
+async def handleDeleteDocument(chatId: str = Path(...), docId: str = Path(...), userId: str = Query(...)):
+    try:
+        chatHistory = ChatHistory(userId=userId)
+        chatHistory.deleteDocument(chatId, docId)
+        return {"status": "Document deleted successfully"}
     except ChatHistoryError as e:
         raise HTTPException(status_code=500, detail=str(e))

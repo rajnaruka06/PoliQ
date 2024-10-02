@@ -22,6 +22,7 @@ This directory contains the core AI and data processing logic for our electoral 
 - `loadPostgresDatabase`: Context manager for database connections
 - `loadLLM`: Loads the specified language model
 - `ResourceManager`: Manages metadata and resources for the application
+- `populate_vectordb`: Populates vector database with dataset embeddings
 
 ### CustomAgents
 
@@ -38,13 +39,8 @@ This directory contains the core AI and data processing logic for our electoral 
 
 ## New Features
 
-- Document upload and management for CSV, PDF, and TXT files
-- Chat grouping functionality
-- Message updating with chat history pruning
-- Enhanced error handling with custom exceptions
-- Token management for recent messages
-- Improved metadata handling and resource management
-- Dataset and region matching for user queries
+- Uploading resource files to MongoDB
+- Populating vector database with dataset embeddings
 
 ## Usage
 
@@ -54,7 +50,7 @@ These components are primarily used by the FastAPI application in the `/api` dir
 
 - Works closely with the FastAPI application in the `/api` directory
 - Utilizes environment variables from the `/resources/.ENV` file
-- Interacts with both PostgreSQL and MongoDB databases
+- Interacts with PostgreSQL, MongoDB, and vector databases
 
 ## Testing
 

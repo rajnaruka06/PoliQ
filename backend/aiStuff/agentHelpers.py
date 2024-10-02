@@ -32,9 +32,11 @@ import gridfs
 
 from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
 from langchain_community.utilities import SQLDatabase
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_anthropic import ChatAnthropic
 from langchain_community.tools import DuckDuckGoSearchRun
+from langchain.schema import Document
+from langchain.vectorstores.pgvector import PGVector
 
 ## Setting up logging
 logging.basicConfig(level=logging.INFO)
@@ -54,7 +56,7 @@ Message = TypedDict('Message', {
     'time': str
 })
 
-Document = TypedDict('Document', {
+UserDocument = TypedDict('UserDocument', {
     'docId': str,
     'filename': str,
     'fileType': str,
@@ -69,7 +71,7 @@ ChatDocument = TypedDict('ChatDocument', {
     'archived': bool,
     'lastUpdated': datetime,
     'messages': List[Message],
-    'documents': List[Document]
+    'documents': List[UserDocument]
 })
 
 ## Defining Custom exceptions
@@ -97,7 +99,7 @@ class ChatHistoryError(Exception):
         self.message = message
         super().__init__(self.message)
 
-def loadMetadata(collectionName: str, fileName: str) -> str:
+def loadFromMongo(collectionName: str, fileName: str) -> str:
     """
     Load metadata from MongoDB.
 
@@ -229,9 +231,12 @@ def cleanSqlQuery(sqlQuery: str) -> str:
     Returns:
         str: The cleaned SQL query string.
     """
-
-    # sqlQuery = sqlQuery.lower().strip()
-    sqlQuery = sqlQuery.strip()
+    if "3. FINAL SQL QUERY:" in sqlQuery:
+        sqlQuery = sqlQuery.split("3. FINAL SQL QUERY:")[1].strip()
+        return sqlQuery
+    
+    if sqlQuery.startswith("Updated SQL Query:"):
+        sqlQuery = sqlQuery.split("Updated SQL Query:")[1].strip()
     sqlQuery = sqlQuery.replace("```sql", "").replace("```", "").strip()
     match = re.search(r'\b(with\s+\w+\s+as|select)\b', sqlQuery, re.IGNORECASE)
     if match:
@@ -242,6 +247,29 @@ def cleanSqlQuery(sqlQuery: str) -> str:
         sqlQuery = sqlQuery[:semicolonIndex]
 
     return sqlQuery
+
+def cleanWhereConditions(whereConditions: str) -> List[Dict[str, str]]:
+    """
+    Cleans and extracts the WHERE conditions from the LLM response.
+    
+    Args:
+        whereConditions (str): The original WHERE conditions string from the LLM response.
+    
+    Returns:
+        List[Dict[str, str]]: A list of dictionaries containing table and column information.
+    """
+    if "Extracted WHERE columns:" in whereConditions:
+        whereConditions = whereConditions.split("Extracted WHERE columns:")[1].strip()
+    whereConditions = whereConditions.replace("```json", "").replace("```", "").strip()
+    
+    try:
+        parsed_conditions = json.loads(whereConditions)
+        if isinstance(parsed_conditions, list) and all(isinstance(item, dict) for item in parsed_conditions):
+            return parsed_conditions
+        else:
+            raise ValueError("Parsed conditions are not in the expected format")
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Failed to parse JSON: {str(e)}")
 
 def cleanSummaryResponse(summary: str) -> str:
         """
@@ -258,128 +286,52 @@ def cleanSummaryResponse(summary: str) -> str:
         summary = summary.strip()
         return summary
 
-class PostgresDatabase:
-    def __init__(self):
-        self.DATABASE_URL = os.environ.get("POLIMAP_POSTGRESQL_URL", None)
-        self.engine = create_async_engine(self.DATABASE_URL, echo=True)
-        self.AsyncSessionLocal = sessionmaker(
-            autocommit=False,
-            autoflush=False,
-            bind=self.engine,
-            class_=AsyncSession
+## Currenly only applying RAG to Datasets --> Can be extended to Regions as well
+def populate_vectordb():
+    VECTORDB_CONNECTION_STRING = os.getenv('VECTORDB_CONNECTION_STRING')
+    VECTORDB_COLLECTION_NAME = os.getenv('VECTORDB_COLLECTION_NAME_DATASETS')
+    embeddings = OpenAIEmbeddings()
+
+    try:
+        db = PGVector(
+            collection_name=VECTORDB_COLLECTION_NAME,
+            connection_string=VECTORDB_CONNECTION_STRING,
+            embedding_function=embeddings
         )
+        db.delete_collection()
+        logger.info(f"Previous Vector DB: {VECTORDB_COLLECTION_NAME} deleted")
+    except:
+        logger.info(f"No previous Vector DB: {VECTORDB_COLLECTION_NAME} to delete")
+        pass
+    
+    datasets = loadFromMongo('datasetsVectorDB', 'datasetsVectorDB')
+    datasets = json.loads(datasets)
 
-    @asynccontextmanager
-    async def get_db_session(self):
-        session = self.AsyncSessionLocal()
-        try:
-            yield session
-        finally:
-            await session.close()
+    logger.info(f"Populating Vector DB: {VECTORDB_COLLECTION_NAME} with {len(datasets['datasets'])} documents")
+    
+    documents = [Document(page_content=dataset['context'], metadata={'id': dataset['id']}) for dataset in datasets['datasets']]
 
-    async def switch_database(self, session: AsyncSession, database_name: str):
-        await session.execute(text(f"SET search_path TO {database_name}"))
-        await session.commit()
+    db = PGVector.from_documents(
+        embedding=embeddings,
+        documents=documents,
+        collection_name=VECTORDB_COLLECTION_NAME,
+        connection_string=VECTORDB_CONNECTION_STRING,
+    )
 
-## For Testing Purposes
-class DataFetcher:
-    def __init__(self):
-        self.mongo_uri = os.environ.get('MONGO_URI')
-        self.postgres_db_name = os.environ.get('POLIMAP_DB_NAME')
-        self.postgres_db = PostgresDatabase()
-        self.mongo_client = AsyncIOMotorClient(self.mongo_uri)
+    logger.info(f"Vector DB {VECTORDB_COLLECTION_NAME} populated with {len(documents)} documents")
+    return db
 
-    @asynccontextmanager
-    async def get_mongo_connection(self):
-        db = self.mongo_client['appdata']
-        try:
-            yield db
-        finally:
-            # await self.mongo_client.close()
-            pass  
-
-    async def fetch_dataset(self, id: int) -> Optional[Dict[str, Any]]:
-        async with self.get_mongo_connection() as db:
-            dataset = await db['datasets'].find_one({"id": id}, {"display_name": 1, "name": 1, "level": 1, "series_name": 1, "query": 1, "id": 1, "_id": 0})
-        return dataset
-
-    async def fetch_region(self, regionId: int) -> Optional[Dict[str, Any]]:
-        if regionId is None:
-            return None
-        async with self.get_mongo_connection() as db:
-            region = await db['regions'].find_one({"id": regionId}, {"display_name": 1, "id": 1,  "aec_id": 1, "series_name": 1, "query": 1, "_id": 0})
-        return region
-
-    async def fetch_data(self, dataset: Dict[str, Any], region: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-        if dataset["query"]['query_type'].upper() == "SQL":
-            return await self.fetch_sql_data(dataset, region)
-        elif dataset["query"]['query_type'].upper() == "ELECDATA":
-            return await self.fetch_elec_data(dataset, region)
-        else:
-            raise ValueError(f"Unsupported query type: {dataset['query']['query_type']}")
-
-    async def fetch_sql_data(self, dataset: Dict[str, Any], region: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-        sql_query = dataset["query"]['query_text']
-        if region:
-            sql_query += " " + dataset["query"]['filter']
-            sql_query = sql_query.replace("%s", f"'{region['display_name']}'")
-
-        async with self.postgres_db.get_db_session() as session:
-            await self.postgres_db.switch_database(session, self.postgres_db_name)
-            result = await session.execute(text(sql_query))
-            column_data = {col: [] for col in result.keys()}
-            for row in result.mappings():
-                for col in result.keys():
-                    column_data[col].append(row[col])
-
-        return column_data
-
-    async def fetch_elec_data(self, dataset: Dict[str, Any], region: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-        filter = {}
-        if region:
-            filter = dataset["query"]["filter"]
-            for k, v in filter['places'].items():
-                if filter['places'][k] == "%s":
-                    filter['places'][k] = [region["display_name"]]
-
-        # Placeholder for elec_data.fetch_data
-        # column_data = await elec_data.fetch_data(dataset['query']['query_text'], filter)
-
-        # Simulated column_data structure
-        column_data = {
-            'series': [
-                {'name': 'locale_id', 'data': []},
-                {'name': 'seat', 'data': []},
-                {'name': dataset['series_name'], 'data': []},
-                {'name': 'year', 'data': []},
-                {'name': 'place', 'data': []}
-            ]
-        }
-
-        series = [x for x in column_data['series'] if x['name'] in ['percent', 'year', 'place']]
-        for col in series:
-            if col['name'] == "percent":
-                col['name'] = dataset['series_name']
-        column_data['series'] = series
-
-        return column_data
-
-    async def get_dataset_with_data(self, datasetId: int, regionId: Optional[int] = None) -> Dict[str, Any]:
-        dataset = await self.fetch_dataset(datasetId)
-        if dataset is None:
-            raise ValueError(f"Dataset {datasetId} not found")
-
-        region = None
-        if regionId is not None:
-            region = await self.fetch_region(regionId)
-            if region is None:
-                raise ValueError(f"Region {regionId} not found")
-
-        column_data = await self.fetch_data(dataset, region)
-
-        dataset['data'] = column_data
-        del dataset['query']
-        return dataset
+def get_relevant_documents(query, k=10):
+    VECTORDB_CONNECTION_STRING = os.getenv('VECTORDB_CONNECTION_STRING')
+    VECTORDB_COLLECTION_NAME = os.getenv('VECTORDB_COLLECTION_NAME_DATASETS')
+    embeddings = OpenAIEmbeddings()
+    db = PGVector(
+        collection_name=VECTORDB_COLLECTION_NAME,
+        connection_string=VECTORDB_CONNECTION_STRING,
+        embedding_function=embeddings
+    )
+    similar = db.similarity_search_with_score(query, k=k)
+    return similar
 
 class QuerySQLTool:
     """
@@ -521,7 +473,7 @@ class QuerySQLTool:
         """
         with self._getDbConnection() as db:
             queryRunner = QuerySQLDataBaseTool(db=db)
-            query = query.lower().strip()
+            # query = query.lower().strip()
 
             if query == "invalid user query - not related to the database.":
                 raise InvalidUserQueryException("Query is not related to the database schema.")
@@ -551,7 +503,7 @@ class ChatHistory:
     MongoDB Database Structure:
     - Database: ChatHistoryDB
     - Collection: <user_id> (Each user has a dedicated collection named after their user_id)
-    - Document Structure:
+    - Chat Structure:
       {
         "chatId": <str>,             # Unique identifier for the chat session
         "date": <str>,                # Date the chat was created (YYYY-MM-DD format)
@@ -825,6 +777,27 @@ class ChatHistory:
         """Gets the context of all documents associated with a chat."""
         return self._prepareDocsForLlm(chatId)
     
+    def getUploadedFiles(self, chatId: str) -> List[Dict[str, Any]]:
+        """Gets the list of uploaded files for a specific chat."""
+        with self._getDbConnection():
+            chat = self.collection.find_one({"chatId": chatId}, {"documents": 1})
+            if chat and "documents" in chat:
+                return self._convertObjectId(chat["documents"])
+            return []
+        
+    def getFileContent(self, docId: str) -> Tuple[Optional[str], Optional[bytes], Optional[str]]:
+        """Gets the content, filename, and content type of a file from GridFS."""
+        with self._getDbConnection():
+            try:
+                file = self.fs.get(ObjectId(docId))
+                content = file.read()
+                filename = file.filename
+                content_type = file.content_type
+                return filename, content, content_type
+            except gridfs.errors.NoFile:
+                logger.error(f"No file found with id: {docId}")
+                return None, None, None
+    
     def addMessage(self, chatId: str, content: str, isUser: bool = True) -> str:
         """Adds a new message to a chat."""
         if not chatId:
@@ -978,6 +951,29 @@ class ChatHistory:
             except Exception as e:
                 logger.error(f"Error deleting chat {chatId}: {e}")
                 raise ChatHistoryError(f"Failed to delete chat: {str(e)}")
+            
+    def deleteDocument(self, chatId: str, docId: str) -> None:
+        """Deletes a document from a chat and removes it from GridFS."""
+        with self._getDbConnection():
+            try:
+                result = self.collection.update_one(
+                    {"chatId": chatId},
+                    {
+                        "$pull": {"documents": {"docId": docId}},
+                        "$set": {"lastUpdated": datetime.now()}
+                    }
+                )
+
+                if result.matched_count == 0:
+                    raise ChatHistoryError(f"No chat found with ID: {chatId}")
+
+                if result.modified_count == 0:
+                    raise ChatHistoryError(f"No document found with ID: {docId} in chat: {chatId}")
+                self.fs.delete(ObjectId(docId))
+
+            except Exception as e:
+                logger.error(f"Error deleting document {docId} from chat {chatId}: {e}")
+                raise ChatHistoryError(f"Failed to delete document: {str(e)}")
 
     def archiveChat(self, chatId: str) -> None:
         """Archives a chat."""
@@ -1114,3 +1110,286 @@ class ResourceManager:
         self.createMetadata()
         self.uploadToMongodb()
         logger.info("All resources have been processed and uploaded to MongoDB.")
+
+## Colin does not follow standard practices with his queries. So just changing getcols function here.
+class QuerySQLTool2:
+    """
+    A tool for executing SQL queries on a database and processing the results.
+
+    This class provides methods to execute SQL queries, parse the results,
+    and convert them into pandas DataFrames. It includes custom parsing for
+    special data types like Decimal, datetime, date, and handles 'inf' values.
+
+    Attributes:
+        db (SQLDatabase): The database connection object.
+        queryRunner (QuerySQLDataBaseTool): The tool used to run SQL queries.
+
+    Methods:
+        executeQuery(query: str) -> pd.DataFrame:
+            Execute an SQL query and return the results as a DataFrame.
+        getCols(sqlQuery: str) -> List[str]:
+            Extract column names from an SQL query.
+
+    Private Methods:
+        _parseDecimal(match): Parse Decimal values from query results.
+        _parseDatetime(match): Parse datetime values from query results.
+        _parseDate(match): Parse date values from query results.
+        _customParser(resStr: str): Custom parser for query result strings.
+
+    Raises:
+        InvalidUserQueryException: If the query is invalid or unrelated to the database.
+        NoDataFoundException: If no data is returned from the query.
+    """
+    def __init__(self, dbName: str):
+        self.dbName = dbName
+    
+    @contextmanager
+    def _getDbConnection(self):
+        with loadPostgresDatabase(self.dbName) as db:
+            yield db
+    
+    def _validateSqlQuery(self, query: str) -> bool:
+        """
+        Validates the SQL query for potential SQL injection.
+        
+        Args:
+            query (str): The SQL query to validate.
+        
+        Returns:
+            bool: True if the query is valid, False otherwise.
+        """
+
+        parsed = sqlparse.parse(query)
+        if not parsed:
+            return False
+        
+        if len(parsed) > 1:
+            return False
+
+        statement = parsed[0]
+        if statement.get_type() not in ('SELECT', 'WITH'):
+            return False
+        
+        def check_tokens(token_list):
+            for token in token_list:
+                if token.ttype is Keyword and token.value.upper() in ('INSERT', 'UPDATE', 'DELETE', 'DROP', 'TRUNCATE', 'ALTER'):
+                    return False
+                if isinstance(token, IdentifierList) or isinstance(token, Identifier):
+                    if not check_tokens(token.tokens):
+                        return False
+            return True
+        
+        if not check_tokens(statement.tokens):
+            return False
+
+        return True
+    
+    def _getCols(self, sqlQuery: str) -> List[str]:
+        """
+        Extracts column names from an SQL query.
+        
+        Args:
+            sqlQuery (str): The SQL query.
+        
+        Returns:
+            List[str]: A list of column names.
+        """
+        selectRegex = re.compile(r'select\s+(.+?)\s+from', re.IGNORECASE | re.DOTALL)
+        allMatches = selectRegex.findall(sqlQuery)
+        if not allMatches:
+            return []
+        finalSelect = allMatches[0]
+        return [col.lower().strip().split(' as ')[-1].split('.')[-1] for col in finalSelect.split(',')]
+
+    def _parseDecimal(self, match):
+        value = match.group(1)
+        if value.lower() == 'inf':
+            return 'None'
+        elif value.lower() == '-inf':
+            return 'None'
+        return f"'{Decimal(value)}'"
+
+    def _parseDatetime(self, match):
+        dateArgs = list(map(int, match.group(1).split(',')))
+        if 'tzinfo' in match.group(2):
+            dt = datetime(*dateArgs, tzinfo=timezone.utc)
+        else:
+            dt = datetime(*dateArgs)
+        return f"'{dt.isoformat()}'"
+
+    def _parseDate(self, match):
+        dateArgs = list(map(int, match.group(1).split(',')))
+        dt = date(*dateArgs)
+        return f"'{dt.isoformat()}'"
+    
+    def _customParser(self, resStr: str):
+        resStr = re.sub(
+            r"Decimal\('([^']+)'\)"
+            , self._parseDecimal
+            , resStr
+        )
+        resStr = re.sub(
+            r"datetime\.datetime\(([\d, ]+)(, tzinfo=datetime\.timezone\.utc)?\)"
+            , self._parseDatetime
+            , resStr
+        )
+        resStr = re.sub(
+            r"datetime\.date\(([\d, ]+)\)"
+            , self._parseDate
+            , resStr
+        )
+        resStr = re.sub(r"inf", 'None', resStr)
+        resStr = re.sub(r"-inf", 'None', resStr)
+        return ast.literal_eval(resStr)
+        
+    def executeQuery(self, query: str) -> pd.DataFrame:
+        """
+        Executes an SQL query and return the results as a DataFrame.
+        
+        Args:
+            query (str): The SQL query to execute.
+        
+        Returns:
+            pd.DataFrame: The query results as a DataFrame.
+        
+        Raises:
+            InvalidUserQueryException: If the query is invalid or unrelated to the database.
+            NoDataFoundException: If no data is returned from the query.
+        """
+        with self._getDbConnection() as db:
+            queryRunner = QuerySQLDataBaseTool(db=db)
+
+            if query == "invalid user query - not related to the database.":
+                raise InvalidUserQueryException("Query is not related to the database schema.")
+            if not self._validateSqlQuery(query):
+                raise InvalidUserQueryException("Invalid SQL query. Possible SQL injection attempt.")
+            try:
+                res = queryRunner.invoke(query)
+                
+                ## Testing START
+                with open('preres.txt', 'w') as file:
+                    file.write(str(res))
+                res = self._customParser(res)
+                
+                with open('res.txt', 'w') as file:
+                    file.write(str(res))
+                ## Testing END
+
+                if not res:
+                    raise NoDataFoundException("No data fetched from the database")
+                columns = self._getCols(query)          
+                if not columns:
+                    columns = range(len(res[0]))
+                logger.info(f"Identified columns: {columns}")
+                return pd.DataFrame.from_records(data=res, columns=columns)
+            except SyntaxError as e:
+                logger.error(f"Error executing SQL Query: {query}\nERROR:{e}\n")
+                raise InvalidUserQueryException("Invalid SQL query.")
+            except Exception as e:
+                Data = res if res else 'Can Not Fetch Data'
+                logger.error(f"Error executing query: {e}\nSQL Query: {query}\nData: {Data}")
+                raise
+
+
+## For Testing Purposes
+class DataFetcher:
+    def __init__(self):
+        self.mongo_uri = os.environ.get('MONGO_URI')
+        self.postgres_db_name = os.environ.get('POLIMAP_DB_NAME')
+        self.mongo_client = MongoClient(self.mongo_uri)
+        self.query_tool = QuerySQLTool2(dbName=self.postgres_db_name)
+
+    @contextmanager
+    def get_mongo_connection(self):
+        db = self.mongo_client['appdata']
+        try:
+            yield db
+        finally:
+            pass  
+
+    def fetch_dataset(self, id: int) -> Optional[Dict[str, Any]]:
+        with self.get_mongo_connection() as db:
+            dataset = db['datasets'].find_one({"id": id}, {"display_name": 1, "name": 1, "level": 1, "series_name": 1, "query": 1, "id": 1, "_id": 0})
+        return dataset
+
+    def fetch_region(self, regionId: int) -> Optional[Dict[str, Any]]:
+        if regionId is None:
+            return None
+        with self.get_mongo_connection() as db:
+            region = db['regions'].find_one({"id": regionId}, {"display_name": 1, "id": 1,  "aec_id": 1, "series_name": 1, "query": 1, "_id": 0})
+        return region
+
+    def fetch_data(self, dataset: Dict[str, Any], region: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        if dataset["query"]['query_type'].upper() == "SQL":
+            return self.fetch_sql_data(dataset, region)
+        elif dataset["query"]['query_type'].upper() == "ELECDATA":
+            return self.fetch_elec_data(dataset, region)
+        else:
+            raise ValueError(f"Unsupported query type: {dataset['query']['query_type']}")
+
+    def fetch_sql_data(self, dataset: Dict[str, Any], region: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        sql_query = dataset["query"]['query_text']
+        if region:
+            sql_query += " " + dataset["query"]['filter']
+            sql_query = sql_query.replace("%s", f"'{region['display_name']}'")
+
+        logger.info(f"Executing SQL Query: {sql_query}")
+        polimapData = self.query_tool.executeQuery(sql_query)
+        return polimapData
+
+    def fetch_elec_data(self, dataset: Dict[str, Any], region: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        filter = {}
+        if region:
+            filter = dataset["query"]["filter"]
+            for k, v in filter['places'].items():
+                if filter['places'][k] == "%s":
+                    filter['places'][k] = [region["display_name"]]
+
+        # Simulated column_data structure
+        column_data = {
+            'series': [
+                {'name': 'locale_id', 'data': []},
+                {'name': 'seat', 'data': []},
+                {'name': dataset['series_name'], 'data': []},
+                {'name': 'year', 'data': []},
+                {'name': 'place', 'data': []}
+            ]
+        }
+
+        series = [x for x in column_data['series'] if x['name'] in ['percent', 'year', 'place']]
+        for col in series:
+            if col['name'] == "percent":
+                col['name'] = dataset['series_name']
+        column_data['series'] = series
+
+        return {'layers': [column_data]}
+
+    def get_datasets_with_data(self, layers: List[List[str]]) -> List[Dict[str, Any]]:
+        results = []
+        logger.info(f"input layers: {layers}")
+        for layer in layers:
+            logger.info(f"processing layer:{layer}")
+            if len(layer) != 3:
+                raise ValueError("Each layer must contain exactly three elements: [RegionID, DatasetID, Level].")
+            region_id, dataset_id, level = layer
+
+            dataset = self.fetch_dataset(int(dataset_id))
+            if dataset is None:
+                raise ValueError(f"Dataset {dataset_id} not found")
+            
+            if region_id != '':
+                region = self.fetch_region(int(region_id))
+                if region is None:
+                    raise ValueError(f"Region {region_id} not found")
+            else:
+                region = None
+            
+            logger.info(f"fetching data for {dataset} and {region}")
+            sqlData = self.fetch_data(dataset, region)
+            dataset_copy = dataset.copy()
+            dataset_copy['data'] = sqlData
+            del dataset_copy['query']
+            results.append(dataset_copy)
+
+
+        return results

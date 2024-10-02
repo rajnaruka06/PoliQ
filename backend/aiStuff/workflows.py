@@ -8,7 +8,9 @@ from .agentHelpers import (
     , InvalidUserQueryException
     , NoDataFoundException
     , loadLLM
-    , loadMetadata
+    , loadFromMongo
+    , cleanWhereConditions
+    , get_relevant_documents
 )
 from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent, DatasetRegionMatcherAgent
 import sys
@@ -54,7 +56,9 @@ class ElecDataWorkflow:
 
     def _setTableInfo(self):
         with loadPostgresDatabase(self.dbName) as db:
-            self.tableInfo = db.get_table_info()
+            table_list = db.get_usable_table_names()
+            table_list = [table for table in table_list if not (table.lower().startswith('auth') or table.lower().startswith('django'))]
+            self.tableInfo = db.get_table_info(table_list)
     
     def _setDialect(self):
         with loadPostgresDatabase(self.dbName) as db:
@@ -103,7 +107,24 @@ class ElecDataWorkflow:
             queryType = self.routerAgent.determineQueryType(userQuery, chatHistory)
             if queryType.strip().upper() == "DATABASE":
                 sqlQuery = self._generateQuery(userQuery, chatHistory)
-                data = self._executeSqlQuery(sqlQuery)
+                logger.info(f"Generated SQL Query: {sqlQuery}")
+
+                whereColumns = self.sqlCoderAgent.extractWhereColumns(sqlQuery)
+                whereColumns = cleanWhereConditions(whereColumns)
+                logger.info(f"Extracted WHERE columns: {whereColumns}")
+                context = ""
+                for column in whereColumns:
+                    selectQuery = f"SELECT DISTINCT {column['column']} FROM {column['table']};"
+                    result = self.sqlQueryTool.executeQuery(selectQuery)
+                    result = result.to_string()
+                    context += f"{selectQuery}\n{result}\n\n"
+                
+                logger.info(f"Context: {context}")
+                updatedQuery = self.sqlCoderAgent.updateWhereConditions(sqlQuery, userQuery, context)
+                updatedQuery = cleanSqlQuery(updatedQuery)
+                logger.info(f"Updated SQL Query: {updatedQuery}")
+
+                data = self._executeSqlQuery(updatedQuery)
                 response = self.responseSummarizerAgent.generateSummaryWithReflection(response=data.to_string(), userQuery=userQuery)
                 response = cleanSummaryResponse(response)
             elif queryType.strip().upper() == "CHAT":
@@ -122,16 +143,28 @@ class ElecDataWorkflow:
             logger.exception(f"An error occurred: {str(e)}")
             return f"An error occurred: {str(e)}"
 
+## Returns Layers in the format of [RegionID, DatasetID, Level]
 class DatasetRegionMatcher:
     def __init__(self):
         self.llm = loadLLM()
-        self.datasetsMetadata = loadMetadata('metadata', 'Datasets')
-        self.regionsMetadata = loadMetadata('metadata', 'Regions')
+        self.datasetsMetadata = loadFromMongo('metadata', 'Datasets')
+        self.datasetsMetadata = json.loads(self.datasetsMetadata)
+        self.regionsMetadata = loadFromMongo('metadata', 'Regions')
         self.agent = DatasetRegionMatcherAgent(llm = self.llm)
 
     def match(self, userQuery):
-        return self.agent.match(
-            userQuery,
-            self.regionsMetadata,
-            self.datasetsMetadata
-        )
+        relevent_docs = get_relevant_documents(userQuery, k = 350)
+        relevent_docs = [str(doc.metadata['id']) for doc, score in relevent_docs]
+
+        relevent_datasets = {id_: self.datasetsMetadata[id_] for id_ in relevent_docs}
+        relevent_datasets = str(relevent_datasets)
+
+        try:
+            return self.agent.match(
+                userQuery,
+                self.regionsMetadata,
+                relevent_datasets
+            )
+        except Exception as e:
+            logger.exception(f"An error occurred: {str(e)}")
+            return f"An error occurred: {str(e)}"
