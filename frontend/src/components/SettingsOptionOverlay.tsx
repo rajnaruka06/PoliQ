@@ -39,12 +39,14 @@ const SettingsOptionOverlay: React.FC<SettingsOptionOverlayProps> = ({
     if (!showSettingsOverlay) return null;
 
     return (
-        <div className="flex absolute top-1/2 left-1/2 flex-col gap-3 p-4 w-1/2 h-1/2 rounded-2xl transform -translate-x-1/2 -translate-y-1/2 bg-darkSecondary">
+        <div className="flex absolute top-1/2 left-1/2 flex-col gap-3 p-4 w-1/2 h-1/2 rounded-2xl transform -translate-x-1/2 -translate-y-1/2 bg-lightSecondary dark:bg-darkSecondary">
             <div className="relative h-full">
-                <div className="sticky p-2 mb-10 text-3xl font-semibold rounded-md bg-darkPrimary">
+                {/* title */}
+                <div className="sticky p-2 mb-10 text-3xl font-semibold text-black rounded-md bg-lightTertiary dark:bg-darkPrimary dark:text-white">
                     {selectedOption}
                 </div>
-                <div className="flex overflow-y-auto flex-col gap-3 p-2 bg-darkPrimary max-h-[calc(100%-10rem)] scrollbar-hide rounded-md">
+                {/* content */}
+                <div className="flex overflow-y-auto flex-col gap-3 p-2 bg-lightTertiary text-black dark:text-white dark:bg-darkPrimary max-h-[calc(100%-10rem)] scrollbar-hide rounded-md">
                     {selectedOption === "Memory" &&
                         memories.map((memory) => (
                             <div
@@ -54,7 +56,7 @@ const SettingsOptionOverlay: React.FC<SettingsOptionOverlayProps> = ({
                                 <div className="truncate">
                                     {memory.memoryContent}
                                 </div>
-                                <div className="px-4 rounded-md cursor-pointer bg-darkSecondary hover:border">
+                                <div className="px-4 text-black rounded-md cursor-pointer bg-lightSecondary dark:text-white dark:bg-darkSecondary hover:border">
                                     <AiFillDelete />
                                 </div>
                             </div>
