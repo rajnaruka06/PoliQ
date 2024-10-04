@@ -74,7 +74,7 @@ const FeedbackButton: React.FC<FeedbackButtonProps> = ({
                         className="px-1 py-1 text-white bg-blue-500 rounded-full"
                         onClick={handleCopyClick} // Call the copy handler
                     >
-                        <BiCopy className="text-xl" />
+                        <BiCopy className="text-xl lg:text-3xl" />
                     </button>
                     {/* Refresh Icon */}
                     <button
@@ -82,25 +82,25 @@ const FeedbackButton: React.FC<FeedbackButtonProps> = ({
                         onClick={handleRefreshClick} // Call the refresh handler
                         disabled={loading} // Disable button when loading
                     >
-                        <BiRefresh className="text-xl" />
+                        <BiRefresh className="text-xl lg:text-3xl" />
                     </button>
                     {/* Confused Icon */}
                     <button
                         className="px-1 py-1 text-white bg-red-500 rounded-full"
                         onClick={handleConfusedClick}
                     >
-                        <BiConfused className="text-xl" />
+                        <BiConfused className="text-xl lg:text-3xl" />
                     </button>
                     {/* Data Icon */}
                     <button className="px-1 py-1 text-white bg-yellow-500 rounded-full">
-                        <BiData className="text-xl" />
+                        <BiData className="text-xl lg:text-3xl" />
                     </button>
                     {/* Bar Chart Icon */}
                     <button
                         className="px-1 py-1 text-white bg-purple-500 rounded-full"
                         onClick={handleVisualizationClick} // Call the visualization handler
                     >
-                        <BiBarChartSquare className="text-xl" />
+                        <BiBarChartSquare className="text-xl lg:text-3xl" />
                     </button>
                 </div>
             </div>
