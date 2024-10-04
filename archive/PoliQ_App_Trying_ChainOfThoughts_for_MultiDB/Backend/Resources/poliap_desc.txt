@@ -1,0 +1,9 @@
+This database contains extensive data from the Australian Bureau of Statistics (ABS) and the Australian Electoral Commission (AEC). The ABS data covers a wide range of topics from the Australian Census and surveys, including demographic characteristics such as age, ancestry, indigenous status, language spoken at home, relationship status, and year of arrival in Australia. It also includes household and family composition data, as well as economic characteristics like income, industry of employment, long-term health conditions, mortgage repayments, method of travel to work, occupation, qualification, labor force status, renters, socio-economic status, structural characteristics of dwellings, study participation, tenure, and unpaid assistance to persons with disabilities.
+
+The AEC data focuses on federal elections, providing information on voting booths, candidates, political parties, election results, and referendums. This includes historical data on voting booths, candidate preferences, election outcomes, and the geographical boundaries of Commonwealth Electoral Divisions.
+
+Additionally, the database includes spatial reference system data, which is crucial for geographical analysis and mapping.
+
+The data is updated periodically, with ABS data typically refreshed after each Census (conducted every 5 years) and AEC data updated after each federal election (held at least every 3 years). Some tables, such as those related to voting booths and electoral divisions, may be updated more frequently to reflect changes.
+
+This comprehensive database is ideal for researchers, analysts, and policymakers interested in demographic trends, economic indicators, and electoral processes in Australia.

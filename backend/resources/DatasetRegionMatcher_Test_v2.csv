@@ -1,0 +1,210 @@
+,UserQuery,Identified Layers,Description
+0,Where do the renters live in Wills? ,"[[""10135"", ""1001"", ""SA1""]]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+"
+1,Is the Greens vote correlated to the number of renters? ,"[[""None"", ""1015"", ""top""], [""None"", ""1001"", ""SA1""]]","Identified Layer1:
+Dataset:Greens Primary votes 2022 (%)
+Level: top
+Identified Layer2:
+Dataset:Renters (percent)
+Level: SA1
+"
+2,What is the percentage of renters in the Wills electorate?,"[['10135', '1001', 'SA1']]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+"
+3,How has the number of renters in Wills changed over the last 10 years?,"[['10135', '1001', 'SA1']]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+"
+4,Are there more renters in suburbs closer to the city in Wills?,"[[""10135"", ""1001"", ""SA1""]]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+"
+5,Which suburbs in Wills have the highest concentration of renters?,"[[""10135"", ""1001"", ""SA1""]]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+"
+6,Is there a relationship between income levels and rental rates in Wills?,"[['10135', '1001', 'SA1'], ['10135', '2005', 'SA1']]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+Identified Layer2:
+Dataset:High income earners (percent)
+Region:Wills
+Level: SA1
+"
+7,How does the proportion of renters in Wills compare to the overall state average?,"[['10135', '1001', 'SA1'], ['None', '1001', 'SA1']]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+Identified Layer2:
+Dataset:Renters (percent)
+Level: SA1
+"
+8,Is the number of renters in Wills correlated with high Green Party votes across suburbs?,"[['10135', '1001', 'SA1'], ['10135', '1015', 'top']]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+Identified Layer2:
+Dataset:Greens Primary votes 2022 (%)
+Region:Wills
+Level: top
+"
+9,Does the level of home ownership impact political preferences in Wills?,"[[""10135"", ""1001"", ""SA1""]]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+"
+10,Which suburb in Wills has the most renters voting for the Greens?,"[[""10135"", ""1001"", ""SA1""], [""10135"", ""1067"", ""booth""]]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+Identified Layer2:
+Dataset:Greens Ordinary votes 2019 (%)
+Region:Wills
+Level: booth
+"
+11,How does the demographic breakdown of renters in Wills influence voter turnout?,"[[""10135"", ""1001"", ""SA1""]]","Identified Layer1:
+Dataset:Renters (percent)
+Region:Wills
+Level: SA1
+"
+12,"What are the age distributions across different suburbs within a specific electorate, and how might this impact voting trends?",[],
+13,How do household income levels vary across different SA1 regions in a given electorate?,[],
+14,What is the relationship between education levels and voting preferences in various SA1 regions?,"[[""None"", ""2003"", ""SA1""], [""None"", ""2005"", ""SA1""], [""None"", ""2004"", ""SA1""]]","Identified Layer1:
+Dataset:LOTE at home (percent)
+Level: SA1
+Identified Layer2:
+Dataset:High income earners (percent)
+Level: SA1
+Identified Layer3:
+Dataset:PT to work (percent)
+Level: SA1
+"
+15,How does the employment rate correlate with voting patterns within different SA1 areas?,[],
+16,Are there any observable trends between the concentration of recent immigrants in certain SA1 regions and the political parties they are more likely to support?,[],
+17,"What is the distribution of homeowners vs. renters across different SA1s, and how does this influence local voting behavior?","[[""None"", ""1001"", ""SA1""]]","Identified Layer1:
+Dataset:Renters (percent)
+Level: SA1
+"
+18,"How do household compositions (e.g., single-family, multi-family, shared housing) vary by SA1, and what impact might this have on voting outcomes?",[],
+19,"What is the voter turnout in different SA1 regions, and how does this compare to population density?",[],
+20,"How do geographical factors, such as proximity to the city center, affect voting preferences in the electorate?",[],
+21,"Is there a noticeable difference in voting behavior between urban, suburban, and rural areas within an electorate?","[[""None"", ""1002"", ""booth""]]","Identified Layer1:
+Dataset:Yes vote (percent)
+Level: booth
+"
+22,"How do different transportation accessibility levels (e.g., public transport, roads) across SA1s influence voter participation?",[],
+23,"What is the distribution of polling booth locations, and does proximity to these booths affect voter turnout in various suburbs?",[],
+24,Are there patterns in how voters in specific SA1 regions align themselves with local vs. national issues?,"[[""None"", ""2004"", ""SA1""], [""None"", ""2005"", ""SA1""], [""None"", ""1001"", ""SA1""], [""None"", ""2003"", ""SA1""], [""None"", ""2001"", ""SA1""]]","Identified Layer1:
+Dataset:PT to work (percent)
+Level: SA1
+Identified Layer2:
+Dataset:High income earners (percent)
+Level: SA1
+Identified Layer3:
+Dataset:Renters (percent)
+Level: SA1
+Identified Layer4:
+Dataset:LOTE at home (percent)
+Level: SA1
+Identified Layer5:
+Dataset:Islam (percent)
+Level: SA1
+"
+25,"How do the boundaries of polling booths overlap with key demographic features in the SA1 data (e.g., income, age)?","[['None', '2005', 'SA1'], ['None', '1001', 'SA1']]","Identified Layer1:
+Dataset:High income earners (percent)
+Level: SA1
+Identified Layer2:
+Dataset:Renters (percent)
+Level: SA1
+"
+26,Which SA1 regions have the highest concentration of swing voters based on historical election results and demographic shifts?,"[['None', '1001', 'SA1'], ['None', '2005', 'SA1'], ['None', '2003', 'SA1'], ['None', '2001', 'SA1'], ['None', '2004', 'SA1']]","Identified Layer1:
+Dataset:Renters (percent)
+Level: SA1
+Identified Layer2:
+Dataset:High income earners (percent)
+Level: SA1
+Identified Layer3:
+Dataset:LOTE at home (percent)
+Level: SA1
+Identified Layer4:
+Dataset:Islam (percent)
+Level: SA1
+Identified Layer5:
+Dataset:PT to work (percent)
+Level: SA1
+"
+27,"How do social service facilities (e.g., schools, hospitals) in different SA1 areas relate to political party support?",[],
+28,What are the key socioeconomic factors that political campaigns should focus on in specific SA1 regions to maximize voter engagement?,"[[""None"", ""2005"", ""SA1""], [""None"", ""2004"", ""SA1""], [""None"", ""2003"", ""SA1""], [""None"", ""1001"", ""SA1""], [""None"", ""2001"", ""SA1""]]","Identified Layer1:
+Dataset:High income earners (percent)
+Level: SA1
+Identified Layer2:
+Dataset:PT to work (percent)
+Level: SA1
+Identified Layer3:
+Dataset:LOTE at home (percent)
+Level: SA1
+Identified Layer4:
+Dataset:Renters (percent)
+Level: SA1
+Identified Layer5:
+Dataset:Islam (percent)
+Level: SA1
+"
+29,"Are there specific SA1 regions where targeted campaign strategies (e.g., door-to-door canvassing, digital advertising) would be more effective?","[[""None"", ""1001"", ""SA1""]]","Identified Layer1:
+Dataset:Renters (percent)
+Level: SA1
+"
+30,How does the correlation between household income and party support vary across different electorates?,"[['None', '2005', 'SA1'], ['None', '1003', 'top'], ['None', '1004', 'top'], ['None', '1009', 'top'], ['None', '1010', 'top'], ['None', '1021', 'top'], ['None', '1022', 'top']]","Identified Layer1:
+Dataset:High income earners (percent)
+Level: SA1
+Identified Layer2:
+Dataset:ALP Primary votes 2022 (%)
+Level: top
+Identified Layer3:
+Dataset:ALP Ordinary votes 2022 (%)
+Level: top
+Identified Layer4:
+Dataset:Coalition Primary votes 2022 (%)
+Level: top
+Identified Layer5:
+Dataset:Coalition Ordinary votes 2022 (%)
+Level: top
+Identified Layer6:
+Dataset:Independents Primary votes 2022 (%)
+Level: top
+Identified Layer7:
+Dataset:Independents Ordinary votes 2022 (%)
+Level: top
+"
+31,What is the impact of recent infrastructure developments in certain SA1s on local voting patterns?,"[[""None"", ""1002"", ""booth""]]","Identified Layer1:
+Dataset:Yes vote (percent)
+Level: booth
+"
+32,"How does the proportion of different household types (e.g., single-parent, elderly) in SA1 regions influence key policy concerns (e.g., healthcare, education)?",[],
+33,How do changes in local unemployment rates affect voter turnout and party preferences across SA1 regions?,[],
+34,"What are the most common policy issues in SA1 regions with higher youth populations, and how do these influence voting behavior?",[],
+35,"How do environmental concerns (e.g., green spaces, pollution levels) vary between SA1s, and what is their correlation with support for the Green Party?",[],
+36,How does access to affordable housing in various SA1s correlate with party support?,"[['None', '1001', 'SA1']]","Identified Layer1:
+Dataset:Renters (percent)
+Level: SA1
+"
+37,How have demographic changes over the last decade in different SA1 regions affected shifts in political preferences?,"[['None', '2004', 'SA1'], ['None', '1001', 'SA1']]","Identified Layer1:
+Dataset:PT to work (percent)
+Level: SA1
+Identified Layer2:
+Dataset:Renters (percent)
+Level: SA1
+"
+38,"Which SA1 regions have seen the most significant changes in voter registration, and how has this impacted election outcomes?",[],
+39,How do changes in population density within certain SA1 regions affect the distribution of polling booth locations?,[],
+40,Have there been changes in voter turnout patterns in specific SA1 areas over the last three federal elections?,[],
+41,"How has the proportion of absentee ballots or early voting changed in various SA1 regions, and what does this suggest about local voter behavior?",[],

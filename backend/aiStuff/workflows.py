@@ -73,6 +73,7 @@ class ElecDataWorkflow:
                 tableInfo=self.tableInfo,
                 chatHistory=chatHistory
             )
+            # logger.info(f"SQL Expert Output: {sqlQuery}")
             sqlQuery = cleanSqlQuery(sqlQuery)
             return sqlQuery
         except Exception as e:
@@ -107,22 +108,28 @@ class ElecDataWorkflow:
             queryType = self.routerAgent.determineQueryType(userQuery, chatHistory)
             if queryType.strip().upper() == "DATABASE":
                 sqlQuery = self._generateQuery(userQuery, chatHistory)
+                if sqlQuery == "invalid user query - not related to the database.":
+                    raise InvalidUserQueryException()
                 logger.info(f"Generated SQL Query: {sqlQuery}")
 
-                whereColumns = self.sqlCoderAgent.extractWhereColumns(sqlQuery)
-                whereColumns = cleanWhereConditions(whereColumns)
-                logger.info(f"Extracted WHERE columns: {whereColumns}")
-                context = ""
-                for column in whereColumns:
-                    selectQuery = f"SELECT DISTINCT {column['column']} FROM {column['table']};"
-                    result = self.sqlQueryTool.executeQuery(selectQuery)
-                    result = result.to_string()
-                    context += f"{selectQuery}\n{result}\n\n"
-                
-                logger.info(f"Context: {context}")
-                updatedQuery = self.sqlCoderAgent.updateWhereConditions(sqlQuery, userQuery, context)
-                updatedQuery = cleanSqlQuery(updatedQuery)
-                logger.info(f"Updated SQL Query: {updatedQuery}")
+                ## Should be updated with better error handling.
+                try:
+                    whereColumns = self.sqlCoderAgent.extractWhereColumns(sqlQuery)
+                    whereColumns = cleanWhereConditions(whereColumns)
+                    logger.info(f"Extracted WHERE columns: {whereColumns}")
+                    context = ""
+                    for column in whereColumns:
+                        selectQuery = f"SELECT DISTINCT {column['column']} FROM {column['table']};"
+                        result = self.sqlQueryTool.executeQuery(selectQuery)
+                        result = result.to_string()
+                        context += f"{selectQuery}\n{result}\n\n"
+                    
+                    logger.info(f"Context: {context}")
+                    updatedQuery = self.sqlCoderAgent.updateWhereConditions(sqlQuery, userQuery, context)
+                    updatedQuery = cleanSqlQuery(updatedQuery)
+                    logger.info(f"Updated SQL Query: {updatedQuery}")
+                except:
+                    updatedQuery = sqlQuery
 
                 data = self._executeSqlQuery(updatedQuery)
                 response = self.responseSummarizerAgent.generateSummaryWithReflection(response=data.to_string(), userQuery=userQuery)
@@ -141,7 +148,7 @@ class ElecDataWorkflow:
             return str(e)
         except Exception as e:
             logger.exception(f"An error occurred: {str(e)}")
-            return f"An error occurred: {str(e)}"
+            return f"Sorry, Can not answer that question at the moment."
 
 ## Returns Layers in the format of [RegionID, DatasetID, Level]
 class DatasetRegionMatcher:
@@ -160,11 +167,12 @@ class DatasetRegionMatcher:
         relevent_datasets = str(relevent_datasets)
 
         try:
-            return self.agent.match(
+            res = self.agent.match(
                 userQuery,
                 self.regionsMetadata,
                 relevent_datasets
             )
+            return res
         except Exception as e:
             logger.exception(f"An error occurred: {str(e)}")
             return f"An error occurred: {str(e)}"

@@ -10,6 +10,9 @@ import os
 resourcesPath = os.path.join(os.path.dirname(__file__), '../resources')
 envPath = os.path.join(resourcesPath, '.ENV')
 
+import logging
+logger = logging.getLogger(__name__)
+
 ## Using CRAG for SQL Generation
 class SqlExpert:
     def __init__(self, llm: BaseLanguageModel):
@@ -19,7 +22,7 @@ class SqlExpert:
         template = """Given an input question, perform the following steps:
 
         1. Generate a syntactically correct {dialect} SQL query.
-        2. Provide feedback on the generated query, suggesting improvements if necessary.
+        2. Provide feedback on the generated query, suggesting improvements if necessary based on provided rules and logical errors.
         3. Based on the feedback, provide a final, improved SQL query.
 
         Rules for SQL generation (MUST BE FOLLOWED FOR BOTH INITIAL AND FINAL QUERIES):
@@ -32,6 +35,9 @@ class SqlExpert:
         - End the SQL query with a semicolon (;).
         - Do not include any LIMIT, OFFSET unless explicitly mentioned in the user query.
         - While filtering using subquery use 'in' instead of '='.
+        - Do Not Assume Any information that is not provided.
+        
+        If SQL Query can not be generated, just return "invalid user query - not related to the database."
 
         Available tables:
         {tableInfo}
@@ -72,11 +78,23 @@ class SqlExpert:
         {sqlQuery}
         
         Extract the distinct column names and their corresponding table names used in the WHERE clause.
-        Use column that are hardcoded for filtering.
+        Use column that are hardcoded for filtering. If no such column exists, return an empty list.
 
-        example:
-        SELECT * FROM table1 WHERE column1 = 'value1' AND column2 IN (SELECT column3 FROM table2 WHERE column4 = 'value2');
-        Here, we want to extract column1 and column4 but not column2.
+        Example:
+        Query: SELECT * FROM table1 WHERE column1 = 'value1' AND column2 IN (SELECT column3 FROM table2 WHERE column4 = 'value2');
+        Response: [
+            {{
+                "table": "table1",
+                "column": "column1"
+            }},
+            {{
+                "table": "table2",
+                "column": "column4"
+            }}
+        ]
+        Explanation:
+        - column1 and column4 are used for filtering with a hardcoded value.
+        - column3 is used for filtering but not with hardcoded values.
 
         Respond in the following JSON format:
         [
@@ -100,14 +118,20 @@ class SqlExpert:
         User Query:
         {userQuery}
         
-        Context:
+        Context (The context provides distinct values for the columns used in the WHERE conditions):
         {context}
         
-        Update the WHERE conditions in the original SQL query based on the user query and the provided context.
-        Only modify the WHERE conditions, keeping the rest of the query unchanged.
-        Only return the updated SQL query, nothing else.
+        Carefully examine the original SQL query, the user query, and the provided context.
+        Only update the filter values in the WHERE conditions if The existing filter values are incorrect based on the user query and context.
+
+        Do not add new conditions or remove existing ones.
+        Do not change any other part of the query, including table names, column names, or the overall structure.
+
+        If no changes are needed, return the original SQL query exactly as it is.
         
-        Updated SQL Query:
+        Only return the SQL query, nothing else.
+        
+        SQL Query:
         """
         
         response = self._invokeChain(template, originalQuery=originalQuery, userQuery=userQuery, context=context)
@@ -224,6 +248,8 @@ class DatasetRegionMatcherAgent:
         - RegionID should be included whenever possible. Only omit it if there is absolutely no relevant region for the query.
         - DatasetID is necessary
         - Level is one of "top" (for CEDs), "booth" (for polling booths), or "SA1" (for Statistical Areas)
+        - Each value should be inside double quotes like "123"
+        - represent null values for RegionID as "None"
 
         Only include layers that are absolutely necessary to provide a complete and accurate response.
 
@@ -252,6 +278,7 @@ class DatasetRegionMatcherAgent:
                 "datasets_metadata": datasetsMetadata,
                 "user_query": userQuery
             })
+            # logger.info(f"DatasetRegionMatcherAgent: {result}")
             return result
         except Exception as e:
             raise RuntimeError(f"Error processing LLM output: {str(e)}")

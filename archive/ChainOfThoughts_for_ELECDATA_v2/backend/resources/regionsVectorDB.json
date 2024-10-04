@@ -1,0 +1,6044 @@
+{
+  "regions": [
+    {
+      "id": 10000,
+      "aec_id": 103,
+      "name": "/Australia/NSW/CED/Banks",
+      "paths": [
+        "/Australia/NSW/CED/Banks",
+        "/Australia/CED/Banks"
+      ],
+      "display_name": "Banks",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/banks.htm",
+      "centroid": {
+        "lat": -33.96601431572648,
+        "lon": 151.04698378055517
+      },
+      "bounds": [
+        {
+          "lat": -33.995921,
+          "lon": 150.970677
+        },
+        {
+          "lat": -33.939661,
+          "lon": 150.970677
+        },
+        {
+          "lat": -33.939661,
+          "lon": 151.129671
+        },
+        {
+          "lat": -33.995921,
+          "lon": 151.129671
+        },
+        {
+          "lat": -33.99592,
+          "lon": 150.970677
+        }
+      ],
+      "context": "Banks electoral division in New South Wales, Australia. Located in southern Sydney suburbs."
+    },
+    {
+      "id": 10001,
+      "aec_id": 104,
+      "name": "/Australia/NSW/CED/Barton",
+      "paths": [
+        "/Australia/NSW/CED/Barton",
+        "/Australia/CED/Barton"
+      ],
+      "display_name": "Barton",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/barton.htm",
+      "centroid": {
+        "lat": -33.94086565447365,
+        "lon": 151.12745072027988
+      },
+      "bounds": [
+        {
+          "lat": -33.973631,
+          "lon": 151.076976
+        },
+        {
+          "lat": -33.90912,
+          "lon": 151.076976
+        },
+        {
+          "lat": -33.90912,
+          "lon": 151.17424
+        },
+        {
+          "lat": -33.973631,
+          "lon": 151.17424
+        },
+        {
+          "lat": -33.97363,
+          "lon": 151.076976
+        }
+      ],
+      "context": "Barton electoral division in New South Wales, Australia. Covers inner southern Sydney suburbs."
+    },
+    {
+      "id": 10002,
+      "aec_id": 105,
+      "name": "/Australia/NSW/CED/Bennelong",
+      "paths": [
+        "/Australia/NSW/CED/Bennelong",
+        "/Australia/CED/Bennelong"
+      ],
+      "display_name": "Bennelong",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/bennelong.htm",
+      "centroid": {
+        "lat": -33.79454169288428,
+        "lon": 151.09858190804
+      },
+      "bounds": [
+        {
+          "lat": -33.843059,
+          "lon": 151.047308
+        },
+        {
+          "lat": -33.751745,
+          "lon": 151.047308
+        },
+        {
+          "lat": -33.751745,
+          "lon": 151.159079
+        },
+        {
+          "lat": -33.843059,
+          "lon": 151.159079
+        },
+        {
+          "lat": -33.84305,
+          "lon": 151.047308
+        }
+      ],
+      "context": "Bennelong electoral division in New South Wales, Australia. Located in northern Sydney suburbs."
+    },
+    {
+      "id": 10003,
+      "aec_id": 106,
+      "name": "/Australia/NSW/CED/Berowra",
+      "paths": [
+        "/Australia/NSW/CED/Berowra",
+        "/Australia/CED/Berowra"
+      ],
+      "display_name": "Berowra",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/berowra.htm",
+      "centroid": {
+        "lat": -33.56915691157705,
+        "lon": 151.04714994871253
+      },
+      "bounds": [
+        {
+          "lat": -33.769749,
+          "lon": 150.869657
+        },
+        {
+          "lat": -33.37806,
+          "lon": 150.869657
+        },
+        {
+          "lat": -33.37806,
+          "lon": 151.284798
+        },
+        {
+          "lat": -33.769749,
+          "lon": 151.284798
+        },
+        {
+          "lat": -33.76974,
+          "lon": 150.869657
+        }
+      ],
+      "context": "Berowra electoral division in New South Wales, Australia. Covers northern Sydney and Hawkesbury River area."
+    },
+    {
+      "id": 10004,
+      "aec_id": 107,
+      "name": "/Australia/NSW/CED/Blaxland",
+      "paths": [
+        "/Australia/NSW/CED/Blaxland",
+        "/Australia/CED/Blaxland"
+      ],
+      "display_name": "Blaxland",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/blaxland.htm",
+      "centroid": {
+        "lat": -33.896311855481024,
+        "lon": 151.00899134658007
+      },
+      "bounds": [
+        {
+          "lat": -33.946946,
+          "lon": 150.966024
+        },
+        {
+          "lat": -33.834392,
+          "lon": 150.966024
+        },
+        {
+          "lat": -33.834392,
+          "lon": 151.044405
+        },
+        {
+          "lat": -33.946946,
+          "lon": 151.044405
+        },
+        {
+          "lat": -33.94694,
+          "lon": 150.966024
+        }
+      ],
+      "context": "Blaxland electoral division in New South Wales, Australia. Located in western Sydney suburbs."
+    },
+    {
+      "id": 10005,
+      "aec_id": 108,
+      "name": "/Australia/NSW/CED/Bradfield",
+      "paths": [
+        "/Australia/NSW/CED/Bradfield",
+        "/Australia/CED/Bradfield"
+      ],
+      "display_name": "Bradfield",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/bradfield.htm",
+      "centroid": {
+        "lat": -33.73479408953743,
+        "lon": 151.1505200523028
+      },
+      "bounds": [
+        {
+          "lat": -33.797722,
+          "lon": 151.090013
+        },
+        {
+          "lat": -33.659582,
+          "lon": 151.090013
+        },
+        {
+          "lat": -33.659582,
+          "lon": 151.234942
+        },
+        {
+          "lat": -33.797722,
+          "lon": 151.234942
+        },
+        {
+          "lat": -33.79772,
+          "lon": 151.090013
+        }
+      ],
+      "context": "Bradfield electoral division in New South Wales, Australia. Covers upper north shore of Sydney."
+    },
+    {
+      "id": 10006,
+      "aec_id": 109,
+      "name": "/Australia/NSW/CED/Calare",
+      "paths": [
+        "/Australia/NSW/CED/Calare",
+        "/Australia/CED/Calare"
+      ],
+      "display_name": "Calare",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/calare.htm",
+      "centroid": {
+        "lat": -33.0873186756027,
+        "lon": 149.4777122303185
+      },
+      "bounds": [
+        {
+          "lat": -34.20593,
+          "lon": 148.290184
+        },
+        {
+          "lat": -32.05809,
+          "lon": 148.290184
+        },
+        {
+          "lat": -32.05809,
+          "lon": 150.619763
+        },
+        {
+          "lat": -34.20593,
+          "lon": 150.619763
+        },
+        {
+          "lat": -34.2059,
+          "lon": 148.290184
+        }
+      ],
+      "context": "Calare electoral division in New South Wales, Australia. Covers central west region including Orange and Bathurst."
+    },
+    {
+      "id": 10007,
+      "aec_id": 111,
+      "name": "/Australia/NSW/CED/Chifley",
+      "paths": [
+        "/Australia/NSW/CED/Chifley",
+        "/Australia/CED/Chifley"
+      ],
+      "display_name": "Chifley",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/chifley.htm",
+      "centroid": {
+        "lat": -33.73032737465693,
+        "lon": 150.83716221069844
+      },
+      "bounds": [
+        {
+          "lat": -33.797945,
+          "lon": 150.75963
+        },
+        {
+          "lat": -33.650138,
+          "lon": 150.75963
+        },
+        {
+          "lat": -33.650138,
+          "lon": 150.906339
+        },
+        {
+          "lat": -33.797945,
+          "lon": 150.906339
+        },
+        {
+          "lat": -33.79794,
+          "lon": 150.75963
+        }
+      ],
+      "context": "Chifley electoral division in New South Wales, Australia. Located in western Sydney suburbs including Mount Druitt."
+    },
+    {
+      "id": 10008,
+      "aec_id": 112,
+      "name": "/Australia/NSW/CED/Cook",
+      "paths": [
+        "/Australia/NSW/CED/Cook",
+        "/Australia/CED/Cook"
+      ],
+      "display_name": "Cook",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/cook.htm",
+      "centroid": {
+        "lat": -34.02445090307757,
+        "lon": 151.14402084426376
+      },
+      "bounds": [
+        {
+          "lat": -34.077811,
+          "lon": 151.076831
+        },
+        {
+          "lat": -33.964309,
+          "lon": 151.076831
+        },
+        {
+          "lat": -33.964309,
+          "lon": 151.231936
+        },
+        {
+          "lat": -34.077811,
+          "lon": 151.231936
+        },
+        {
+          "lat": -34.07781,
+          "lon": 151.076831
+        }
+      ],
+      "context": "Cook electoral division in New South Wales, Australia. Covers southern Sydney suburbs including Cronulla and Miranda."
+    },
+    {
+      "id": 10009,
+      "aec_id": 113,
+      "name": "/Australia/NSW/CED/Cowper",
+      "paths": [
+        "/Australia/NSW/CED/Cowper",
+        "/Australia/CED/Cowper"
+      ],
+      "display_name": "Cowper",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/cowper.htm",
+      "centroid": {
+        "lat": -30.76115213453272,
+        "lon": 152.71902339059798
+      },
+      "bounds": [
+        {
+          "lat": -31.492932,
+          "lon": 152.269825
+        },
+        {
+          "lat": -30.180789,
+          "lon": 152.269825
+        },
+        {
+          "lat": -30.180789,
+          "lon": 153.154572
+        },
+        {
+          "lat": -31.492932,
+          "lon": 153.154572
+        },
+        {
+          "lat": -31.49293,
+          "lon": 152.269825
+        }
+      ],
+      "context": "Cowper electoral division in New South Wales, Australia. Covers mid north coast including Coffs Harbour and Port Macquarie."
+    },
+    {
+      "id": 10010,
+      "aec_id": 114,
+      "name": "/Australia/NSW/CED/Cunningham",
+      "paths": [
+        "/Australia/NSW/CED/Cunningham",
+        "/Australia/CED/Cunningham"
+      ],
+      "display_name": "Cunningham",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/cunningham.htm",
+      "centroid": {
+        "lat": -34.321051766699675,
+        "lon": 150.86797083774343
+      },
+      "bounds": [
+        {
+          "lat": -34.500723,
+          "lon": 150.689634
+        },
+        {
+          "lat": -34.130009,
+          "lon": 150.689634
+        },
+        {
+          "lat": -34.130009,
+          "lon": 151.066158
+        },
+        {
+          "lat": -34.500723,
+          "lon": 151.066158
+        },
+        {
+          "lat": -34.50072,
+          "lon": 150.689634
+        }
+      ],
+      "context": "Cunningham electoral division in New South Wales, Australia. Covers Wollongong area and northern Illawarra region."
+    },
+    {
+      "id": 10011,
+      "aec_id": 115,
+      "name": "/Australia/NSW/CED/Dobell",
+      "paths": [
+        "/Australia/NSW/CED/Dobell",
+        "/Australia/CED/Dobell"
+      ],
+      "display_name": "Dobell",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/dobell.htm",
+      "centroid": {
+        "lat": -33.24747383644953,
+        "lon": 151.36912164986066
+      },
+      "bounds": [
+        {
+          "lat": -33.429352,
+          "lon": 151.199234
+        },
+        {
+          "lat": -33.043719,
+          "lon": 151.199234
+        },
+        {
+          "lat": -33.043719,
+          "lon": 151.579361
+        },
+        {
+          "lat": -33.429352,
+          "lon": 151.579361
+        },
+        {
+          "lat": -33.42935,
+          "lon": 151.199234
+        }
+      ],
+      "context": "Dobell electoral division in New South Wales, Australia. Covers Central Coast region north of Sydney."
+    },
+    {
+      "id": 10012,
+      "aec_id": 117,
+      "name": "/Australia/NSW/CED/Eden-Monaro",
+      "paths": [
+        "/Australia/NSW/CED/Eden-Monaro",
+        "/Australia/CED/Eden-Monaro"
+      ],
+      "display_name": "Eden-Monaro",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/eden-monaro.htm",
+      "centroid": {
+        "lat": -36.045468200758606,
+        "lon": 149.04148880711983
+      },
+      "bounds": [
+        {
+          "lat": -37.505077,
+          "lon": 147.687385
+        },
+        {
+          "lat": -34.535578,
+          "lon": 147.687385
+        },
+        {
+          "lat": -34.535578,
+          "lon": 150.230948
+        },
+        {
+          "lat": -37.505077,
+          "lon": 150.230948
+        },
+        {
+          "lat": -37.50507,
+          "lon": 147.687385
+        }
+      ],
+      "context": "Eden-Monaro electoral division in New South Wales, Australia. Covers south-eastern NSW including Queanbeyan and coastal areas."
+    },
+    {
+      "id": 10013,
+      "aec_id": 118,
+      "name": "/Australia/NSW/CED/Farrer",
+      "paths": [
+        "/Australia/NSW/CED/Farrer",
+        "/Australia/CED/Farrer"
+      ],
+      "display_name": "Farrer",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/farrer.htm",
+      "centroid": {
+        "lat": -34.34571087417621,
+        "lon": 144.45414647203916
+      },
+      "bounds": [
+        {
+          "lat": -36.12992,
+          "lon": 141.001707
+        },
+        {
+          "lat": -32.671254,
+          "lon": 141.001707
+        },
+        {
+          "lat": -32.671254,
+          "lon": 147.897578
+        },
+        {
+          "lat": -36.12992,
+          "lon": 147.897578
+        },
+        {
+          "lat": -36.1299,
+          "lon": 141.001707
+        }
+      ],
+      "context": "Farrer electoral division in New South Wales, Australia. Covers south-western NSW including Albury and Broken Hill."
+    },
+    {
+      "id": 10014,
+      "aec_id": 119,
+      "name": "/Australia/NSW/CED/Fowler",
+      "paths": [
+        "/Australia/NSW/CED/Fowler",
+        "/Australia/CED/Fowler"
+      ],
+      "display_name": "Fowler",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/fowler.htm",
+      "centroid": {
+        "lat": -33.893906315536945,
+        "lon": 150.921004395184
+      },
+      "bounds": [
+        {
+          "lat": -33.939096,
+          "lon": 150.842448
+        },
+        {
+          "lat": -33.851122,
+          "lon": 150.842448
+        },
+        {
+          "lat": -33.851122,
+          "lon": 150.985518
+        },
+        {
+          "lat": -33.939096,
+          "lon": 150.985518
+        },
+        {
+          "lat": -33.93909,
+          "lon": 150.842448
+        }
+      ],
+      "context": "Fowler electoral division in New South Wales, Australia. Located in south-western Sydney suburbs including Cabramatta."
+    },
+    {
+      "id": 10015,
+      "aec_id": 120,
+      "name": "/Australia/NSW/CED/Gilmore",
+      "paths": [
+        "/Australia/NSW/CED/Gilmore",
+        "/Australia/CED/Gilmore"
+      ],
+      "display_name": "Gilmore",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/gilmore.htm",
+      "centroid": {
+        "lat": -35.240335714946966,
+        "lon": 150.31216536976052
+      },
+      "bounds": [
+        {
+          "lat": -36.066889,
+          "lon": 149.81439
+        },
+        {
+          "lat": -34.598949,
+          "lon": 149.81439
+        },
+        {
+          "lat": -34.598949,
+          "lon": 150.865478
+        },
+        {
+          "lat": -36.066889,
+          "lon": 150.865478
+        },
+        {
+          "lat": -36.06688,
+          "lon": 149.81439
+        }
+      ],
+      "context": "Gilmore electoral division in New South Wales, Australia. Covers south coast region including Nowra and Batemans Bay."
+    },
+    {
+      "id": 10016,
+      "aec_id": 121,
+      "name": "/Australia/NSW/CED/Grayndler",
+      "paths": [
+        "/Australia/NSW/CED/Grayndler",
+        "/Australia/CED/Grayndler"
+      ],
+      "display_name": "Grayndler",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/grayndler.htm",
+      "centroid": {
+        "lat": -33.88303019360506,
+        "lon": 151.15940223834716
+      },
+      "bounds": [
+        {
+          "lat": -33.924966,
+          "lon": 151.117504
+        },
+        {
+          "lat": -33.844215,
+          "lon": 151.117504
+        },
+        {
+          "lat": -33.844215,
+          "lon": 151.198714
+        },
+        {
+          "lat": -33.924966,
+          "lon": 151.198714
+        },
+        {
+          "lat": -33.92496,
+          "lon": 151.117504
+        }
+      ],
+      "context": "Grayndler electoral division in New South Wales, Australia. Covers inner western Sydney suburbs including Leichhardt and Marrickville."
+    },
+    {
+      "id": 10017,
+      "aec_id": 122,
+      "name": "/Australia/NSW/CED/Greenway",
+      "paths": [
+        "/Australia/NSW/CED/Greenway",
+        "/Australia/CED/Greenway"
+      ],
+      "display_name": "Greenway",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/greenway.htm",
+      "centroid": {
+        "lat": -33.73147327219568,
+        "lon": 150.91106465061998
+      },
+      "bounds": [
+        {
+          "lat": -33.811574,
+          "lon": 150.851042
+        },
+        {
+          "lat": -33.646317,
+          "lon": 150.851042
+        },
+        {
+          "lat": -33.646317,
+          "lon": 150.966879
+        },
+        {
+          "lat": -33.811574,
+          "lon": 150.966879
+        },
+        {
+          "lat": -33.81157,
+          "lon": 150.851042
+        }
+      ],
+      "context": "Greenway electoral division in New South Wales, Australia. Located in north-western Sydney suburbs including Blacktown."
+    },
+    {
+      "id": 10018,
+      "aec_id": 124,
+      "name": "/Australia/NSW/CED/Hughes",
+      "paths": [
+        "/Australia/NSW/CED/Hughes",
+        "/Australia/CED/Hughes"
+      ],
+      "display_name": "Hughes",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/hughes.htm",
+      "centroid": {
+        "lat": -34.061386991543294,
+        "lon": 151.01577273163522
+      },
+      "bounds": [
+        {
+          "lat": -34.172329,
+          "lon": 150.886112
+        },
+        {
+          "lat": -33.926893,
+          "lon": 150.886112
+        },
+        {
+          "lat": -33.926893,
+          "lon": 151.171847
+        },
+        {
+          "lat": -34.172329,
+          "lon": 151.171847
+        },
+        {
+          "lat": -34.17232,
+          "lon": 150.886112
+        }
+      ],
+      "context": "Hughes electoral division in New South Wales, Australia. Covers southern Sydney suburbs and northern Sutherland Shire."
+    },
+    {
+      "id": 10019,
+      "aec_id": 125,
+      "name": "/Australia/NSW/CED/Hume",
+      "paths": [
+        "/Australia/NSW/CED/Hume",
+        "/Australia/CED/Hume"
+      ],
+      "display_name": "Hume",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/hume.htm",
+      "centroid": {
+        "lat": -34.44211399821293,
+        "lon": 149.66424051482875
+      },
+      "bounds": [
+        {
+          "lat": -35.256292,
+          "lon": 148.553622
+        },
+        {
+          "lat": -33.841775,
+          "lon": 148.553622
+        },
+        {
+          "lat": -33.841775,
+          "lon": 150.897996
+        },
+        {
+          "lat": -35.256292,
+          "lon": 150.897996
+        },
+        {
+          "lat": -35.25629,
+          "lon": 148.553622
+        }
+      ],
+      "context": "Hume electoral division in New South Wales, Australia. Covers southern tablelands and parts of south-western Sydney."
+    },
+    {
+      "id": 10020,
+      "aec_id": 126,
+      "name": "/Australia/NSW/CED/Hunter",
+      "paths": [
+        "/Australia/NSW/CED/Hunter",
+        "/Australia/CED/Hunter"
+      ],
+      "display_name": "Hunter",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/hunter.htm",
+      "centroid": {
+        "lat": -32.65682490489414,
+        "lon": 150.92482035904342
+      },
+      "bounds": [
+        {
+          "lat": -33.202843,
+          "lon": 150.22644
+        },
+        {
+          "lat": -32.130039,
+          "lon": 150.22644
+        },
+        {
+          "lat": -32.130039,
+          "lon": 151.665396
+        },
+        {
+          "lat": -33.202843,
+          "lon": 151.665396
+        },
+        {
+          "lat": -33.20284,
+          "lon": 150.22644
+        }
+      ],
+      "context": "Hunter electoral division in New South Wales, Australia. Covers Hunter Valley region including Cessnock and Muswellbrook."
+    },
+    {
+      "id": 10021,
+      "aec_id": 127,
+      "name": "/Australia/NSW/CED/Kingsford Smith",
+      "paths": [
+        "/Australia/NSW/CED/Kingsford Smith",
+        "/Australia/CED/Kingsford Smith"
+      ],
+      "display_name": "Kingsford Smith",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/kingsford smith.htm",
+      "centroid": {
+        "lat": -33.95891298265658,
+        "lon": 151.2104971760803
+      },
+      "bounds": [
+        {
+          "lat": -34.016739,
+          "lon": 151.148203
+        },
+        {
+          "lat": -33.900896,
+          "lon": 151.148203
+        },
+        {
+          "lat": -33.900896,
+          "lon": 151.268249
+        },
+        {
+          "lat": -34.016739,
+          "lon": 151.268249
+        },
+        {
+          "lat": -34.01673,
+          "lon": 151.148203
+        }
+      ],
+      "context": "Kingsford Smith electoral division in New South Wales, Australia. Covers eastern Sydney suburbs including Maroubra and Coogee."
+    },
+    {
+      "id": 10022,
+      "aec_id": 128,
+      "name": "/Australia/NSW/CED/Lindsay",
+      "paths": [
+        "/Australia/NSW/CED/Lindsay",
+        "/Australia/CED/Lindsay"
+      ],
+      "display_name": "Lindsay",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/lindsay.htm",
+      "centroid": {
+        "lat": -33.75064268401775,
+        "lon": 150.7106397115322
+      },
+      "bounds": [
+        {
+          "lat": -33.875728,
+          "lon": 150.588042
+        },
+        {
+          "lat": -33.612281,
+          "lon": 150.588042
+        },
+        {
+          "lat": -33.612281,
+          "lon": 150.812394
+        },
+        {
+          "lat": -33.875728,
+          "lon": 150.812394
+        },
+        {
+          "lat": -33.87572,
+          "lon": 150.588042
+        }
+      ],
+      "context": "Lindsay electoral division in New South Wales, Australia. Covers Penrith area in western Sydney."
+    },
+    {
+      "id": 10023,
+      "aec_id": 130,
+      "name": "/Australia/NSW/CED/Lyne",
+      "paths": [
+        "/Australia/NSW/CED/Lyne",
+        "/Australia/CED/Lyne"
+      ],
+      "display_name": "Lyne",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/lyne.htm",
+      "centroid": {
+        "lat": -31.96070204933183,
+        "lon": 152.09697460451238
+      },
+      "bounds": [
+        {
+          "lat": -32.760455,
+          "lon": 151.303745
+        },
+        {
+          "lat": -31.114,
+          "lon": 151.303745
+        },
+        {
+          "lat": -31.114,
+          "lon": 152.915196
+        },
+        {
+          "lat": -32.760455,
+          "lon": 152.915196
+        },
+        {
+          "lat": -32.76045,
+          "lon": 151.303745
+        }
+      ],
+      "context": "Lyne electoral division in New South Wales, Australia. Covers Mid North Coast region including Taree, Port Macquarie, and surrounding areas."
+    },
+    {
+      "id": 10024,
+      "aec_id": 131,
+      "name": "/Australia/NSW/CED/Macarthur",
+      "paths": [
+        "/Australia/NSW/CED/Macarthur",
+        "/Australia/CED/Macarthur"
+      ],
+      "display_name": "Macarthur",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/macarthur.htm",
+      "centroid": {
+        "lat": -34.07129054824257,
+        "lon": 150.82760478210446
+      },
+      "bounds": [
+        {
+          "lat": -34.189613,
+          "lon": 150.722585
+        },
+        {
+          "lat": -33.939931,
+          "lon": 150.722585
+        },
+        {
+          "lat": -33.939931,
+          "lon": 150.940791
+        },
+        {
+          "lat": -34.189613,
+          "lon": 150.940791
+        },
+        {
+          "lat": -34.18961,
+          "lon": 150.722585
+        }
+      ],
+      "context": "Macarthur electoral division in New South Wales, Australia. Covers southwestern Sydney suburbs including Campbelltown and Camden."
+    },
+    {
+      "id": 10025,
+      "aec_id": 132,
+      "name": "/Australia/NSW/CED/Mackellar",
+      "paths": [
+        "/Australia/NSW/CED/Mackellar",
+        "/Australia/CED/Mackellar"
+      ],
+      "display_name": "Mackellar",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/mackellar.htm",
+      "centroid": {
+        "lat": -33.66904615776843,
+        "lon": 151.25255347261228
+      },
+      "bounds": [
+        {
+          "lat": -33.773133,
+          "lon": 151.160755
+        },
+        {
+          "lat": -33.571858,
+          "lon": 151.160755
+        },
+        {
+          "lat": -33.571858,
+          "lon": 151.343021
+        },
+        {
+          "lat": -33.773133,
+          "lon": 151.343021
+        },
+        {
+          "lat": -33.77313,
+          "lon": 151.160755
+        }
+      ],
+      "context": "Mackellar electoral division in New South Wales, Australia. Covers Sydney's Northern Beaches area including Manly, Dee Why, and surrounding suburbs."
+    },
+    {
+      "id": 10026,
+      "aec_id": 133,
+      "name": "/Australia/NSW/CED/Macquarie",
+      "paths": [
+        "/Australia/NSW/CED/Macquarie",
+        "/Australia/CED/Macquarie"
+      ],
+      "display_name": "Macquarie",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/macquarie.htm",
+      "centroid": {
+        "lat": -33.47508245239936,
+        "lon": 150.64166216198709
+      },
+      "bounds": [
+        {
+          "lat": -33.963447,
+          "lon": 150.166036
+        },
+        {
+          "lat": -32.996069,
+          "lon": 150.166036
+        },
+        {
+          "lat": -32.996069,
+          "lon": 151.1356
+        },
+        {
+          "lat": -33.963447,
+          "lon": 151.1356
+        },
+        {
+          "lat": -33.96344,
+          "lon": 150.166036
+        }
+      ],
+      "context": "Macquarie electoral division in New South Wales, Australia. Covers Blue Mountains region and Hawkesbury area west of Sydney."
+    },
+    {
+      "id": 10027,
+      "aec_id": 315,
+      "name": "/Australia/NSW/CED/McMahon",
+      "paths": [
+        "/Australia/NSW/CED/McMahon",
+        "/Australia/CED/McMahon"
+      ],
+      "display_name": "McMahon",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/mcmahon.htm",
+      "centroid": {
+        "lat": -33.83358013461089,
+        "lon": 150.86524579682998
+      },
+      "bounds": [
+        {
+          "lat": -33.885677,
+          "lon": 150.758524
+        },
+        {
+          "lat": -33.776811,
+          "lon": 150.758524
+        },
+        {
+          "lat": -33.776811,
+          "lon": 150.997077
+        },
+        {
+          "lat": -33.885677,
+          "lon": 150.997077
+        },
+        {
+          "lat": -33.88567,
+          "lon": 150.758524
+        }
+      ],
+      "context": "McMahon electoral division in New South Wales, Australia. Covers western Sydney suburbs including Fairfield, Wetherill Park, and surrounding areas."
+    },
+    {
+      "id": 10028,
+      "aec_id": 134,
+      "name": "/Australia/NSW/CED/Mitchell",
+      "paths": [
+        "/Australia/NSW/CED/Mitchell",
+        "/Australia/CED/Mitchell"
+      ],
+      "display_name": "Mitchell",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/mitchell.htm",
+      "centroid": {
+        "lat": -33.711088097232675,
+        "lon": 150.95915848098204
+      },
+      "bounds": [
+        {
+          "lat": -33.796705,
+          "lon": 150.874039
+        },
+        {
+          "lat": -33.611787,
+          "lon": 150.874039
+        },
+        {
+          "lat": -33.611787,
+          "lon": 151.031156
+        },
+        {
+          "lat": -33.796705,
+          "lon": 151.031156
+        },
+        {
+          "lat": -33.7967,
+          "lon": 150.874039
+        }
+      ],
+      "context": "Mitchell electoral division in New South Wales, Australia. Covers northwestern Sydney suburbs including Castle Hill, Baulkham Hills, and surrounding areas."
+    },
+    {
+      "id": 10029,
+      "aec_id": 135,
+      "name": "/Australia/NSW/CED/New England",
+      "paths": [
+        "/Australia/NSW/CED/New England",
+        "/Australia/CED/New England"
+      ],
+      "display_name": "New England",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/new england.htm",
+      "centroid": {
+        "lat": -30.45320762128582,
+        "lon": 151.28228578948284
+      },
+      "bounds": [
+        {
+          "lat": -32.408795,
+          "lon": 149.791608
+        },
+        {
+          "lat": -28.249244,
+          "lon": 149.791608
+        },
+        {
+          "lat": -28.249244,
+          "lon": 152.631413
+        },
+        {
+          "lat": -32.408795,
+          "lon": 152.631413
+        },
+        {
+          "lat": -32.40879,
+          "lon": 149.791608
+        }
+      ],
+      "context": "New England electoral division in New South Wales, Australia. Covers large rural area in northern NSW including Tamworth, Armidale, and surrounding regions."
+    },
+    {
+      "id": 10030,
+      "aec_id": 136,
+      "name": "/Australia/NSW/CED/Newcastle",
+      "paths": [
+        "/Australia/NSW/CED/Newcastle",
+        "/Australia/CED/Newcastle"
+      ],
+      "display_name": "Newcastle",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/newcastle.htm",
+      "centroid": {
+        "lat": -32.891808219588015,
+        "lon": 151.70892066131267
+      },
+      "bounds": [
+        {
+          "lat": -32.962974,
+          "lon": 151.600846
+        },
+        {
+          "lat": -32.823141,
+          "lon": 151.600846
+        },
+        {
+          "lat": -32.823141,
+          "lon": 151.81011
+        },
+        {
+          "lat": -32.962974,
+          "lon": 151.81011
+        },
+        {
+          "lat": -32.96297,
+          "lon": 151.600846
+        }
+      ],
+      "context": "Newcastle electoral division in New South Wales, Australia. Covers Newcastle city and surrounding suburbs in the Hunter region."
+    },
+    {
+      "id": 10031,
+      "aec_id": 137,
+      "name": "/Australia/NSW/CED/North Sydney",
+      "paths": [
+        "/Australia/NSW/CED/North Sydney",
+        "/Australia/CED/North Sydney"
+      ],
+      "display_name": "North Sydney",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/north sydney.htm",
+      "centroid": {
+        "lat": -33.82058659011688,
+        "lon": 151.18464420297403
+      },
+      "bounds": [
+        {
+          "lat": -33.854461,
+          "lon": 151.126708
+        },
+        {
+          "lat": -33.78525,
+          "lon": 151.126708
+        },
+        {
+          "lat": -33.78525,
+          "lon": 151.235228
+        },
+        {
+          "lat": -33.854461,
+          "lon": 151.235228
+        },
+        {
+          "lat": -33.85446,
+          "lon": 151.126708
+        }
+      ],
+      "context": "North Sydney electoral division in New South Wales, Australia. Covers northern Sydney suburbs including North Sydney, Mosman, and surrounding areas."
+    },
+    {
+      "id": 10032,
+      "aec_id": 138,
+      "name": "/Australia/NSW/CED/Page",
+      "paths": [
+        "/Australia/NSW/CED/Page",
+        "/Australia/CED/Page"
+      ],
+      "display_name": "Page",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/page.htm",
+      "centroid": {
+        "lat": -29.334407061517066,
+        "lon": 152.8567441049702
+      },
+      "bounds": [
+        {
+          "lat": -30.418897,
+          "lon": 152.168125
+        },
+        {
+          "lat": -28.269555,
+          "lon": 152.168125
+        },
+        {
+          "lat": -28.269555,
+          "lon": 153.544475
+        },
+        {
+          "lat": -30.418897,
+          "lon": 153.544475
+        },
+        {
+          "lat": -30.41889,
+          "lon": 152.168125
+        }
+      ],
+      "context": "Page electoral division in New South Wales, Australia. Covers Northern Rivers region including Grafton, Lismore, and surrounding areas."
+    },
+    {
+      "id": 10033,
+      "aec_id": 139,
+      "name": "/Australia/NSW/CED/Parkes",
+      "paths": [
+        "/Australia/NSW/CED/Parkes",
+        "/Australia/CED/Parkes"
+      ],
+      "display_name": "Parkes",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/parkes.htm",
+      "centroid": {
+        "lat": -30.926233613235542,
+        "lon": 145.57518185570547
+      },
+      "bounds": [
+        {
+          "lat": -33.607151,
+          "lon": 140.999265
+        },
+        {
+          "lat": -28.537157,
+          "lon": 140.999265
+        },
+        {
+          "lat": -28.537157,
+          "lon": 150.890605
+        },
+        {
+          "lat": -33.607151,
+          "lon": 150.890605
+        },
+        {
+          "lat": -33.60715,
+          "lon": 140.999265
+        }
+      ],
+      "context": "Parkes electoral division in New South Wales, Australia. Covers large rural area in western NSW including Dubbo, Broken Hill, and surrounding regions."
+    },
+    {
+      "id": 10034,
+      "aec_id": 140,
+      "name": "/Australia/NSW/CED/Parramatta",
+      "paths": [
+        "/Australia/NSW/CED/Parramatta",
+        "/Australia/CED/Parramatta"
+      ],
+      "display_name": "Parramatta",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/parramatta.htm",
+      "centroid": {
+        "lat": -33.80791929711231,
+        "lon": 151.00935906907267
+      },
+      "bounds": [
+        {
+          "lat": -33.85369,
+          "lon": 150.947579
+        },
+        {
+          "lat": -33.766481,
+          "lon": 150.947579
+        },
+        {
+          "lat": -33.766481,
+          "lon": 151.066376
+        },
+        {
+          "lat": -33.85369,
+          "lon": 151.066376
+        },
+        {
+          "lat": -33.8536,
+          "lon": 150.947579
+        }
+      ],
+      "context": "Parramatta electoral division in New South Wales, Australia. Covers Parramatta city and surrounding suburbs in western Sydney."
+    },
+    {
+      "id": 10035,
+      "aec_id": 249,
+      "name": "/Australia/NSW/CED/Paterson",
+      "paths": [
+        "/Australia/NSW/CED/Paterson",
+        "/Australia/CED/Paterson"
+      ],
+      "display_name": "Paterson",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/paterson.htm",
+      "centroid": {
+        "lat": -32.764370760571076,
+        "lon": 151.75267657245502
+      },
+      "bounds": [
+        {
+          "lat": -32.881649,
+          "lon": 151.395759
+        },
+        {
+          "lat": -32.635733,
+          "lon": 151.395759
+        },
+        {
+          "lat": -32.635733,
+          "lon": 152.205519
+        },
+        {
+          "lat": -32.881649,
+          "lon": 152.205519
+        },
+        {
+          "lat": -32.88164,
+          "lon": 151.395759
+        }
+      ],
+      "context": "Paterson electoral division in New South Wales, Australia. Covers Port Stephens area and parts of the Hunter region including Maitland."
+    },
+    {
+      "id": 10036,
+      "aec_id": 144,
+      "name": "/Australia/NSW/CED/Reid",
+      "paths": [
+        "/Australia/NSW/CED/Reid",
+        "/Australia/CED/Reid"
+      ],
+      "display_name": "Reid",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/reid.htm",
+      "centroid": {
+        "lat": -33.854786867000534,
+        "lon": 151.09288588940638
+      },
+      "bounds": [
+        {
+          "lat": -33.892749,
+          "lon": 151.030078
+        },
+        {
+          "lat": -33.819541,
+          "lon": 151.030078
+        },
+        {
+          "lat": -33.819541,
+          "lon": 151.166162
+        },
+        {
+          "lat": -33.892749,
+          "lon": 151.166162
+        },
+        {
+          "lat": -33.89274,
+          "lon": 151.030078
+        }
+      ],
+      "context": "Reid electoral division in New South Wales, Australia. Covers inner western Sydney suburbs including Auburn, Lidcombe, and surrounding areas."
+    },
+    {
+      "id": 10037,
+      "aec_id": 145,
+      "name": "/Australia/NSW/CED/Richmond",
+      "paths": [
+        "/Australia/NSW/CED/Richmond",
+        "/Australia/CED/Richmond"
+      ],
+      "display_name": "Richmond",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/richmond.htm",
+      "centroid": {
+        "lat": -28.478275704860298,
+        "lon": 153.41150582045051
+      },
+      "bounds": [
+        {
+          "lat": -28.924898,
+          "lon": 153.106738
+        },
+        {
+          "lat": -28.15702,
+          "lon": 153.106738
+        },
+        {
+          "lat": -28.15702,
+          "lon": 153.638727
+        },
+        {
+          "lat": -28.924898,
+          "lon": 153.638727
+        },
+        {
+          "lat": -28.92489,
+          "lon": 153.106738
+        }
+      ],
+      "context": "Richmond electoral division in New South Wales, Australia. Covers far north coast region including Byron Bay, Tweed Heads, and surrounding areas."
+    },
+    {
+      "id": 10038,
+      "aec_id": 250,
+      "name": "/Australia/NSW/CED/Riverina",
+      "paths": [
+        "/Australia/NSW/CED/Riverina",
+        "/Australia/CED/Riverina"
+      ],
+      "display_name": "Riverina",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/riverina.htm",
+      "centroid": {
+        "lat": -34.164709561769364,
+        "lon": 147.65489634487272
+      },
+      "bounds": [
+        {
+          "lat": -35.57586,
+          "lon": 146.0703
+        },
+        {
+          "lat": -32.369218,
+          "lon": 146.0703
+        },
+        {
+          "lat": -32.369218,
+          "lon": 149.257743
+        },
+        {
+          "lat": -35.57586,
+          "lon": 149.257743
+        },
+        {
+          "lat": -35.5758,
+          "lon": 146.0703
+        }
+      ],
+      "context": "Riverina electoral division in New South Wales, Australia. Covers Riverina region including Wagga Wagga, Griffith, and surrounding rural areas."
+    },
+    {
+      "id": 10039,
+      "aec_id": 146,
+      "name": "/Australia/NSW/CED/Robertson",
+      "paths": [
+        "/Australia/NSW/CED/Robertson",
+        "/Australia/CED/Robertson"
+      ],
+      "display_name": "Robertson",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/robertson.htm",
+      "centroid": {
+        "lat": -33.38230748727901,
+        "lon": 151.21293736083948
+      },
+      "bounds": [
+        {
+          "lat": -33.582269,
+          "lon": 150.984144
+        },
+        {
+          "lat": -33.110401,
+          "lon": 150.984144
+        },
+        {
+          "lat": -33.110401,
+          "lon": 151.45262
+        },
+        {
+          "lat": -33.582269,
+          "lon": 151.45262
+        },
+        {
+          "lat": -33.58226,
+          "lon": 150.984144
+        }
+      ],
+      "context": "Robertson electoral division in New South Wales, Australia. Covers Central Coast region including Gosford, Woy Woy, and surrounding areas."
+    },
+    {
+      "id": 10040,
+      "aec_id": 148,
+      "name": "/Australia/NSW/CED/Shortland",
+      "paths": [
+        "/Australia/NSW/CED/Shortland",
+        "/Australia/CED/Shortland"
+      ],
+      "display_name": "Shortland",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/shortland.htm",
+      "centroid": {
+        "lat": -33.08869228902455,
+        "lon": 151.62073545490284
+      },
+      "bounds": [
+        {
+          "lat": -33.247326,
+          "lon": 151.507566
+        },
+        {
+          "lat": -32.929382,
+          "lon": 151.507566
+        },
+        {
+          "lat": -32.929382,
+          "lon": 151.737944
+        },
+        {
+          "lat": -33.247326,
+          "lon": 151.737944
+        },
+        {
+          "lat": -33.24732,
+          "lon": 151.507566
+        }
+      ],
+      "context": "Shortland electoral division in New South Wales, Australia. Covers Lake Macquarie area and parts of Newcastle's eastern suburbs."
+    },
+    {
+      "id": 10041,
+      "aec_id": 149,
+      "name": "/Australia/NSW/CED/Sydney",
+      "paths": [
+        "/Australia/NSW/CED/Sydney",
+        "/Australia/CED/Sydney"
+      ],
+      "display_name": "Sydney",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/sydney.htm",
+      "centroid": {
+        "lat": -33.03519580646109,
+        "lon": 154.07187772762305
+      },
+      "bounds": [
+        {
+          "lat": -33.924332,
+          "lon": 151.171465
+        },
+        {
+          "lat": -31.486802,
+          "lon": 151.171465
+        },
+        {
+          "lat": -31.486802,
+          "lon": 159.109219
+        },
+        {
+          "lat": -33.924332,
+          "lon": 159.109219
+        },
+        {
+          "lat": -33.92433,
+          "lon": 151.171465
+        }
+      ],
+      "context": "Sydney electoral division in New South Wales, Australia. Covers central Sydney including CBD, inner city suburbs, and Sydney Harbour."
+    },
+    {
+      "id": 10042,
+      "aec_id": 151,
+      "name": "/Australia/NSW/CED/Warringah",
+      "paths": [
+        "/Australia/NSW/CED/Warringah",
+        "/Australia/CED/Warringah"
+      ],
+      "display_name": "Warringah",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/warringah.htm",
+      "centroid": {
+        "lat": -33.798230377525925,
+        "lon": 151.2562804493956
+      },
+      "bounds": [
+        {
+          "lat": -33.85728,
+          "lon": 151.203599
+        },
+        {
+          "lat": -33.751294,
+          "lon": 151.203599
+        },
+        {
+          "lat": -33.751294,
+          "lon": 151.307596
+        },
+        {
+          "lat": -33.85728,
+          "lon": 151.307596
+        },
+        {
+          "lat": -33.8572,
+          "lon": 151.203599
+        }
+      ],
+      "context": "Warringah electoral division in New South Wales, Australia. Covers Sydney's Northern Beaches area including Manly, Brookvale, and surrounding suburbs."
+    },
+    {
+      "id": 10043,
+      "aec_id": 251,
+      "name": "/Australia/NSW/CED/Watson",
+      "paths": [
+        "/Australia/NSW/CED/Watson",
+        "/Australia/CED/Watson"
+      ],
+      "display_name": "Watson",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/watson.htm",
+      "centroid": {
+        "lat": -33.90796442824519,
+        "lon": 151.0745106041295
+      },
+      "bounds": [
+        {
+          "lat": -33.943749,
+          "lon": 151.035641
+        },
+        {
+          "lat": -33.861729,
+          "lon": 151.035641
+        },
+        {
+          "lat": -33.861729,
+          "lon": 151.132426
+        },
+        {
+          "lat": -33.943749,
+          "lon": 151.132426
+        },
+        {
+          "lat": -33.94374,
+          "lon": 151.035641
+        }
+      ],
+      "context": "Watson electoral division in New South Wales, Australia. Covers inner southwestern Sydney suburbs including Lakemba, Campsie, and surrounding areas."
+    },
+    {
+      "id": 10044,
+      "aec_id": 152,
+      "name": "/Australia/NSW/CED/Wentworth",
+      "paths": [
+        "/Australia/NSW/CED/Wentworth",
+        "/Australia/CED/Wentworth"
+      ],
+      "display_name": "Wentworth",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/wentworth.htm",
+      "centroid": {
+        "lat": -33.87620321906161,
+        "lon": 151.25595275236486
+      },
+      "bounds": [
+        {
+          "lat": -33.914843,
+          "lon": 151.215031
+        },
+        {
+          "lat": -33.823585,
+          "lon": 151.215031
+        },
+        {
+          "lat": -33.823585,
+          "lon": 151.290672
+        },
+        {
+          "lat": -33.914843,
+          "lon": 151.290672
+        },
+        {
+          "lat": -33.91484,
+          "lon": 151.215031
+        }
+      ],
+      "context": "Wentworth electoral division in New South Wales, Australia. Covers eastern Sydney suburbs including Bondi, Double Bay, and surrounding areas."
+    },
+    {
+      "id": 10045,
+      "aec_id": 153,
+      "name": "/Australia/NSW/CED/Werriwa",
+      "paths": [
+        "/Australia/NSW/CED/Werriwa",
+        "/Australia/CED/Werriwa"
+      ],
+      "display_name": "Werriwa",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/werriwa.htm",
+      "centroid": {
+        "lat": -33.92850856427806,
+        "lon": 150.82440785338315
+      },
+      "bounds": [
+        {
+          "lat": -34.020952,
+          "lon": 150.704656
+        },
+        {
+          "lat": -33.869447,
+          "lon": 150.704656
+        },
+        {
+          "lat": -33.869447,
+          "lon": 150.918927
+        },
+        {
+          "lat": -34.020952,
+          "lon": 150.918927
+        },
+        {
+          "lat": -34.02095,
+          "lon": 150.704656
+        }
+      ],
+      "context": "Werriwa electoral division in New South Wales, Australia. Covers western Sydney suburbs including Fairfield, Cabramatta, and surrounding areas."
+    },
+    {
+      "id": 10046,
+      "aec_id": 150,
+      "name": "/Australia/NSW/CED/Whitlam",
+      "paths": [
+        "/Australia/NSW/CED/Whitlam",
+        "/Australia/CED/Whitlam"
+      ],
+      "display_name": "Whitlam",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/whitlam.htm",
+      "centroid": {
+        "lat": -34.52256244733534,
+        "lon": 150.58184117958143
+      },
+      "bounds": [
+        {
+          "lat": -34.705271,
+          "lon": 150.226638
+        },
+        {
+          "lat": -34.319652,
+          "lon": 150.226638
+        },
+        {
+          "lat": -34.319652,
+          "lon": 150.904456
+        },
+        {
+          "lat": -34.705271,
+          "lon": 150.904456
+        },
+        {
+          "lat": -34.70527,
+          "lon": 150.226638
+        }
+      ],
+      "context": "Whitlam electoral division in New South Wales, Australia. Covers western Sydney suburbs including Fairfield, Cabramatta, and surrounding areas."
+    },
+    {
+      "id": 10047,
+      "aec_id": 318,
+      "name": "/Australia/ACT/CED/Bean",
+      "paths": [
+        "/Australia/ACT/CED/Bean",
+        "/Australia/CED/Bean"
+      ],
+      "display_name": "Bean",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/act/bean.htm",
+      "centroid": {
+        "lat": -35.42577901074101,
+        "lon": 149.32141277172911
+      },
+      "bounds": [
+        {
+          "lat": -35.920762,
+          "lon": 148.76279
+        },
+        {
+          "lat": -28.994171,
+          "lon": 148.76279
+        },
+        {
+          "lat": -28.994171,
+          "lon": 167.998035
+        },
+        {
+          "lat": -35.920762,
+          "lon": 167.998035
+        },
+        {
+          "lat": -35.92076,
+          "lon": 148.76279
+        }
+      ],
+      "context": "Bean electoral division in the Australian Capital Territory. Covers Canberra's southern suburbs including Belconnen, Woden, and surrounding areas."
+    },
+    {
+      "id": 10048,
+      "aec_id": 101,
+      "name": "/Australia/ACT/CED/Canberra",
+      "paths": [
+        "/Australia/ACT/CED/Canberra",
+        "/Australia/CED/Canberra"
+      ],
+      "display_name": "Canberra",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/act/canberra.htm",
+      "centroid": {
+        "lat": -35.28793119756556,
+        "lon": 149.19319526590465
+      },
+      "bounds": [
+        {
+          "lat": -35.35137,
+          "lon": 149.026067
+        },
+        {
+          "lat": -35.201373,
+          "lon": 149.026067
+        },
+        {
+          "lat": -35.201373,
+          "lon": 149.399287
+        },
+        {
+          "lat": -35.35137,
+          "lon": 149.399287
+        },
+        {
+          "lat": -35.3513,
+          "lon": 149.026067
+        }
+        ],
+      "context": "Canberra electoral division in the Australian Capital Territory. Covers Canberra's southern suburbs including Belconnen, Woden, and surrounding areas."
+    },
+    {
+      "id": 10049,
+      "aec_id": 102,
+      "name": "/Australia/ACT/CED/Fenner",
+      "paths": [
+        "/Australia/ACT/CED/Fenner",
+        "/Australia/CED/Fenner"
+      ],
+      "display_name": "Fenner",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/act/fenner.htm",
+      "centroid": {
+        "lat": -35.18502919881877,
+        "lon": 149.54005893211053
+      },
+      "bounds": [
+        {
+          "lat": -35.280464,
+          "lon": 148.961345
+        },
+        {
+          "lat": -35.112321,
+          "lon": 148.961345
+        },
+        {
+          "lat": -35.112321,
+          "lon": 150.772826
+        },
+        {
+          "lat": -35.280464,
+          "lon": 150.772826
+        },
+        {
+          "lat": -35.28046,
+          "lon": 148.961345
+        }
+      ],
+      "context": "Fenner electoral division in the Australian Capital Territory. Covers Canberra's northern suburbs including Griffith, Deakin, and surrounding areas."
+    },
+    {
+      "id": 10050,
+      "aec_id": 306,
+      "name": "/Australia/NT/CED/Lingiari",
+      "paths": [
+        "/Australia/NT/CED/Lingiari",
+        "/Australia/CED/Lingiari"
+      ],
+      "display_name": "Lingiari",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nt/lingiari.htm",
+      "centroid": {
+        "lat": -19.41475677513732,
+        "lon": 133.36220743001408
+      },
+      "bounds": [
+        {
+          "lat": -25.998636,
+          "lon": 96.816941
+        },
+        {
+          "lat": -10.412356,
+          "lon": 96.816941
+        },
+        {
+          "lat": -10.412356,
+          "lon": 137.999054
+        },
+        {
+          "lat": -25.998636,
+          "lon": 137.999054
+        },
+        {
+          "lat": -25.99863,
+          "lon": 96.816941
+        }
+        ],
+      "context": "Lingiari electoral division in the Northern Territory, Australia. Covers Alice Springs and surrounding areas."
+    },
+    {
+      "id": 10051,
+      "aec_id": 307,
+      "name": "/Australia/NT/CED/Solomon",
+      "paths": [
+        "/Australia/NT/CED/Solomon",
+        "/Australia/CED/Solomon"
+      ],
+      "display_name": "Solomon",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nt/solomon.htm",
+      "centroid": {
+        "lat": -12.432259499257222,
+        "lon": 130.90935287065153
+      },
+      "bounds": [
+        {
+          "lat": -12.541313,
+          "lon": 130.815117
+        },
+        {
+          "lat": -12.33006,
+          "lon": 130.815117
+        },
+        {
+          "lat": -12.33006,
+          "lon": 131.000678
+        },
+        {
+          "lat": -12.541313,
+          "lon": 131.000678
+        },
+        {
+          "lat": -12.54131,
+          "lon": 130.815117
+        }
+      ],
+      "context": "Solomon electoral division in the Northern Territory, Australia. Covers Darwin's eastern suburbs including Parap, The Gardens, and surrounding areas."
+    },
+    {
+      "id": 10052,
+      "aec_id": 304,
+      "name": "/Australia/QLD/CED/Blair",
+      "paths": [
+        "/Australia/QLD/CED/Blair",
+        "/Australia/CED/Blair"
+      ],
+      "display_name": "Blair",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/blair.htm",
+      "centroid": {
+        "lat": -27.119575610272122,
+        "lon": 152.46536345270118
+      },
+      "bounds": [
+        {
+          "lat": -27.865469,
+          "lon": 152.073393
+        },
+        {
+          "lat": -26.452339,
+          "lon": 152.073393
+        },
+        {
+          "lat": -26.452339,
+          "lon": 152.927755
+        },
+        {
+          "lat": -27.865469,
+          "lon": 152.927755
+        },
+        {
+          "lat": -27.86546,
+          "lon": 152.073393
+        }
+      ],
+      "context": "Blair electoral division in Queensland, Australia. Covers Brisbane's western suburbs including Toowong, St Lucia, and surrounding areas."
+    },
+    {
+      "id": 10053,
+      "aec_id": 310,
+      "name": "/Australia/QLD/CED/Bonner",
+      "paths": [
+        "/Australia/QLD/CED/Bonner",
+        "/Australia/CED/Bonner"
+      ],
+      "display_name": "Bonner",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/bonner.htm",
+      "centroid": {
+        "lat": -27.316606261645916,
+        "lon": 153.29057720893354
+      },
+      "bounds": [
+        {
+          "lat": -27.606707,
+          "lon": 153.055774
+        },
+        {
+          "lat": -27.021965,
+          "lon": 153.055774
+        },
+        {
+          "lat": -27.021965,
+          "lon": 153.468489
+        },
+        {
+          "lat": -27.606707,
+          "lon": 153.468489
+        },
+        {
+          "lat": -27.6067,
+          "lon": 153.055774
+        }
+      ],
+      "context": "Bonner electoral division in Queensland, Australia. Covers Brisbane's southern suburbs including Greenslopes, Fairfield, and surrounding areas."
+    },
+    {
+      "id": 10054,
+      "aec_id": 155,
+      "name": "/Australia/QLD/CED/Bowman",
+      "paths": [
+        "/Australia/QLD/CED/Bowman",
+        "/Australia/CED/Bowman"
+      ],
+      "display_name": "Bowman",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/bowman.htm",
+      "centroid": {
+        "lat": -27.550155761115057,
+        "lon": 153.35480642842552
+      },
+      "bounds": [
+        {
+          "lat": -27.741407,
+          "lon": 153.171525
+        },
+        {
+          "lat": -27.387907,
+          "lon": 153.171525
+        },
+        {
+          "lat": -27.387907,
+          "lon": 153.546708
+        },
+        {
+          "lat": -27.741407,
+          "lon": 153.546708
+        },
+        {
+          "lat": -27.7414,
+          "lon": 153.171525
+        }
+      ],
+      "context": "Bowman electoral division in Queensland, Australia. Covers Brisbane's southern suburbs including Greenslopes, Fairfield, and surrounding areas."
+    },
+    {
+      "id": 10055,
+      "aec_id": 156,
+      "name": "/Australia/QLD/CED/Brisbane",
+      "paths": [
+        "/Australia/QLD/CED/Brisbane",
+        "/Australia/CED/Brisbane"
+      ],
+      "display_name": "Brisbane",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/brisbane.htm",
+      "centroid": {
+        "lat": -27.438936231737262,
+        "lon": 153.03043599764743
+      },
+      "bounds": [
+        {
+          "lat": -27.480651,
+          "lon": 152.975299
+        },
+        {
+          "lat": -27.404039,
+          "lon": 152.975299
+        },
+        {
+          "lat": -27.404039,
+          "lon": 153.099932
+        },
+        {
+          "lat": -27.480651,
+          "lon": 153.099932
+        },
+        {
+          "lat": -27.48065,
+          "lon": 152.975299
+        }
+      ],
+      "context": "Brisbane electoral division in Queensland, Australia. Covers Brisbane's central suburbs including Brisbane City, South Brisbane, and surrounding areas."
+    },
+    {
+      "id": 10056,
+      "aec_id": 157,
+      "name": "/Australia/QLD/CED/Capricornia",
+      "paths": [
+        "/Australia/QLD/CED/Capricornia",
+        "/Australia/CED/Capricornia"
+      ],
+      "display_name": "Capricornia",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/capricornia.htm",
+      "centroid": {
+        "lat": -22.081251626439062,
+        "lon": 149.42853567388556
+      },
+      "bounds": [
+        {
+          "lat": -23.556035,
+          "lon": 146.031455
+        },
+        {
+          "lat": -20.294495,
+          "lon": 146.031455
+        },
+        {
+          "lat": -20.294495,
+          "lon": 152.908736
+        },
+        {
+          "lat": -23.556035,
+          "lon": 152.908736
+        },
+        {
+          "lat": -23.55603,
+          "lon": 146.031455
+        }
+      ],
+      "context": "Capricornia electoral division in Queensland, Australia. Covers Rockhampton and surrounding areas."
+    },
+    {
+      "id": 10057,
+      "aec_id": 158,
+      "name": "/Australia/QLD/CED/Dawson",
+      "paths": [
+        "/Australia/QLD/CED/Dawson",
+        "/Australia/CED/Dawson"
+      ],
+      "display_name": "Dawson",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/dawson.htm",
+      "centroid": {
+        "lat": -20.29486555420859,
+        "lon": 149.28859370550225
+      },
+      "bounds": [
+        {
+          "lat": -21.297933,
+          "lon": 146.761029
+        },
+        {
+          "lat": -19.181776,
+          "lon": 146.761029
+        },
+        {
+          "lat": -19.181776,
+          "lon": 152.677731
+        },
+        {
+          "lat": -21.297933,
+          "lon": 152.677731
+        },
+        {
+          "lat": -21.29793,
+          "lon": 146.761029
+        }
+      ],
+      "context": "Dawson electoral division in Queensland, Australia. Covers Mackay and surrounding areas."
+    },
+    {
+      "id": 10058,
+      "aec_id": 252,
+      "name": "/Australia/QLD/CED/Dickson",
+      "paths": [
+        "/Australia/QLD/CED/Dickson",
+        "/Australia/CED/Dickson"
+      ],
+      "display_name": "Dickson",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/dickson.htm",
+      "centroid": {
+        "lat": -27.271569759222118,
+        "lon": 152.84826431782844
+      },
+      "bounds": [
+        {
+          "lat": -27.422375,
+          "lon": 152.68095
+        },
+        {
+          "lat": -27.086267,
+          "lon": 152.68095
+        },
+        {
+          "lat": -27.086267,
+          "lon": 153.02059
+        },
+        {
+          "lat": -27.422375,
+          "lon": 153.02059
+        },
+        {
+          "lat": -27.42237,
+          "lon": 152.68095
+        }
+      ],
+      "context": "Dickson electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10059,
+      "aec_id": 159,
+      "name": "/Australia/QLD/CED/Fadden",
+      "paths": [
+        "/Australia/QLD/CED/Fadden",
+        "/Australia/CED/Fadden"
+      ],
+      "display_name": "Fadden",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/fadden.htm",
+      "centroid": {
+        "lat": -27.817053428550413,
+        "lon": 153.34852649857277
+      },
+      "bounds": [
+        {
+          "lat": -27.976955,
+          "lon": 153.21273
+        },
+        {
+          "lat": -27.690266,
+          "lon": 153.21273
+        },
+        {
+          "lat": -27.690266,
+          "lon": 153.449354
+        },
+        {
+          "lat": -27.976955,
+          "lon": 153.449354
+        },
+        {
+          "lat": -27.97695,
+          "lon": 153.21273
+        }
+      ],
+      "context": "Fadden electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10060,
+      "aec_id": 160,
+      "name": "/Australia/QLD/CED/Fairfax",
+      "paths": [
+        "/Australia/QLD/CED/Fairfax",
+        "/Australia/CED/Fairfax"
+      ],
+      "display_name": "Fairfax",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/fairfax.htm",
+      "centroid": {
+        "lat": -26.583063587459883,
+        "lon": 152.88566653706704
+      },
+      "bounds": [
+        {
+          "lat": -26.733574,
+          "lon": 152.550871
+        },
+        {
+          "lat": -26.432044,
+          "lon": 152.550871
+        },
+        {
+          "lat": -26.432044,
+          "lon": 153.119651
+        },
+        {
+          "lat": -26.733574,
+          "lon": 153.119651
+        },
+        {
+          "lat": -26.73357,
+          "lon": 152.550871
+        }
+      ],
+      "context": "Fairfax electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10061,
+      "aec_id": 161,
+      "name": "/Australia/QLD/CED/Fisher",
+      "paths": [
+        "/Australia/QLD/CED/Fisher",
+        "/Australia/CED/Fisher"
+      ],
+      "display_name": "Fisher",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/fisher.htm",
+      "centroid": {
+        "lat": -26.7885223147015,
+        "lon": 152.9038996378836
+      },
+      "bounds": [
+        {
+          "lat": -26.984787,
+          "lon": 152.582116
+        },
+        {
+          "lat": -26.615283,
+          "lon": 152.582116
+        },
+        {
+          "lat": -26.615283,
+          "lon": 153.151394
+        },
+        {
+          "lat": -26.984787,
+          "lon": 153.151394
+        },
+        {
+          "lat": -26.98478,
+          "lon": 152.582116
+        }
+      ],
+      "context": "Fisher electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10062,
+      "aec_id": 311,
+      "name": "/Australia/QLD/CED/Flynn",
+      "paths": [
+        "/Australia/QLD/CED/Flynn",
+        "/Australia/CED/Flynn"
+      ],
+      "display_name": "Flynn",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/flynn.htm",
+      "centroid": {
+        "lat": -24.385941391645826,
+        "lon": 150.10544076541638
+      },
+      "bounds": [
+        {
+          "lat": -26.478767,
+          "lon": 146.572458
+        },
+        {
+          "lat": -22.654254,
+          "lon": 146.572458
+        },
+        {
+          "lat": -22.654254,
+          "lon": 153.264621
+        },
+        {
+          "lat": -26.478767,
+          "lon": 153.264621
+        },
+        {
+          "lat": -26.47876,
+          "lon": 146.572458
+        }
+      ],
+      "context": "Flynn electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10063,
+      "aec_id": 162,
+      "name": "/Australia/QLD/CED/Forde",
+      "paths": [
+        "/Australia/QLD/CED/Forde",
+        "/Australia/CED/Forde"
+      ],
+      "display_name": "Forde",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/forde.htm",
+      "centroid": {
+        "lat": -27.76170550544764,
+        "lon": 153.18057800091213
+      },
+      "bounds": [
+        {
+          "lat": -27.919252,
+          "lon": 152.986801
+        },
+        {
+          "lat": -27.633997,
+          "lon": 152.986801
+        },
+        {
+          "lat": -27.633997,
+          "lon": 153.314466
+        },
+        {
+          "lat": -27.919252,
+          "lon": 153.314466
+        },
+        {
+          "lat": -27.91925,
+          "lon": 152.986801
+        }
+      ],
+      "context": "Forde electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10064,
+      "aec_id": 163,
+      "name": "/Australia/QLD/CED/Griffith",
+      "paths": [
+        "/Australia/QLD/CED/Griffith",
+        "/Australia/CED/Griffith"
+      ],
+      "display_name": "Griffith",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/griffith.htm",
+      "centroid": {
+        "lat": -27.485333300378894,
+        "lon": 153.06275816092045
+      },
+      "bounds": [
+        {
+          "lat": -27.531787,
+          "lon": 152.995396
+        },
+        {
+          "lat": -27.440768,
+          "lon": 152.995396
+        },
+        {
+          "lat": -27.440768,
+          "lon": 153.106651
+        },
+        {
+          "lat": -27.531787,
+          "lon": 153.106651
+        },
+        {
+          "lat": -27.53178,
+          "lon": 152.995396
+        }
+      ],
+      "context": "Griffith electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10065,
+      "aec_id": 164,
+      "name": "/Australia/QLD/CED/Groom",
+      "paths": [
+        "/Australia/QLD/CED/Groom",
+        "/Australia/CED/Groom"
+      ],
+      "display_name": "Groom",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/groom.htm",
+      "centroid": {
+        "lat": -27.48383019207988,
+        "lon": 151.65346120981954
+      },
+      "bounds": [
+        {
+          "lat": -27.907429,
+          "lon": 151.076181
+        },
+        {
+          "lat": -26.967754,
+          "lon": 151.076181
+        },
+        {
+          "lat": -26.967754,
+          "lon": 152.153098
+        },
+        {
+          "lat": -27.907429,
+          "lon": 152.153098
+        },
+        {
+          "lat": -27.90742,
+          "lon": 151.076181
+        }
+      ],
+      "context": "Groom electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10066,
+      "aec_id": 165,
+      "name": "/Australia/QLD/CED/Herbert",
+      "paths": [
+        "/Australia/QLD/CED/Herbert",
+        "/Australia/CED/Herbert"
+      ],
+      "display_name": "Herbert",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/herbert.htm",
+      "centroid": {
+        "lat": -18.97516915268437,
+        "lon": 147.4106733864931
+      },
+      "bounds": [
+        {
+          "lat": -19.416731,
+          "lon": 146.27542
+        },
+        {
+          "lat": -18.498454,
+          "lon": 146.27542
+        },
+        {
+          "lat": -18.498454,
+          "lon": 149.325557
+        },
+        {
+          "lat": -19.416731,
+          "lon": 149.325557
+        },
+        {
+          "lat": -19.41673,
+          "lon": 146.27542
+        }
+      ],
+      "context": "Herbert electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10067,
+      "aec_id": 166,
+      "name": "/Australia/QLD/CED/Hinkler",
+      "paths": [
+        "/Australia/QLD/CED/Hinkler",
+        "/Australia/CED/Hinkler"
+      ],
+      "display_name": "Hinkler",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/hinkler.htm",
+      "centroid": {
+        "lat": -25.100711678222524,
+        "lon": 152.62904856964607
+      },
+      "bounds": [
+        {
+          "lat": -25.509052,
+          "lon": 151.98244
+        },
+        {
+          "lat": -24.747295,
+          "lon": 151.98244
+        },
+        {
+          "lat": -24.747295,
+          "lon": 153.23322
+        },
+        {
+          "lat": -25.509052,
+          "lon": 153.23322
+        },
+        {
+          "lat": -25.50905,
+          "lon": 151.98244
+        }
+      ],
+      "context": "Hinkler electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10068,
+      "aec_id": 167,
+      "name": "/Australia/QLD/CED/Kennedy",
+      "paths": [
+        "/Australia/QLD/CED/Kennedy",
+        "/Australia/CED/Kennedy"
+      ],
+      "display_name": "Kennedy",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/kennedy.htm",
+      "centroid": {
+        "lat": -19.379303150393024,
+        "lon": 142.02797164728452
+      },
+      "bounds": [
+        {
+          "lat": -23.693644,
+          "lon": 137.99166
+        },
+        {
+          "lat": -15.837752,
+          "lon": 137.99166
+        },
+        {
+          "lat": -15.837752,
+          "lon": 147.599399
+        },
+        {
+          "lat": -23.693644,
+          "lon": 147.599399
+        },
+        {
+          "lat": -23.69364,
+          "lon": 137.99166
+        }
+      ],
+      "context": "Kennedy electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10069,
+      "aec_id": 168,
+      "name": "/Australia/QLD/CED/Leichhardt",
+      "paths": [
+        "/Australia/QLD/CED/Leichhardt",
+        "/Australia/CED/Leichhardt"
+      ],
+      "display_name": "Leichhardt",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/leichhardt.htm",
+      "centroid": {
+        "lat": -13.199248511099738,
+        "lon": 142.9770149564636
+      },
+      "bounds": [
+        {
+          "lat": -17.045015,
+          "lon": 140.995581
+        },
+        {
+          "lat": -9.115517,
+          "lon": 140.995581
+        },
+        {
+          "lat": -9.115517,
+          "lon": 146.362085
+        },
+        {
+          "lat": -17.045015,
+          "lon": 146.362085
+        },
+        {
+          "lat": -17.04501,
+          "lon": 140.995581
+        }
+      ],
+      "context": "Leichhardt electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10070,
+      "aec_id": 169,
+      "name": "/Australia/QLD/CED/Lilley",
+      "paths": [
+        "/Australia/QLD/CED/Lilley",
+        "/Australia/CED/Lilley"
+      ],
+      "display_name": "Lilley",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/lilley.htm",
+      "centroid": {
+        "lat": -27.376662434567233,
+        "lon": 153.07336320334247
+      },
+      "bounds": [
+        {
+          "lat": -27.445258,
+          "lon": 152.975285
+        },
+        {
+          "lat": -27.276796,
+          "lon": 152.975285
+        },
+        {
+          "lat": -27.276796,
+          "lon": 153.160525
+        },
+        {
+          "lat": -27.445258,
+          "lon": 153.160525
+        },
+        {
+          "lat": -27.44525,
+          "lon": 152.975285
+        }
+      ],
+      "context": "Lilley electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10071,
+      "aec_id": 302,
+      "name": "/Australia/QLD/CED/Longman",
+      "paths": [
+        "/Australia/QLD/CED/Longman",
+        "/Australia/CED/Longman"
+      ],
+      "display_name": "Longman",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/longman.htm",
+      "centroid": {
+        "lat": -27.013404727034516,
+        "lon": 152.90234443359228
+      },
+      "bounds": [
+        {
+          "lat": -27.250262,
+          "lon": 152.651189
+        },
+        {
+          "lat": -26.79227,
+          "lon": 152.651189
+        },
+        {
+          "lat": -26.79227,
+          "lon": 153.207558
+        },
+        {
+          "lat": -27.250262,
+          "lon": 153.207558
+        },
+        {
+          "lat": -27.25026,
+          "lon": 152.651189
+        }
+      ],
+      "context": "Longman electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10072,
+      "aec_id": 170,
+      "name": "/Australia/QLD/CED/Maranoa",
+      "paths": [
+        "/Australia/QLD/CED/Maranoa",
+        "/Australia/CED/Maranoa"
+      ],
+      "display_name": "Maranoa",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/maranoa.htm",
+      "centroid": {
+        "lat": -25.80692753121768,
+        "lon": 144.7174322297396
+      },
+      "bounds": [
+        {
+          "lat": -29.177898,
+          "lon": 137.996879
+        },
+        {
+          "lat": -21.308656,
+          "lon": 137.996879
+        },
+        {
+          "lat": -21.308656,
+          "lon": 152.492637
+        },
+        {
+          "lat": -29.177898,
+          "lon": 152.492637
+        },
+        {
+          "lat": -29.17789,
+          "lon": 137.996879
+        }
+      ],
+      "context": "Maranoa electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10073,
+      "aec_id": 171,
+      "name": "/Australia/QLD/CED/McPherson",
+      "paths": [
+        "/Australia/QLD/CED/McPherson",
+        "/Australia/CED/McPherson"
+      ],
+      "display_name": "McPherson",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/mcpherson.htm",
+      "centroid": {
+        "lat": -28.14755637081941,
+        "lon": 153.39860733718228
+      },
+      "bounds": [
+        {
+          "lat": -28.250311,
+          "lon": 153.294263
+        },
+        {
+          "lat": -28.030988,
+          "lon": 153.294263
+        },
+        {
+          "lat": -28.030988,
+          "lon": 153.552171
+        },
+        {
+          "lat": -28.250311,
+          "lon": 153.552171
+        },
+        {
+          "lat": -28.25031,
+          "lon": 153.294263
+        }
+      ],
+      "context": "McPherson electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10074,
+      "aec_id": 172,
+      "name": "/Australia/QLD/CED/Moncrieff",
+      "paths": [
+        "/Australia/QLD/CED/Moncrieff",
+        "/Australia/CED/Moncrieff"
+      ],
+      "display_name": "Moncrieff",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/moncrieff.htm",
+      "centroid": {
+        "lat": -28.004398992702296,
+        "lon": 153.38411342109688
+      },
+      "bounds": [
+        {
+          "lat": -28.076645,
+          "lon": 153.285975
+        },
+        {
+          "lat": -27.933812,
+          "lon": 153.285975
+        },
+        {
+          "lat": -27.933812,
+          "lon": 153.447581
+        },
+        {
+          "lat": -28.076645,
+          "lon": 153.447581
+        },
+        {
+          "lat": -28.07664,
+          "lon": 153.285975
+        }
+      ],
+      "context": "Moncrieff electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10075,
+      "aec_id": 173,
+      "name": "/Australia/QLD/CED/Moreton",
+      "paths": [
+        "/Australia/QLD/CED/Moreton",
+        "/Australia/CED/Moreton"
+      ],
+      "display_name": "Moreton",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/moreton.htm",
+      "centroid": {
+        "lat": -27.562753474538948,
+        "lon": 153.0324658925293
+      },
+      "bounds": [
+        {
+          "lat": -27.618091,
+          "lon": 152.96204
+        },
+        {
+          "lat": -27.499829,
+          "lon": 152.96204
+        },
+        {
+          "lat": -27.499829,
+          "lon": 153.111147
+        },
+        {
+          "lat": -27.618091,
+          "lon": 153.111147
+        },
+        {
+          "lat": -27.61809,
+          "lon": 152.96204
+        }
+      ],
+      "context": "Moreton electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10076,
+      "aec_id": 174,
+      "name": "/Australia/QLD/CED/Oxley",
+      "paths": [
+        "/Australia/QLD/CED/Oxley",
+        "/Australia/CED/Oxley"
+      ],
+      "display_name": "Oxley",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/oxley.htm",
+      "centroid": {
+        "lat": -27.608282330783055,
+        "lon": 152.93381570730062
+      },
+      "bounds": [
+        {
+          "lat": -27.686481,
+          "lon": 152.852921
+        },
+        {
+          "lat": -27.526793,
+          "lon": 152.852921
+        },
+        {
+          "lat": -27.526793,
+          "lon": 153.025278
+        },
+        {
+          "lat": -27.686481,
+          "lon": 153.025278
+        },
+        {
+          "lat": -27.68648,
+          "lon": 152.852921
+        }
+      ],
+      "context": "Oxley electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10077,
+      "aec_id": 175,
+      "name": "/Australia/QLD/CED/Petrie",
+      "paths": [
+        "/Australia/QLD/CED/Petrie",
+        "/Australia/CED/Petrie"
+      ],
+      "display_name": "Petrie",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/petrie.htm",
+      "centroid": {
+        "lat": -27.246275986691998,
+        "lon": 153.03879906848766
+      },
+      "bounds": [
+        {
+          "lat": -27.365258,
+          "lon": 152.97751
+        },
+        {
+          "lat": -27.14787,
+          "lon": 152.97751
+        },
+        {
+          "lat": -27.14787,
+          "lon": 153.119525
+        },
+        {
+          "lat": -27.365258,
+          "lon": 153.119525
+        },
+        {
+          "lat": -27.36525,
+          "lon": 152.97751
+        }
+      ],
+      "context": "Oxley electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10078,
+      "aec_id": 176,
+      "name": "/Australia/QLD/CED/Rankin",
+      "paths": [
+        "/Australia/QLD/CED/Rankin",
+        "/Australia/CED/Rankin"
+      ],
+      "display_name": "Rankin",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/rankin.htm",
+      "centroid": {
+        "lat": -27.64223827939567,
+        "lon": 153.09431306680065
+      },
+      "bounds": [
+        {
+          "lat": -27.700167,
+          "lon": 153.014889
+        },
+        {
+          "lat": -27.587311,
+          "lon": 153.014889
+        },
+        {
+          "lat": -27.587311,
+          "lon": 153.183562
+        },
+        {
+          "lat": -27.700167,
+          "lon": 153.183562
+        },
+        {
+          "lat": -27.70016,
+          "lon": 153.014889
+        }
+      ],
+      "context": "Oxley electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10079,
+      "aec_id": 177,
+      "name": "/Australia/QLD/CED/Ryan",
+      "paths": [
+        "/Australia/QLD/CED/Ryan",
+        "/Australia/CED/Ryan"
+      ],
+      "display_name": "Ryan",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/ryan.htm",
+      "centroid": {
+        "lat": -27.459987370555467,
+        "lon": 152.86352579612006
+      },
+      "bounds": [
+        {
+          "lat": -27.602534,
+          "lon": 152.679693
+        },
+        {
+          "lat": -27.318469,
+          "lon": 152.679693
+        },
+        {
+          "lat": -27.318469,
+          "lon": 153.021748
+        },
+        {
+          "lat": -27.602534,
+          "lon": 153.021748
+        },
+        {
+          "lat": -27.60253,
+          "lon": 152.679693
+        }
+      ],
+      "context": "Oxley electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10080,
+      "aec_id": 178,
+      "name": "/Australia/QLD/CED/Wide Bay",
+      "paths": [
+        "/Australia/QLD/CED/Wide Bay",
+        "/Australia/CED/Wide Bay"
+      ],
+      "display_name": "Wide Bay",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/wide bay.htm",
+      "centroid": {
+        "lat": -25.917588200445,
+        "lon": 152.5657314295503
+      },
+      "bounds": [
+        {
+          "lat": -26.597709,
+          "lon": 151.7194
+        },
+        {
+          "lat": -24.696996,
+          "lon": 151.7194
+        },
+        {
+          "lat": -24.696996,
+          "lon": 153.360352
+        },
+        {
+          "lat": -26.597709,
+          "lon": 153.360352
+        },
+        {
+          "lat": -26.5977,
+          "lon": 151.7194
+        }
+      ],
+      "context": "Wide Bay electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10081,
+      "aec_id": 316,
+      "name": "/Australia/QLD/CED/Wright",
+      "paths": [
+        "/Australia/QLD/CED/Wright",
+        "/Australia/CED/Wright"
+      ],
+      "display_name": "Wright",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/qld/wright.htm",
+      "centroid": {
+        "lat": -27.91713718580011,
+        "lon": 152.6740434711744
+      },
+      "bounds": [
+        {
+          "lat": -28.363963,
+          "lon": 151.942075
+        },
+        {
+          "lat": -27.385228,
+          "lon": 151.942075
+        },
+        {
+          "lat": -27.385228,
+          "lon": 153.370122
+        },
+        {
+          "lat": -28.363963,
+          "lon": 153.370122
+        },
+        {
+          "lat": -28.36396,
+          "lon": 151.942075
+        }
+      ],
+      "context": "Wright electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10082,
+      "aec_id": 179,
+      "name": "/Australia/SA/CED/Adelaide",
+      "paths": [
+        "/Australia/SA/CED/Adelaide",
+        "/Australia/CED/Adelaide"
+      ],
+      "display_name": "Adelaide",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/sa/adelaide.htm",
+      "centroid": {
+        "lat": -34.902545363419996,
+        "lon": 138.58902609764814
+      },
+      "bounds": [
+        {
+          "lat": -34.967237,
+          "lon": 138.546715
+        },
+        {
+          "lat": -34.846848,
+          "lon": 138.546715
+        },
+        {
+          "lat": -34.846848,
+          "lon": 138.638165
+        },
+        {
+          "lat": -34.967237,
+          "lon": 138.638165
+        },
+        {
+          "lat": -34.96723,
+          "lon": 138.546715
+        }
+      ],
+      "context": "Adelaide electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10083,
+      "aec_id": 180,
+      "name": "/Australia/SA/CED/Barker",
+      "paths": [
+        "/Australia/SA/CED/Barker",
+        "/Australia/CED/Barker"
+      ],
+      "display_name": "Barker",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/sa/barker.htm",
+      "centroid": {
+        "lat": -35.51267264199071,
+        "lon": 140.1808962005806
+      },
+      "bounds": [
+        {
+          "lat": -38.062603,
+          "lon": 138.744114
+        },
+        {
+          "lat": -33.310387,
+          "lon": 138.744114
+        },
+        {
+          "lat": -33.310387,
+          "lon": 141.002956
+        },
+        {
+          "lat": -38.062603,
+          "lon": 141.002956
+        },
+        {
+          "lat": -38.0626,
+          "lon": 138.744114
+        }
+      ],
+      "context": "Barker electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10084,
+      "aec_id": 182,
+      "name": "/Australia/SA/CED/Boothby",
+      "paths": [
+        "/Australia/SA/CED/Boothby",
+        "/Australia/CED/Boothby"
+      ],
+      "display_name": "Boothby",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/sa/boothby.htm",
+      "centroid": {
+        "lat": -35.002138644708296,
+        "lon": 138.58433886165295
+      },
+      "bounds": [
+        {
+          "lat": -35.059834,
+          "lon": 138.503686
+        },
+        {
+          "lat": -34.951985,
+          "lon": 138.503686
+        },
+        {
+          "lat": -34.951985,
+          "lon": 138.681387
+        },
+        {
+          "lat": -35.059834,
+          "lon": 138.681387
+        },
+        {
+          "lat": -35.05983,
+          "lon": 138.503686
+        }
+      ],
+      "context": "Boothby electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10085,
+      "aec_id": 183,
+      "name": "/Australia/SA/CED/Grey",
+      "paths": [
+        "/Australia/SA/CED/Grey",
+        "/Australia/CED/Grey"
+      ],
+      "display_name": "Grey",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/sa/grey.htm",
+      "centroid": {
+        "lat": -29.62946531040223,
+        "lon": 135.47150357665473
+      },
+      "bounds": [
+        {
+          "lat": -35.378187,
+          "lon": 129.001337
+        },
+        {
+          "lat": -25.996146,
+          "lon": 129.001337
+        },
+        {
+          "lat": -25.996146,
+          "lon": 141.002239
+        },
+        {
+          "lat": -35.378187,
+          "lon": 141.002239
+        },
+        {
+          "lat": -35.37818,
+          "lon": 129.001337
+        }
+      ],
+      "context": "Grey electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10086,
+      "aec_id": 185,
+      "name": "/Australia/SA/CED/Hindmarsh",
+      "paths": [
+        "/Australia/SA/CED/Hindmarsh",
+        "/Australia/CED/Hindmarsh"
+      ],
+      "display_name": "Hindmarsh",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/sa/hindmarsh.htm",
+      "centroid": {
+        "lat": -34.868166762315695,
+        "lon": 138.51929733065757
+      },
+      "bounds": [
+        {
+          "lat": -34.975938,
+          "lon": 138.475723
+        },
+        {
+          "lat": -34.755243,
+          "lon": 138.475723
+        },
+        {
+          "lat": -34.755243,
+          "lon": 138.575387
+        },
+        {
+          "lat": -34.975938,
+          "lon": 138.575387
+        },
+        {
+          "lat": -34.97593,
+          "lon": 138.475723
+        }
+      ],
+      "context": "Hindmarsh electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10087,
+      "aec_id": 186,
+      "name": "/Australia/SA/CED/Kingston",
+      "paths": [
+        "/Australia/SA/CED/Kingston",
+        "/Australia/CED/Kingston"
+      ],
+      "display_name": "Kingston",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/sa/kingston.htm",
+      "centroid": {
+        "lat": -35.11978745145852,
+        "lon": 138.53351172568665
+      },
+      "bounds": [
+        {
+          "lat": -35.247361,
+          "lon": 138.461713
+        },
+        {
+          "lat": -35.023294,
+          "lon": 138.461713
+        },
+        {
+          "lat": -35.023294,
+          "lon": 138.628128
+        },
+        {
+          "lat": -35.247361,
+          "lon": 138.628128
+        },
+        {
+          "lat": -35.24736,
+          "lon": 138.461713
+        }
+      ],
+      "context": "Kingston electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10088,
+      "aec_id": 187,
+      "name": "/Australia/SA/CED/Makin",
+      "paths": [
+        "/Australia/SA/CED/Makin",
+        "/Australia/CED/Makin"
+      ],
+      "display_name": "Makin",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/sa/makin.htm",
+      "centroid": {
+        "lat": -34.80200503423269,
+        "lon": 138.66773414698363
+      },
+      "bounds": [
+        {
+          "lat": -34.849857,
+          "lon": 138.546655
+        },
+        {
+          "lat": -34.734253,
+          "lon": 138.546655
+        },
+        {
+          "lat": -34.734253,
+          "lon": 138.78019
+        },
+        {
+          "lat": -34.849857,
+          "lon": 138.78019
+        },
+        {
+          "lat": -34.84985,
+          "lon": 138.546655
+        }
+      ],
+      "context": "Makin electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10089,
+      "aec_id": 188,
+      "name": "/Australia/SA/CED/Mayo",
+      "paths": [
+        "/Australia/SA/CED/Mayo",
+        "/Australia/CED/Mayo"
+      ],
+      "display_name": "Mayo",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/sa/mayo.htm",
+      "centroid": {
+        "lat": -35.53912102477734,
+        "lon": 138.01151188841428
+      },
+      "bounds": [
+        {
+          "lat": -36.086604,
+          "lon": 136.532942
+        },
+        {
+          "lat": -34.680483,
+          "lon": 136.532942
+        },
+        {
+          "lat": -34.680483,
+          "lon": 139.158312
+        },
+        {
+          "lat": -36.086604,
+          "lon": 139.158312
+        },
+        {
+          "lat": -36.0866,
+          "lon": 136.532942
+        }
+      ],
+      "context": "Mayo electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10090,
+      "aec_id": 325,
+      "name": "/Australia/SA/CED/Spence",
+      "paths": [
+        "/Australia/SA/CED/Spence",
+        "/Australia/CED/Spence"
+      ],
+      "display_name": "Spence",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/sa/spence.htm",
+      "centroid": {
+        "lat": -34.68193229226407,
+        "lon": 138.67021521026268
+      },
+      "bounds": [
+        {
+          "lat": -34.791796,
+          "lon": 138.435645
+        },
+        {
+          "lat": -34.550732,
+          "lon": 138.435645
+        },
+        {
+          "lat": -34.550732,
+          "lon": 138.848044
+        },
+        {
+          "lat": -34.791796,
+          "lon": 138.848044
+        },
+        {
+          "lat": -34.79179,
+          "lon": 138.435645
+        }
+      ],
+      "context": "Spence electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10091,
+      "aec_id": 190,
+      "name": "/Australia/SA/CED/Sturt",
+      "paths": [
+        "/Australia/SA/CED/Sturt",
+        "/Australia/CED/Sturt"
+      ],
+      "display_name": "Sturt",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/sa/sturt.htm",
+      "centroid": {
+        "lat": -34.89758087508902,
+        "lon": 138.66916143336258
+      },
+      "bounds": [
+        {
+          "lat": -34.976197,
+          "lon": 138.612826
+        },
+        {
+          "lat": -34.837125,
+          "lon": 138.612826
+        },
+        {
+          "lat": -34.837125,
+          "lon": 138.756521
+        },
+        {
+          "lat": -34.976197,
+          "lon": 138.756521
+        },
+        {
+          "lat": -34.97619,
+          "lon": 138.612826
+        }
+      ],
+      "context": "Sturt electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10092,
+      "aec_id": 192,
+      "name": "/Australia/TAS/CED/Bass",
+      "paths": [
+        "/Australia/TAS/CED/Bass",
+        "/Australia/CED/Bass"
+      ],
+      "display_name": "Bass",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/tas/bass.htm",
+      "centroid": {
+        "lat": -40.90880283186195,
+        "lon": 147.6033156197957
+      },
+      "bounds": [
+        {
+          "lat": -41.556178,
+          "lon": 146.380633
+        },
+        {
+          "lat": -39.203662,
+          "lon": 146.380633
+        },
+        {
+          "lat": -39.203662,
+          "lon": 148.498674
+        },
+        {
+          "lat": -41.556178,
+          "lon": 148.498674
+        },
+        {
+          "lat": -41.55617,
+          "lon": 146.380633
+        }
+      ],
+      "context": "Bass electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10093,
+      "aec_id": 193,
+      "name": "/Australia/TAS/CED/Braddon",
+      "paths": [
+        "/Australia/TAS/CED/Braddon",
+        "/Australia/CED/Braddon"
+      ],
+      "display_name": "Braddon",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/tas/braddon.htm",
+      "centroid": {
+        "lat": -41.6387726331175,
+        "lon": 145.44144770315202
+      },
+      "bounds": [
+        {
+          "lat": -43.322614,
+          "lon": 143.818923
+        },
+        {
+          "lat": -39.579252,
+          "lon": 143.818923
+        },
+        {
+          "lat": -39.579252,
+          "lon": 146.76206
+        },
+        {
+          "lat": -43.322614,
+          "lon": 146.76206
+        },
+        {
+          "lat": -43.32261,
+          "lon": 143.818923
+        }
+      ],
+      "context": "Braddon electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10094,
+      "aec_id": 319,
+      "name": "/Australia/TAS/CED/Clark",
+      "paths": [
+        "/Australia/TAS/CED/Clark",
+        "/Australia/CED/Clark"
+      ],
+      "display_name": "Clark",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/tas/clark.htm",
+      "centroid": {
+        "lat": -42.88927147887644,
+        "lon": 147.24328295998993
+      },
+      "bounds": [
+        {
+          "lat": -42.986264,
+          "lon": 147.135393
+        },
+        {
+          "lat": -42.750403,
+          "lon": 147.135393
+        },
+        {
+          "lat": -42.750403,
+          "lon": 147.361982
+        },
+        {
+          "lat": -42.986264,
+          "lon": 147.361982
+        },
+        {
+          "lat": -42.98626,
+          "lon": 147.135393
+        }
+      ],
+      "context": "Clark electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10095,
+      "aec_id": 195,
+      "name": "/Australia/TAS/CED/Franklin",
+      "paths": [
+        "/Australia/TAS/CED/Franklin",
+        "/Australia/CED/Franklin"
+      ],
+      "display_name": "Franklin",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/tas/franklin.htm",
+      "centroid": {
+        "lat": -43.2331410600221,
+        "lon": 146.69806480602122
+      },
+      "bounds": [
+        {
+          "lat": -43.74051,
+          "lon": 145.915093
+        },
+        {
+          "lat": -42.761214,
+          "lon": 145.915093
+        },
+        {
+          "lat": -42.761214,
+          "lon": 147.613383
+        },
+        {
+          "lat": -43.74051,
+          "lon": 147.613383
+        },
+        {
+          "lat": -43.7405,
+          "lon": 145.915093
+        }
+      ],
+      "context": "Franklin electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10096,
+      "aec_id": 196,
+      "name": "/Australia/TAS/CED/Lyons",
+      "paths": [
+        "/Australia/TAS/CED/Lyons",
+        "/Australia/CED/Lyons"
+      ],
+      "display_name": "Lyons",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/tas/lyons.htm",
+      "centroid": {
+        "lat": -42.11250072259381,
+        "lon": 147.08662433049122
+      },
+      "bounds": [
+        {
+          "lat": -43.246566,
+          "lon": 145.832501
+        },
+        {
+          "lat": -40.715064,
+          "lon": 145.832501
+        },
+        {
+          "lat": -40.715064,
+          "lon": 148.359261
+        },
+        {
+          "lat": -43.246566,
+          "lon": 148.359261
+        },
+        {
+          "lat": -43.24656,
+          "lon": 145.832501
+        }
+      ],
+      "context": "Lyons electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10097,
+      "aec_id": 197,
+      "name": "/Australia/VIC/CED/Aston",
+      "paths": [
+        "/Australia/VIC/CED/Aston",
+        "/Australia/CED/Aston"
+      ],
+      "display_name": "Aston",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/aston.htm",
+      "centroid": {
+        "lat": -37.88896729171631,
+        "lon": 145.25863898300975
+      },
+      "bounds": [
+        {
+          "lat": -37.963976,
+          "lon": 145.190852
+        },
+        {
+          "lat": -37.833033,
+          "lon": 145.190852
+        },
+        {
+          "lat": -37.833033,
+          "lon": 145.347619
+        },
+        {
+          "lat": -37.963976,
+          "lon": 145.347619
+        },
+        {
+          "lat": -37.96397,
+          "lon": 145.190852
+        }
+      ],
+      "context": "Aston electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10098,
+      "aec_id": 198,
+      "name": "/Australia/VIC/CED/Ballarat",
+      "paths": [
+        "/Australia/VIC/CED/Ballarat",
+        "/Australia/CED/Ballarat"
+      ],
+      "display_name": "Ballarat",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/ballarat.htm",
+      "centroid": {
+        "lat": -37.620943549621124,
+        "lon": 143.91043253650787
+      },
+      "bounds": [
+        {
+          "lat": -38.065483,
+          "lon": 143.440553
+        },
+        {
+          "lat": -37.14766,
+          "lon": 143.440553
+        },
+        {
+          "lat": -37.14766,
+          "lon": 144.419031
+        },
+        {
+          "lat": -38.065483,
+          "lon": 144.419031
+        },
+        {
+          "lat": -38.06548,
+          "lon": 143.440553
+        }
+      ],
+      "context": "Ballarat electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10099,
+      "aec_id": 200,
+      "name": "/Australia/VIC/CED/Bendigo",
+      "paths": [
+        "/Australia/VIC/CED/Bendigo",
+        "/Australia/CED/Bendigo"
+      ],
+      "display_name": "Bendigo",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/bendigo.htm",
+      "centroid": {
+        "lat": -36.89015461075622,
+        "lon": 144.37351860575052
+      },
+      "bounds": [
+        {
+          "lat": -37.386072,
+          "lon": 143.830638
+        },
+        {
+          "lat": -36.385183,
+          "lon": 143.830638
+        },
+        {
+          "lat": -36.385183,
+          "lon": 144.853563
+        },
+        {
+          "lat": -37.386072,
+          "lon": 144.853563
+        },
+        {
+          "lat": -37.38607,
+          "lon": 143.830638
+        }
+      ],
+      "context": "Bendigo electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10100,
+      "aec_id": 201,
+      "name": "/Australia/VIC/CED/Bruce",
+      "paths": [
+        "/Australia/VIC/CED/Bruce",
+        "/Australia/CED/Bruce"
+      ],
+      "display_name": "Bruce",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/bruce.htm",
+      "centroid": {
+        "lat": -37.99370571567711,
+        "lon": 145.27938762597333
+      },
+      "bounds": [
+        {
+          "lat": -38.074511,
+          "lon": 145.188362
+        },
+        {
+          "lat": -37.923128,
+          "lon": 145.188362
+        },
+        {
+          "lat": -37.923128,
+          "lon": 145.361053
+        },
+        {
+          "lat": -38.074511,
+          "lon": 145.361053
+        },
+        {
+          "lat": -38.07451,
+          "lon": 145.188362
+        }
+      ],
+      "context": "Bruce electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10101,
+      "aec_id": 203,
+      "name": "/Australia/VIC/CED/Calwell",
+      "paths": [
+        "/Australia/VIC/CED/Calwell",
+        "/Australia/CED/Calwell"
+      ],
+      "display_name": "Calwell",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/calwell.htm",
+      "centroid": {
+        "lat": -37.59914094873974,
+        "lon": 144.9014629072374
+      },
+      "bounds": [
+        {
+          "lat": -37.694691,
+          "lon": 144.806039
+        },
+        {
+          "lat": -37.502119,
+          "lon": 144.806039
+        },
+        {
+          "lat": -37.502119,
+          "lon": 144.977813
+        },
+        {
+          "lat": -37.694691,
+          "lon": 144.977813
+        },
+        {
+          "lat": -37.69469,
+          "lon": 144.806039
+        }
+      ],
+      "context": "Calwell electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10102,
+      "aec_id": 204,
+      "name": "/Australia/VIC/CED/Casey",
+      "paths": [
+        "/Australia/VIC/CED/Casey",
+        "/Australia/CED/Casey"
+      ],
+      "display_name": "Casey",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/casey.htm",
+      "centroid": {
+        "lat": -37.71528731857416,
+        "lon": 145.6955945436588
+      },
+      "bounds": [
+        {
+          "lat": -37.975028,
+          "lon": 145.281666
+        },
+        {
+          "lat": -37.52509,
+          "lon": 145.281666
+        },
+        {
+          "lat": -37.52509,
+          "lon": 146.192502
+        },
+        {
+          "lat": -37.975028,
+          "lon": 146.192502
+        },
+        {
+          "lat": -37.97502,
+          "lon": 145.281666
+        }
+      ],
+      "context": "Casey electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10103,
+      "aec_id": 205,
+      "name": "/Australia/VIC/CED/Chisholm",
+      "paths": [
+        "/Australia/VIC/CED/Chisholm",
+        "/Australia/CED/Chisholm"
+      ],
+      "display_name": "Chisholm",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/chisholm.htm",
+      "centroid": {
+        "lat": -37.87510233179037,
+        "lon": 145.14477194992753
+      },
+      "bounds": [
+        {
+          "lat": -37.924401,
+          "lon": 145.088226
+        },
+        {
+          "lat": -37.816894,
+          "lon": 145.088226
+        },
+        {
+          "lat": -37.816894,
+          "lon": 145.208341
+        },
+        {
+          "lat": -37.924401,
+          "lon": 145.208341
+        },
+        {
+          "lat": -37.9244,
+          "lon": 145.088226
+        }
+      ],
+      "context": "Chisholm electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10104,
+      "aec_id": 320,
+      "name": "/Australia/VIC/CED/Cooper",
+      "paths": [
+        "/Australia/VIC/CED/Cooper",
+        "/Australia/CED/Cooper"
+      ],
+      "display_name": "Cooper",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/cooper.htm",
+      "centroid": {
+        "lat": -37.73653494907752,
+        "lon": 145.0131483627922
+      },
+      "bounds": [
+        {
+          "lat": -37.803662,
+          "lon": 144.966158
+        },
+        {
+          "lat": -37.690999,
+          "lon": 144.966158
+        },
+        {
+          "lat": -37.690999,
+          "lon": 145.075398
+        },
+        {
+          "lat": -37.803662,
+          "lon": 145.075398
+        },
+        {
+          "lat": -37.80366,
+          "lon": 144.966158
+        }
+      ],
+      "context": "Cooper electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10105,
+      "aec_id": 328,
+      "name": "/Australia/VIC/CED/Corangamite",
+      "paths": [
+        "/Australia/VIC/CED/Corangamite",
+        "/Australia/CED/Corangamite"
+      ],
+      "display_name": "Corangamite",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/corangamite.htm",
+      "centroid": {
+        "lat": -38.18683897186338,
+        "lon": 144.24630444584193
+      },
+      "bounds": [
+        {
+          "lat": -38.398384,
+          "lon": 143.809865
+        },
+        {
+          "lat": -37.976627,
+          "lon": 143.809865
+        },
+        {
+          "lat": -37.976627,
+          "lon": 144.720215
+        },
+        {
+          "lat": -38.398384,
+          "lon": 144.720215
+        },
+        {
+          "lat": -38.39838,
+          "lon": 143.809865
+        }
+      ],
+      "context": "Corangamite electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10106,
+      "aec_id": 208,
+      "name": "/Australia/VIC/CED/Corio",
+      "paths": [
+        "/Australia/VIC/CED/Corio",
+        "/Australia/CED/Corio"
+      ],
+      "display_name": "Corio",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/corio.htm",
+      "centroid": {
+        "lat": -37.98501564774399,
+        "lon": 144.36601932399472
+      },
+      "bounds": [
+        {
+          "lat": -38.214825,
+          "lon": 144.20252
+        },
+        {
+          "lat": -37.800934,
+          "lon": 144.20252
+        },
+        {
+          "lat": -37.800934,
+          "lon": 144.591927
+        },
+        {
+          "lat": -38.214825,
+          "lon": 144.591927
+        },
+        {
+          "lat": -38.21482,
+          "lon": 144.20252
+        }
+      ],
+      "context": "Corio electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10107,
+      "aec_id": 209,
+      "name": "/Australia/VIC/CED/Deakin",
+      "paths": [
+        "/Australia/VIC/CED/Deakin",
+        "/Australia/CED/Deakin"
+      ],
+      "display_name": "Deakin",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/deakin.htm",
+      "centroid": {
+        "lat": -37.81395862267408,
+        "lon": 145.2432322737088
+      },
+      "bounds": [
+        {
+          "lat": -37.865207,
+          "lon": 145.152195
+        },
+        {
+          "lat": -37.761845,
+          "lon": 145.152195
+        },
+        {
+          "lat": -37.761845,
+          "lon": 145.318727
+        },
+        {
+          "lat": -37.865207,
+          "lon": 145.318727
+        },
+        {
+          "lat": -37.8652,
+          "lon": 145.152195
+        }
+      ],
+      "context": "Deakin electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10108,
+      "aec_id": 210,
+      "name": "/Australia/VIC/CED/Dunkley",
+      "paths": [
+        "/Australia/VIC/CED/Dunkley",
+        "/Australia/CED/Dunkley"
+      ],
+      "display_name": "Dunkley",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/dunkley.htm",
+      "centroid": {
+        "lat": -38.14379820935485,
+        "lon": 145.16150200500516
+      },
+      "bounds": [
+        {
+          "lat": -38.224894,
+          "lon": 145.061238
+        },
+        {
+          "lat": -38.067395,
+          "lon": 145.061238
+        },
+        {
+          "lat": -38.067395,
+          "lon": 145.239583
+        },
+        {
+          "lat": -38.224894,
+          "lon": 145.239583
+        },
+        {
+          "lat": -38.22489,
+          "lon": 145.061238
+        }
+      ],
+      "context": "Dunkley electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10109,
+      "aec_id": 211,
+      "name": "/Australia/VIC/CED/Flinders",
+      "paths": [
+        "/Australia/VIC/CED/Flinders",
+        "/Australia/CED/Flinders"
+      ],
+      "display_name": "Flinders",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/flinders.htm",
+      "centroid": {
+        "lat": -38.346409857716665,
+        "lon": 145.11655715868426
+      },
+      "bounds": [
+        {
+          "lat": -38.502988,
+          "lon": 144.651412
+        },
+        {
+          "lat": -38.181571,
+          "lon": 144.651412
+        },
+        {
+          "lat": -38.181571,
+          "lon": 145.503419
+        },
+        {
+          "lat": -38.502988,
+          "lon": 145.503419
+        },
+        {
+          "lat": -38.50298,
+          "lon": 144.651412
+        }
+      ],
+      "context": "Flinders electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10110,
+      "aec_id": 321,
+      "name": "/Australia/VIC/CED/Fraser",
+      "paths": [
+        "/Australia/VIC/CED/Fraser",
+        "/Australia/CED/Fraser"
+      ],
+      "display_name": "Fraser",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/fraser.htm",
+      "centroid": {
+        "lat": -37.78031863382237,
+        "lon": 144.83221463254932
+      },
+      "bounds": [
+        {
+          "lat": -37.822888,
+          "lon": 144.769138
+        },
+        {
+          "lat": -37.724219,
+          "lon": 144.769138
+        },
+        {
+          "lat": -37.724219,
+          "lon": 144.916501
+        },
+        {
+          "lat": -37.822888,
+          "lon": 144.916501
+        },
+        {
+          "lat": -37.82288,
+          "lon": 144.769138
+        }
+      ],
+      "context": "Fraser electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10111,
+      "aec_id": 212,
+      "name": "/Australia/VIC/CED/Gellibrand",
+      "paths": [
+        "/Australia/VIC/CED/Gellibrand",
+        "/Australia/CED/Gellibrand"
+      ],
+      "display_name": "Gellibrand",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/gellibrand.htm",
+      "centroid": {
+        "lat": -37.86032713676657,
+        "lon": 144.79037570881505
+      },
+      "bounds": [
+        {
+          "lat": -37.941279,
+          "lon": 144.702655
+        },
+        {
+          "lat": -37.806788,
+          "lon": 144.702655
+        },
+        {
+          "lat": -37.806788,
+          "lon": 144.915524
+        },
+        {
+          "lat": -37.941279,
+          "lon": 144.915524
+        },
+        {
+          "lat": -37.94127,
+          "lon": 144.702655
+        }
+      ],
+      "context": "Gellibrand electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10112,
+      "aec_id": 213,
+      "name": "/Australia/VIC/CED/Gippsland",
+      "paths": [
+        "/Australia/VIC/CED/Gippsland",
+        "/Australia/CED/Gippsland"
+      ],
+      "display_name": "Gippsland",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/gippsland.htm",
+      "centroid": {
+        "lat": -37.591316172781916,
+        "lon": 147.7581780273603
+      },
+      "bounds": [
+        {
+          "lat": -38.790889,
+          "lon": 146.210508
+        },
+        {
+          "lat": -36.612428,
+          "lon": 146.210508
+        },
+        {
+          "lat": -36.612428,
+          "lon": 149.976291
+        },
+        {
+          "lat": -38.790889,
+          "lon": 149.976291
+        },
+        {
+          "lat": -38.79088,
+          "lon": 146.210508
+        }
+      ],
+      "context": "Gippsland electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10113,
+      "aec_id": 214,
+      "name": "/Australia/VIC/CED/Goldstein",
+      "paths": [
+        "/Australia/VIC/CED/Goldstein",
+        "/Australia/CED/Goldstein"
+      ],
+      "display_name": "Goldstein",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/goldstein.htm",
+      "centroid": {
+        "lat": -37.932547984864634,
+        "lon": 145.02171082936144
+      },
+      "bounds": [
+        {
+          "lat": -37.996447,
+          "lon": 144.983382
+        },
+        {
+          "lat": -37.883274,
+          "lon": 144.983382
+        },
+        {
+          "lat": -37.883274,
+          "lon": 145.055267
+        },
+        {
+          "lat": -37.996447,
+          "lon": 145.055267
+        },
+        {
+          "lat": -37.99644,
+          "lon": 144.983382
+        }
+      ],
+      "context": "Goldstein electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10114,
+      "aec_id": 309,
+      "name": "/Australia/VIC/CED/Gorton",
+      "paths": [
+        "/Australia/VIC/CED/Gorton",
+        "/Australia/CED/Gorton"
+      ],
+      "display_name": "Gorton",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/gorton.htm",
+      "centroid": {
+        "lat": -37.73968468683421,
+        "lon": 144.71009906777095
+      },
+      "bounds": [
+        {
+          "lat": -37.812017,
+          "lon": 144.604728
+        },
+        {
+          "lat": -37.66291,
+          "lon": 144.604728
+        },
+        {
+          "lat": -37.66291,
+          "lon": 144.848173
+        },
+        {
+          "lat": -37.812017,
+          "lon": 144.848173
+        },
+        {
+          "lat": -37.81201,
+          "lon": 144.604728
+        }
+      ],
+      "context": "Gorton electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10115,
+      "aec_id": 326,
+      "name": "/Australia/VIC/CED/Hawke",
+      "paths": [
+        "/Australia/VIC/CED/Hawke",
+        "/Australia/CED/Hawke"
+      ],
+      "display_name": "Hawke",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/hawke.htm",
+      "centroid": {
+        "lat": -37.63019743625584,
+        "lon": 144.4404763834283
+      },
+      "bounds": [
+        {
+          "lat": -37.864089,
+          "lon": 144.130125
+        },
+        {
+          "lat": -37.420649,
+          "lon": 144.130125
+        },
+        {
+          "lat": -37.420649,
+          "lon": 144.870505
+        },
+        {
+          "lat": -37.864089,
+          "lon": 144.870505
+        },
+        {
+          "lat": -37.86408,
+          "lon": 144.130125
+        }
+      ],
+      "context": "Hawke electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10116,
+      "aec_id": 215,
+      "name": "/Australia/VIC/CED/Higgins",
+      "paths": [
+        "/Australia/VIC/CED/Higgins",
+        "/Australia/CED/Higgins"
+      ],
+      "display_name": "Higgins",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/higgins.htm",
+      "centroid": {
+        "lat": -37.86463393909637,
+        "lon": 145.04524167956282
+      },
+      "bounds": [
+        {
+          "lat": -37.90814,
+          "lon": 144.983322
+        },
+        {
+          "lat": -37.829622,
+          "lon": 144.983322
+        },
+        {
+          "lat": -37.829622,
+          "lon": 145.093654
+        },
+        {
+          "lat": -37.90814,
+          "lon": 145.093654
+        },
+        {
+          "lat": -37.9081,
+          "lon": 144.983322
+        }
+      ],
+      "context": "Higgins electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10117,
+      "aec_id": 216,
+      "name": "/Australia/VIC/CED/Holt",
+      "paths": [
+        "/Australia/VIC/CED/Holt",
+        "/Australia/CED/Holt"
+      ],
+      "display_name": "Holt",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/holt.htm",
+      "centroid": {
+        "lat": -38.15132313318502,
+        "lon": 145.30218037963462
+      },
+      "bounds": [
+        {
+          "lat": -38.248493,
+          "lon": 145.214929
+        },
+        {
+          "lat": -38.017011,
+          "lon": 145.214929
+        },
+        {
+          "lat": -38.017011,
+          "lon": 145.430658
+        },
+        {
+          "lat": -38.248493,
+          "lon": 145.430658
+        },
+        {
+          "lat": -38.24849,
+          "lon": 145.214929
+        }
+      ],
+      "context": "Holt electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10118,
+      "aec_id": 217,
+      "name": "/Australia/VIC/CED/Hotham",
+      "paths": [
+        "/Australia/VIC/CED/Hotham",
+        "/Australia/CED/Hotham"
+      ],
+      "display_name": "Hotham",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/hotham.htm",
+      "centroid": {
+        "lat": -37.94036178353977,
+        "lon": 145.1320920662543
+      },
+      "bounds": [
+        {
+          "lat": -37.99542,
+          "lon": 145.048317
+        },
+        {
+          "lat": -37.887152,
+          "lon": 145.048317
+        },
+        {
+          "lat": -37.887152,
+          "lon": 145.195486
+        },
+        {
+          "lat": -37.99542,
+          "lon": 145.195486
+        },
+        {
+          "lat": -37.9954,
+          "lon": 145.048317
+        }
+      ],
+      "context": "Hotham electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10119,
+      "aec_id": 218,
+      "name": "/Australia/NSW/CED/Indi",
+      "paths": [
+        "/Australia/NSW/CED/Indi",
+        "/Australia/CED/Indi"
+      ],
+      "display_name": "Indi",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/nsw/indi.htm",
+      "centroid": {
+        "lat": -36.734566686430796,
+        "lon": 146.60678878862268
+      },
+      "bounds": [
+        {
+          "lat": -37.629427,
+          "lon": 145.162734
+        },
+        {
+          "lat": -35.928545,
+          "lon": 145.162734
+        },
+        {
+          "lat": -35.928545,
+          "lon": 148.220685
+        },
+        {
+          "lat": -37.629427,
+          "lon": 148.220685
+        },
+        {
+          "lat": -37.62942,
+          "lon": 145.162734
+        }
+      ],
+      "context": "Indi electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10120,
+      "aec_id": 219,
+      "name": "/Australia/VIC/CED/Isaacs",
+      "paths": [
+        "/Australia/VIC/CED/Isaacs",
+        "/Australia/CED/Isaacs"
+      ],
+      "display_name": "Isaacs",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/isaacs.htm",
+      "centroid": {
+        "lat": -38.01508105127237,
+        "lon": 145.1495152579721
+      },
+      "bounds": [
+        {
+          "lat": -38.085,
+          "lon": 145.034373
+        },
+        {
+          "lat": -37.933006,
+          "lon": 145.034373
+        },
+        {
+          "lat": -37.933006,
+          "lon": 145.251854
+        },
+        {
+          "lat": -38.085,
+          "lon": 145.251854
+        },
+        {
+          "lat": -38.08,
+          "lon": 145.034373
+        }
+      ],
+      "context": "Isaacs electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10121,
+      "aec_id": 220,
+      "name": "/Australia/VIC/CED/Jagajaga",
+      "paths": [
+        "/Australia/VIC/CED/Jagajaga",
+        "/Australia/CED/Jagajaga"
+      ],
+      "display_name": "Jagajaga",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/jagajaga.htm",
+      "centroid": {
+        "lat": -37.7149041358436,
+        "lon": 145.1412302003442
+      },
+      "bounds": [
+        {
+          "lat": -37.78509,
+          "lon": 145.027828
+        },
+        {
+          "lat": -37.656809,
+          "lon": 145.027828
+        },
+        {
+          "lat": -37.656809,
+          "lon": 145.269289
+        },
+        {
+          "lat": -37.78509,
+          "lon": 145.269289
+        },
+        {
+          "lat": -37.785,
+          "lon": 145.027828
+        }
+      ],
+      "context": "Jagajaga electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10122,
+      "aec_id": 221,
+      "name": "/Australia/VIC/CED/Kooyong",
+      "paths": [
+        "/Australia/VIC/CED/Kooyong",
+        "/Australia/CED/Kooyong"
+      ],
+      "display_name": "Kooyong",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/kooyong.htm",
+      "centroid": {
+        "lat": -37.814117622212976,
+        "lon": 145.06620959995487
+      },
+      "bounds": [
+        {
+          "lat": -37.861375,
+          "lon": 144.999258
+        },
+        {
+          "lat": -37.776861,
+          "lon": 144.999258
+        },
+        {
+          "lat": -37.776861,
+          "lon": 145.118458
+        },
+        {
+          "lat": -37.861375,
+          "lon": 145.118458
+        },
+        {
+          "lat": -37.86137,
+          "lon": 144.999258
+        }
+      ],
+      "context": "Kooyong electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10123,
+      "aec_id": 223,
+      "name": "/Australia/VIC/CED/La Trobe",
+      "paths": [
+        "/Australia/VIC/CED/La Trobe",
+        "/Australia/CED/La Trobe"
+      ],
+      "display_name": "La Trobe",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/la trobe.htm",
+      "centroid": {
+        "lat": -38.08382065293301,
+        "lon": 145.56432761936782
+      },
+      "bounds": [
+        {
+          "lat": -38.332457,
+          "lon": 145.327163
+        },
+        {
+          "lat": -37.857701,
+          "lon": 145.327163
+        },
+        {
+          "lat": -37.857701,
+          "lon": 145.765096
+        },
+        {
+          "lat": -38.332457,
+          "lon": 145.765096
+        },
+        {
+          "lat": -38.33245,
+          "lon": 145.327163
+        }
+      ],
+      "context": "La Trobe electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10124,
+      "aec_id": 222,
+      "name": "/Australia/VIC/CED/Lalor",
+      "paths": [
+        "/Australia/VIC/CED/Lalor",
+        "/Australia/CED/Lalor"
+      ],
+      "display_name": "Lalor",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/lalor.htm",
+      "centroid": {
+        "lat": -37.89002548199663,
+        "lon": 144.59520196884966
+      },
+      "bounds": [
+        {
+          "lat": -38.004581,
+          "lon": 144.444061
+        },
+        {
+          "lat": -37.781013,
+          "lon": 144.444061
+        },
+        {
+          "lat": -37.781013,
+          "lon": 144.757828
+        },
+        {
+          "lat": -38.004581,
+          "lon": 144.757828
+        },
+        {
+          "lat": -38.00458,
+          "lon": 144.444061
+        }
+      ],
+      "context": "Lalor electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10125,
+      "aec_id": 322,
+      "name": "/Australia/VIC/CED/Macnamara",
+      "paths": [
+        "/Australia/VIC/CED/Macnamara",
+        "/Australia/CED/Macnamara"
+      ],
+      "display_name": "Macnamara",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/macnamara.htm",
+      "centroid": {
+        "lat": -37.85216979155332,
+        "lon": 144.9723747930164
+      },
+      "bounds": [
+        {
+          "lat": -37.891737,
+          "lon": 144.897093
+        },
+        {
+          "lat": -37.819122,
+          "lon": 144.897093
+        },
+        {
+          "lat": -37.819122,
+          "lon": 145.049635
+        },
+        {
+          "lat": -37.891737,
+          "lon": 145.049635
+        },
+        {
+          "lat": -37.89173,
+          "lon": 144.897093
+        }
+      ],
+      "context": "Macnamara electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10126,
+      "aec_id": 224,
+      "name": "/Australia/VIC/CED/Mallee",
+      "paths": [
+        "/Australia/VIC/CED/Mallee",
+        "/Australia/CED/Mallee"
+      ],
+      "display_name": "Mallee",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/mallee.htm",
+      "centroid": {
+        "lat": -35.86547912516628,
+        "lon": 142.38331502900715
+      },
+      "bounds": [
+        {
+          "lat": -37.449882,
+          "lon": 140.961682
+        },
+        {
+          "lat": -33.980426,
+          "lon": 140.961682
+        },
+        {
+          "lat": -33.980426,
+          "lon": 144.418183
+        },
+        {
+          "lat": -37.449882,
+          "lon": 144.418183
+        },
+        {
+          "lat": -37.44988,
+          "lon": 140.961682
+        }
+      ],
+      "context": "Mallee electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10127,
+      "aec_id": 225,
+      "name": "/Australia/VIC/CED/Maribyrnong",
+      "paths": [
+        "/Australia/VIC/CED/Maribyrnong",
+        "/Australia/CED/Maribyrnong"
+      ],
+      "display_name": "Maribyrnong",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/maribyrnong.htm",
+      "centroid": {
+        "lat": -37.720201386370796,
+        "lon": 144.87279291062057
+      },
+      "bounds": [
+        {
+          "lat": -37.802286,
+          "lon": 144.797644
+        },
+        {
+          "lat": -37.64101,
+          "lon": 144.797644
+        },
+        {
+          "lat": -37.64101,
+          "lon": 144.940362
+        },
+        {
+          "lat": -37.802286,
+          "lon": 144.940362
+        },
+        {
+          "lat": -37.80228,
+          "lon": 144.797644
+        }
+      ],
+      "context": "Maribyrnong electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10128,
+      "aec_id": 226,
+      "name": "/Australia/VIC/CED/McEwen",
+      "paths": [
+        "/Australia/VIC/CED/McEwen",
+        "/Australia/CED/McEwen"
+      ],
+      "display_name": "McEwen",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/mcewen.htm",
+      "centroid": {
+        "lat": -37.425595027012164,
+        "lon": 144.90804306748961
+      },
+      "bounds": [
+        {
+          "lat": -37.718879,
+          "lon": 144.377801
+        },
+        {
+          "lat": -37.200891,
+          "lon": 144.377801
+        },
+        {
+          "lat": -37.200891,
+          "lon": 145.366412
+        },
+        {
+          "lat": -37.718879,
+          "lon": 145.366412
+        },
+        {
+          "lat": -37.71887,
+          "lon": 144.377801
+        }
+      ],
+      "context": "McEwen electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10129,
+      "aec_id": 228,
+      "name": "/Australia/VIC/CED/Melbourne",
+      "paths": [
+        "/Australia/VIC/CED/Melbourne",
+        "/Australia/CED/Melbourne"
+      ],
+      "display_name": "Melbourne",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/melbourne.htm",
+      "centroid": {
+        "lat": -37.80451673253442,
+        "lon": 144.96754634001377
+      },
+      "bounds": [
+        {
+          "lat": -37.834519,
+          "lon": 144.905452
+        },
+        {
+          "lat": -37.772661,
+          "lon": 144.905452
+        },
+        {
+          "lat": -37.772661,
+          "lon": 145.028365
+        },
+        {
+          "lat": -37.834519,
+          "lon": 145.028365
+        },
+        {
+          "lat": -37.83451,
+          "lon": 144.905452
+        }
+      ],
+      "context": "Melbourne electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10130,
+      "aec_id": 229,
+      "name": "/Australia/VIC/CED/Menzies",
+      "paths": [
+        "/Australia/VIC/CED/Menzies",
+        "/Australia/CED/Menzies"
+      ],
+      "display_name": "Menzies",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/menzies.htm",
+      "centroid": {
+        "lat": -37.76457629681312,
+        "lon": 145.18678638406104
+      },
+      "bounds": [
+        {
+          "lat": -37.819847,
+          "lon": 145.067113
+        },
+        {
+          "lat": -37.702443,
+          "lon": 145.067113
+        },
+        {
+          "lat": -37.702443,
+          "lon": 145.293932
+        },
+        {
+          "lat": -37.819847,
+          "lon": 145.293932
+        },
+        {
+          "lat": -37.81984,
+          "lon": 145.067113
+        }
+      ],
+      "context": "Menzies electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10131,
+      "aec_id": 323,
+      "name": "/Australia/VIC/CED/Monash",
+      "paths": [
+        "/Australia/VIC/CED/Monash",
+        "/Australia/CED/Monash"
+      ],
+      "display_name": "Monash",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/monash.htm",
+      "centroid": {
+        "lat": -38.29736376373771,
+        "lon": 146.0503047531553
+      },
+      "bounds": [
+        {
+          "lat": -39.15919,
+          "lon": 145.109448
+        },
+        {
+          "lat": -37.580001,
+          "lon": 145.109448
+        },
+        {
+          "lat": -37.580001,
+          "lon": 146.707426
+        },
+        {
+          "lat": -39.15919,
+          "lon": 146.707426
+        },
+        {
+          "lat": -39.1591,
+          "lon": 145.109448
+        }
+      ],
+      "context": "Monash electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10132,
+      "aec_id": 324,
+      "name": "/Australia/VIC/CED/Nicholls",
+      "paths": [
+        "/Australia/VIC/CED/Nicholls",
+        "/Australia/CED/Nicholls"
+      ],
+      "display_name": "Nicholls",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/nicholls.htm",
+      "centroid": {
+        "lat": -36.42339549118721,
+        "lon": 145.1622981404748
+      },
+      "bounds": [
+        {
+          "lat": -37.29412,
+          "lon": 144.259311
+        },
+        {
+          "lat": -35.801997,
+          "lon": 144.259311
+        },
+        {
+          "lat": -35.801997,
+          "lon": 146.246547
+        },
+        {
+          "lat": -37.29412,
+          "lon": 146.246547
+        },
+        {
+          "lat": -37.2941,
+          "lon": 144.259311
+        }
+      ],
+      "context": "Nicholls electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10133,
+      "aec_id": 232,
+      "name": "/Australia/VIC/CED/Scullin",
+      "paths": [
+        "/Australia/VIC/CED/Scullin",
+        "/Australia/CED/Scullin"
+      ],
+      "display_name": "Scullin",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/scullin.htm",
+      "centroid": {
+        "lat": -37.64698320964702,
+        "lon": 145.03394669619553
+      },
+      "bounds": [
+        {
+          "lat": -37.699983,
+          "lon": 144.946461
+        },
+        {
+          "lat": -37.598964,
+          "lon": 144.946461
+        },
+        {
+          "lat": -37.598964,
+          "lon": 145.123397
+        },
+        {
+          "lat": -37.699983,
+          "lon": 145.123397
+        },
+        {
+          "lat": -37.69998,
+          "lon": 144.946461
+        }
+      ],
+      "context": "Scullin electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10134,
+      "aec_id": 233,
+      "name": "/Australia/VIC/CED/Wannon",
+      "paths": [
+        "/Australia/VIC/CED/Wannon",
+        "/Australia/CED/Wannon"
+      ],
+      "display_name": "Wannon",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/wannon.htm",
+      "centroid": {
+        "lat": -37.89034438652587,
+        "lon": 142.54571511904686
+      },
+      "bounds": [
+        {
+          "lat": -38.857693,
+          "lon": 140.965735
+        },
+        {
+          "lat": -37.087296,
+          "lon": 140.965735
+        },
+        {
+          "lat": -37.087296,
+          "lon": 144.234254
+        },
+        {
+          "lat": -38.857693,
+          "lon": 144.234254
+        },
+        {
+          "lat": -38.85769,
+          "lon": 140.965735
+        }
+      ],
+      "context": "Wannon electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10135,
+      "aec_id": 234,
+      "name": "/Australia/VIC/CED/Wills",
+      "paths": [
+        "/Australia/VIC/CED/Wills",
+        "/Australia/CED/Wills"
+      ],
+      "display_name": "Wills",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/vic/wills.htm",
+      "centroid": {
+        "lat": -37.7301334335691,
+        "lon": 144.94862035510428
+      },
+      "bounds": [
+        {
+          "lat": -37.779319,
+          "lon": 144.898012
+        },
+        {
+          "lat": -37.69094,
+          "lon": 144.898012
+        },
+        {
+          "lat": -37.69094,
+          "lon": 144.986865
+        },
+        {
+          "lat": -37.779319,
+          "lon": 144.986865
+        },
+        {
+          "lat": -37.77931,
+          "lon": 144.898012
+        }
+      ],
+      "context": "Wills electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10136,
+      "aec_id": 235,
+      "name": "/Australia/WA/CED/Brand",
+      "paths": [
+        "/Australia/WA/CED/Brand",
+        "/Australia/CED/Brand"
+      ],
+      "display_name": "Brand",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/brand.htm",
+      "centroid": {
+        "lat": -32.30708610576891,
+        "lon": 115.80152498437683
+      },
+      "bounds": [
+        {
+          "lat": -32.458152,
+          "lon": 115.658938
+        },
+        {
+          "lat": -32.118366,
+          "lon": 115.658938
+        },
+        {
+          "lat": -32.118366,
+          "lon": 115.900791
+        },
+        {
+          "lat": -32.458152,
+          "lon": 115.900791
+        },
+        {
+          "lat": -32.45815,
+          "lon": 115.658938
+        }
+      ],
+      "context": "Brand electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10137,
+      "aec_id": 317,
+      "name": "/Australia/WA/CED/Burt",
+      "paths": [
+        "/Australia/WA/CED/Burt",
+        "/Australia/CED/Burt"
+      ],
+      "display_name": "Burt",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/burt.htm",
+      "centroid": {
+        "lat": -32.103484179202866,
+        "lon": 115.97646123559653
+      },
+      "bounds": [
+        {
+          "lat": -32.186852,
+          "lon": 115.896914
+        },
+        {
+          "lat": -32.003525,
+          "lon": 115.896914
+        },
+        {
+          "lat": -32.003525,
+          "lon": 116.056273
+        },
+        {
+          "lat": -32.186852,
+          "lon": 116.056273
+        },
+        {
+          "lat": -32.18685,
+          "lon": 115.896914
+        }
+      ],
+      "context": "Burt electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10138,
+      "aec_id": 236,
+      "name": "/Australia/WA/CED/Canning",
+      "paths": [
+        "/Australia/WA/CED/Canning",
+        "/Australia/CED/Canning"
+      ],
+      "display_name": "Canning",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/canning.htm",
+      "centroid": {
+        "lat": -32.5418007496604,
+        "lon": 115.9899504181329
+      },
+      "bounds": [
+        {
+          "lat": -32.94311,
+          "lon": 115.606776
+        },
+        {
+          "lat": -32.009311,
+          "lon": 115.606776
+        },
+        {
+          "lat": -32.009311,
+          "lon": 116.35808
+        },
+        {
+          "lat": -32.94311,
+          "lon": 116.35808
+        },
+        {
+          "lat": -32.9431,
+          "lon": 115.606776
+        }
+      ],
+      "context": "Canning electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10139,
+      "aec_id": 237,
+      "name": "/Australia/WA/CED/Cowan",
+      "paths": [
+        "/Australia/WA/CED/Cowan",
+        "/Australia/CED/Cowan"
+      ],
+      "display_name": "Cowan",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/cowan.htm",
+      "centroid": {
+        "lat": -31.858475706144194,
+        "lon": 115.86205771484468
+      },
+      "bounds": [
+        {
+          "lat": -31.901762,
+          "lon": 115.783178
+        },
+        {
+          "lat": -31.817323,
+          "lon": 115.783178
+        },
+        {
+          "lat": -31.817323,
+          "lon": 115.956597
+        },
+        {
+          "lat": -31.901762,
+          "lon": 115.956597
+        },
+        {
+          "lat": -31.90176,
+          "lon": 115.783178
+        }
+      ],
+      "context": "Cowan electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10140,
+      "aec_id": 238,
+      "name": "/Australia/WA/CED/Curtin",
+      "paths": [
+        "/Australia/WA/CED/Curtin",
+        "/Australia/CED/Curtin"
+      ],
+      "display_name": "Curtin",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/curtin.htm",
+      "centroid": {
+        "lat": -31.94620141098528,
+        "lon": 115.78854664582701
+      },
+      "bounds": [
+        {
+          "lat": -32.02679,
+          "lon": 115.749997
+        },
+        {
+          "lat": -31.857519,
+          "lon": 115.749997
+        },
+        {
+          "lat": -31.857519,
+          "lon": 115.843989
+        },
+        {
+          "lat": -32.02679,
+          "lon": 115.843989
+        },
+        {
+          "lat": -32.0267,
+          "lon": 115.749997
+        }
+      ],
+      "context": "Curtin electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10141,
+      "aec_id": 312,
+      "name": "/Australia/WA/CED/Durack",
+      "paths": [
+        "/Australia/WA/CED/Durack",
+        "/Australia/CED/Durack"
+      ],
+      "display_name": "Durack",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/durack.htm",
+      "centroid": {
+        "lat": -22.32397906693698,
+        "lon": 121.35982285350357
+      },
+      "bounds": [
+        {
+          "lat": -32.139926,
+          "lon": 112.921114
+        },
+        {
+          "lat": -13.688704,
+          "lon": 112.921114
+        },
+        {
+          "lat": -13.688704,
+          "lon": 129.001338
+        },
+        {
+          "lat": -32.139926,
+          "lon": 129.001338
+        },
+        {
+          "lat": -32.13992,
+          "lon": 112.921114
+        }
+      ],
+      "context": "Durack electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10142,
+      "aec_id": 239,
+      "name": "/Australia/WA/CED/Forrest",
+      "paths": [
+        "/Australia/WA/CED/Forrest",
+        "/Australia/CED/Forrest"
+      ],
+      "display_name": "Forrest",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/forrest.htm",
+      "centroid": {
+        "lat": -33.62461377292029,
+        "lon": 115.61415585191672
+      },
+      "bounds": [
+        {
+          "lat": -34.425259,
+          "lon": 114.97465
+        },
+        {
+          "lat": -32.920678,
+          "lon": 114.97465
+        },
+        {
+          "lat": -32.920678,
+          "lon": 116.239769
+        },
+        {
+          "lat": -34.425259,
+          "lon": 116.239769
+        },
+        {
+          "lat": -34.42525,
+          "lon": 114.97465
+        }
+      ],
+      "context": "Forrest electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10143,
+      "aec_id": 240,
+      "name": "/Australia/WA/CED/Fremantle",
+      "paths": [
+        "/Australia/WA/CED/Fremantle",
+        "/Australia/CED/Fremantle"
+      ],
+      "display_name": "Fremantle",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/fremantle.htm",
+      "centroid": {
+        "lat": -32.10523278394242,
+        "lon": 115.78938113800248
+      },
+      "bounds": [
+        {
+          "lat": -32.181389,
+          "lon": 115.449473
+        },
+        {
+          "lat": -31.987343,
+          "lon": 115.449473
+        },
+        {
+          "lat": -31.987343,
+          "lon": 115.916173
+        },
+        {
+          "lat": -32.181389,
+          "lon": 115.916173
+        },
+        {
+          "lat": -32.18138,
+          "lon": 115.449473
+        }
+      ],
+      "context": "Fremantle electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10144,
+      "aec_id": 305,
+      "name": "/Australia/WA/CED/Hasluck",
+      "paths": [
+        "/Australia/WA/CED/Hasluck",
+        "/Australia/CED/Hasluck"
+      ],
+      "display_name": "Hasluck",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/hasluck.htm",
+      "centroid": {
+        "lat": -31.860457637970978,
+        "lon": 116.17839269383528
+      },
+      "bounds": [
+        {
+          "lat": -32.062561,
+          "lon": 115.914083
+        },
+        {
+          "lat": -31.670468,
+          "lon": 115.914083
+        },
+        {
+          "lat": -31.670468,
+          "lon": 116.415125
+        },
+        {
+          "lat": -32.062561,
+          "lon": 116.415125
+        },
+        {
+          "lat": -32.06256,
+          "lon": 115.914083
+        }
+      ],
+      "context": "Hasluck electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10145,
+      "aec_id": 242,
+      "name": "/Australia/WA/CED/Moore",
+      "paths": [
+        "/Australia/WA/CED/Moore",
+        "/Australia/CED/Moore"
+      ],
+      "display_name": "Moore",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/moore.htm",
+      "centroid": {
+        "lat": -31.786991296131582,
+        "lon": 115.76478974575576
+      },
+      "bounds": [
+        {
+          "lat": -31.874567,
+          "lon": 115.70661
+        },
+        {
+          "lat": -31.711941,
+          "lon": 115.70661
+        },
+        {
+          "lat": -31.711941,
+          "lon": 115.820868
+        },
+        {
+          "lat": -31.874567,
+          "lon": 115.820868
+        },
+        {
+          "lat": -31.87456,
+          "lon": 115.70661
+        }
+      ],
+      "context": "Moore electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10146,
+      "aec_id": 243,
+      "name": "/Australia/WA/CED/O'Connor",
+      "paths": [
+        "/Australia/WA/CED/O'Connor",
+        "/Australia/CED/O'Connor"
+      ],
+      "display_name": "O'Connor",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/o'connor.htm",
+      "centroid": {
+        "lat": -29.01407718760419,
+        "lon": 123.23040919492789
+      },
+      "bounds": [
+        {
+          "lat": -35.192008,
+          "lon": 115.336501
+        },
+        {
+          "lat": -23.440217,
+          "lon": 115.336501
+        },
+        {
+          "lat": -23.440217,
+          "lon": 129.002045
+        },
+        {
+          "lat": -35.192008,
+          "lon": 129.002045
+        },
+        {
+          "lat": -35.192,
+          "lon": 115.336501
+        }
+      ],
+      "context": "O'Connor electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10147,
+      "aec_id": 244,
+      "name": "/Australia/WA/CED/Pearce",
+      "paths": [
+        "/Australia/WA/CED/Pearce",
+        "/Australia/CED/Pearce"
+      ],
+      "display_name": "Pearce",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/pearce.htm",
+      "centroid": {
+        "lat": -31.625971928398346,
+        "lon": 115.78386707661483
+      },
+      "bounds": [
+        {
+          "lat": -31.841348,
+          "lon": 115.560745
+        },
+        {
+          "lat": -31.455129,
+          "lon": 115.560745
+        },
+        {
+          "lat": -31.455129,
+          "lon": 115.982838
+        },
+        {
+          "lat": -31.841348,
+          "lon": 115.982838
+        },
+        {
+          "lat": -31.84134,
+          "lon": 115.560745
+        }
+      ],
+      "context": "Moore electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10148,
+      "aec_id": 245,
+      "name": "/Australia/WA/CED/Perth",
+      "paths": [
+        "/Australia/WA/CED/Perth",
+        "/Australia/CED/Perth"
+      ],
+      "display_name": "Perth",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/perth.htm",
+      "centroid": {
+        "lat": -31.922445688409255,
+        "lon": 115.88246616416717
+      },
+      "bounds": [
+        {
+          "lat": -31.991159,
+          "lon": 115.817993
+        },
+        {
+          "lat": -31.887224,
+          "lon": 115.817993
+        },
+        {
+          "lat": -31.887224,
+          "lon": 115.964319
+        },
+        {
+          "lat": -31.991159,
+          "lon": 115.964319
+        },
+        {
+          "lat": -31.99115,
+          "lon": 115.817993
+        }
+      ],
+      "context": "Perth electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10149,
+      "aec_id": 247,
+      "name": "/Australia/WA/CED/Swan",
+      "paths": [
+        "/Australia/WA/CED/Swan",
+        "/Australia/CED/Swan"
+      ],
+      "display_name": "Swan",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/swan.htm",
+      "centroid": {
+        "lat": -31.97541325152652,
+        "lon": 115.94580891364214
+      },
+      "bounds": [
+        {
+          "lat": -32.035429,
+          "lon": 115.838086
+        },
+        {
+          "lat": -31.915772,
+          "lon": 115.838086
+        },
+        {
+          "lat": -31.915772,
+          "lon": 116.041017
+        },
+        {
+          "lat": -32.035429,
+          "lon": 116.041017
+        },
+        {
+          "lat": -32.03542,
+          "lon": 115.838086
+        }
+      ],
+      "context": "Swan electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    },
+    {
+      "id": 10150,
+      "aec_id": 248,
+      "name": "/Australia/WA/CED/Tangney",
+      "paths": [
+        "/Australia/WA/CED/Tangney",
+        "/Australia/CED/Tangney"
+      ],
+      "display_name": "Tangney",
+      "type": "CED",
+      "geometry": null,
+      "source": "https://www.aec.gov.au/profiles/wa/tangney.htm",
+      "centroid": {
+        "lat": -32.05004849540874,
+        "lon": 115.86856660383347
+      },
+      "bounds": [
+        {
+          "lat": -32.115337,
+          "lon": 115.775886
+        },
+        {
+          "lat": -31.991159,
+          "lon": 115.775886
+        },
+        {
+          "lat": -31.991159,
+          "lon": 115.951618
+        },
+        {
+          "lat": -32.115337,
+          "lon": 115.951618
+        },
+        {
+          "lat": -32.11533,
+          "lon": 115.775886
+        }
+      ],
+      "context": "Tangney electoral division in Queensland, Australia. Covers Brisbane's inner city area including Fortitude Valley, New Farm, and surrounding suburbs."
+    }
+  ]
+}

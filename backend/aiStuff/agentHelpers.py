@@ -263,6 +263,7 @@ def cleanWhereConditions(whereConditions: str) -> List[Dict[str, str]]:
     whereConditions = whereConditions.replace("```json", "").replace("```", "").strip()
     
     try:
+        logger.info(f"whereConditions before parsing: {whereConditions}")
         parsed_conditions = json.loads(whereConditions)
         if isinstance(parsed_conditions, list) and all(isinstance(item, dict) for item in parsed_conditions):
             return parsed_conditions
@@ -485,7 +486,7 @@ class QuerySQLTool:
                     raise NoDataFoundException("No data fetched from the database")
                 res = self._customParser(res)
                 columns = self._getCols(query)
-                if not columns:
+                if len(columns) < len(res[0]):
                     columns = range(len(res[0]))
                 return pd.DataFrame.from_records(data=res, columns=columns)
             except SyntaxError as e:
@@ -1111,7 +1112,7 @@ class ResourceManager:
         self.uploadToMongodb()
         logger.info("All resources have been processed and uploaded to MongoDB.")
 
-## Colin does not follow standard practices with his queries. So just changing getcols function here.
+## For Testing Purposes
 class QuerySQLTool2:
     """
     A tool for executing SQL queries on a database and processing the results.
@@ -1289,7 +1290,6 @@ class QuerySQLTool2:
                 Data = res if res else 'Can Not Fetch Data'
                 logger.error(f"Error executing query: {e}\nSQL Query: {query}\nData: {Data}")
                 raise
-
 
 ## For Testing Purposes
 class DataFetcher:
