@@ -22,7 +22,7 @@ class SqlExpert:
         template = """Given an input question, perform the following steps:
 
         1. Generate a syntactically correct {dialect} SQL query.
-        2. Provide feedback on the generated query, suggesting improvements if necessary based on provided rules and logical errors.
+        2. Provide feedback on the generated query, suggesting improvements if necessary.
         3. Based on the feedback, provide a final, improved SQL query.
 
         Rules for SQL generation (MUST BE FOLLOWED FOR BOTH INITIAL AND FINAL QUERIES):
@@ -73,70 +73,6 @@ class SqlExpert:
         except Exception as e:
             raise RuntimeError(f"Error invoking language model: {str(e)}")
 
-    def extractWhereColumns(self, sqlQuery: str) -> List[Dict[str, str]]:
-        template = """Given the following SQL query:
-        {sqlQuery}
-        
-        Extract the distinct column names and their corresponding table names used in the WHERE clause.
-        Use column that are hardcoded for filtering. If no such column exists, return an empty list.
-
-        Example:
-        Query: SELECT * FROM table1 WHERE column1 = 'value1' AND column2 IN (SELECT column3 FROM table2 WHERE column4 = 'value2');
-        Response: [
-            {{
-                "table": "table1",
-                "column": "column1"
-            }},
-            {{
-                "table": "table2",
-                "column": "column4"
-            }}
-        ]
-        Explanation:
-        - column1 and column4 are used for filtering with a hardcoded value.
-        - column3 is used for filtering but not with hardcoded values.
-
-        Respond in the following JSON format:
-        [
-            {{
-                "table": "table_name",
-                "column": "column_name"
-            }},
-            ...
-        ]
-        """
-        
-        response = self._invokeChain(template, sqlQuery=sqlQuery)
-        return response
-
-    def updateWhereConditions(self, originalQuery: str, userQuery: str, context: str) -> str:
-        template = """Given the following information:
-        
-        Original SQL Query:
-        {originalQuery}
-        
-        User Query:
-        {userQuery}
-        
-        Context (The context provides distinct values for the columns used in the WHERE conditions):
-        {context}
-        
-        Carefully examine the original SQL query, the user query, and the provided context.
-        Only update the filter values in the WHERE conditions if The existing filter values are incorrect based on the user query and context.
-
-        Do not add new conditions or remove existing ones.
-        Do not change any other part of the query, including table names, column names, or the overall structure.
-
-        If no changes are needed, return the original SQL query exactly as it is.
-        
-        Only return the SQL query, nothing else.
-        
-        SQL Query:
-        """
-        
-        response = self._invokeChain(template, originalQuery=originalQuery, userQuery=userQuery, context=context)
-        return response.strip()
-
 ## Using Self - Refelction
 class ResponseSummarizer:
     def __init__(self, llm: BaseLanguageModel):
@@ -165,6 +101,7 @@ class ResponseSummarizer:
 
         Each section should be separated by the delimiter: -----
         Do not add the delimiter at the end of the response it should be placed between the sections.
+        Each summary should be phrased as if you're having a conversation with the user.
         """
 
         result = self._invokeLlm(template, response=response, userQuery=userQuery)
@@ -261,6 +198,20 @@ class DatasetRegionMatcherAgent:
         5. If there are no relevant data or regions to answer the query, return an empty list [].
         6. Always try to include a specific RegionID. Only omit the RegionID if the query doesn't specify or imply any particular region and no region from the metadata is relevant.
         7. Do not return any other information apart from the JSON array.
+        8. Consider whether the query requires comparing or correlating multiple datasets. For example:
+        - Queries about impact, influence, or relationships between factors will typically need multiple layers
+        - Questions comparing demographic data with voting patterns require both demographic and electoral layers
+        - Analysis of trends or patterns may require multiple related datasets
+        9. Carefully consider the temporal aspect of the query:
+        - For queries about current situations or those without specific time references (e.g., "What is the population in Wills?"), use the most recent available dataset
+        - For historical queries (e.g., "How has voting changed since 2019?"), include datasets from all relevant years
+        - For trend analysis (e.g., "Show the demographic changes over the last decade"), include datasets covering the specified time period
+        - For comparative queries across time periods (e.g., "Compare 2019 and 2022 election results"), include datasets from all mentioned time periods
+        10. When multiple years of data are available:
+        - If the query implies "current" or "now", use the most recent year
+        - If the query mentions specific years or time periods, use those exact years
+        - If the query asks about changes or trends, include all relevant years within the specified period
+
 
         {format_instructions}
         """

@@ -36,7 +36,8 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_anthropic import ChatAnthropic
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain.schema import Document
-from langchain.vectorstores.pgvector import PGVector
+from langchain.vectorstores.pgvector import PGVector ## Try with from langchain_community.vectorstores import PGVector
+
 
 ## Setting up logging
 logging.basicConfig(level=logging.INFO)
@@ -233,10 +234,7 @@ def cleanSqlQuery(sqlQuery: str) -> str:
     """
     if "3. FINAL SQL QUERY:" in sqlQuery:
         sqlQuery = sqlQuery.split("3. FINAL SQL QUERY:")[1].strip()
-        return sqlQuery
     
-    if sqlQuery.startswith("Updated SQL Query:"):
-        sqlQuery = sqlQuery.split("Updated SQL Query:")[1].strip()
     sqlQuery = sqlQuery.replace("```sql", "").replace("```", "").strip()
     match = re.search(r'\b(with\s+\w+\s+as|select)\b', sqlQuery, re.IGNORECASE)
     if match:
@@ -247,30 +245,6 @@ def cleanSqlQuery(sqlQuery: str) -> str:
         sqlQuery = sqlQuery[:semicolonIndex]
 
     return sqlQuery
-
-def cleanWhereConditions(whereConditions: str) -> List[Dict[str, str]]:
-    """
-    Cleans and extracts the WHERE conditions from the LLM response.
-    
-    Args:
-        whereConditions (str): The original WHERE conditions string from the LLM response.
-    
-    Returns:
-        List[Dict[str, str]]: A list of dictionaries containing table and column information.
-    """
-    if "Extracted WHERE columns:" in whereConditions:
-        whereConditions = whereConditions.split("Extracted WHERE columns:")[1].strip()
-    whereConditions = whereConditions.replace("```json", "").replace("```", "").strip()
-    
-    try:
-        logger.info(f"whereConditions before parsing: {whereConditions}")
-        parsed_conditions = json.loads(whereConditions)
-        if isinstance(parsed_conditions, list) and all(isinstance(item, dict) for item in parsed_conditions):
-            return parsed_conditions
-        else:
-            raise ValueError("Parsed conditions are not in the expected format")
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Failed to parse JSON: {str(e)}")
 
 def cleanSummaryResponse(summary: str) -> str:
         """
@@ -474,7 +448,6 @@ class QuerySQLTool:
         """
         with self._getDbConnection() as db:
             queryRunner = QuerySQLDataBaseTool(db=db)
-            # query = query.lower().strip()
 
             if query == "invalid user query - not related to the database.":
                 raise InvalidUserQueryException("Query is not related to the database schema.")
@@ -799,6 +772,17 @@ class ChatHistory:
                 logger.error(f"No file found with id: {docId}")
                 return None, None, None
     
+    def getLayers(self, chatId: str, messageId: str) -> List[List[str]]:
+        """Gets layers associated with a specific message."""
+        with self._getDbConnection():
+            chat = self.collection.find_one(
+                {"chatId": chatId},
+                {"messages": {"$elemMatch": {"messageId": messageId}}}
+            )
+            if chat and "messages" in chat and chat["messages"]:
+                return chat["messages"][0].get("layers", [])
+            return []
+        
     def addMessage(self, chatId: str, content: str, isUser: bool = True) -> str:
         """Adds a new message to a chat."""
         if not chatId:
@@ -838,6 +822,28 @@ class ChatHistory:
         
         return chatId
     
+    def addLayers(self, chatId: str, messageId: str, layers: List[List[str]]) -> None:
+        """Adds or updates layers for a specific message."""
+        with self._getDbConnection():
+            try:
+                result = self.collection.update_one(
+                    {
+                        "chatId": chatId,
+                        "messages.messageId": messageId
+                    },
+                    {
+                        "$set": {
+                            "messages.$.layers": layers,
+                            "lastUpdated": datetime.now()
+                        }
+                    }
+                )
+                if result.matched_count == 0:
+                    raise ChatHistoryError(f"No message found with ID: {messageId} in chat: {chatId}")
+            except Exception as e:
+                logger.error(f"Error adding layers for message {messageId} in chat {chatId}: {e}")
+                raise ChatHistoryError(f"Failed to add layers: {str(e)}")
+
     def updateGroupStatus(self, chatId: str, groupName: str = 'CustomGroup', groupColor: str = 'red') -> None:
         """Updates the group status of a chat."""
         with self._getDbConnection():

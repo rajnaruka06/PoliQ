@@ -8,11 +8,12 @@ import logging
 import sys
 import os
 from typing import List, Optional
+import json
 
 ## Adding the parent directory to the sys path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from aiStuff.workflows import ElecDataWorkflow
+from aiStuff.workflows import ElecDataWorkflow, DatasetRegionMatcher
 from aiStuff.agentHelpers import ChatHistory, ChatHistoryError
 
 ## Setting up logging
@@ -34,8 +35,9 @@ app.add_middleware(
     allow_headers=["*"], 
 )
 
-## Initializing the workflow
-workflow = ElecDataWorkflow()
+## Initializing the workflows
+elecdataWorkflow = ElecDataWorkflow()
+layersWorkflow = DatasetRegionMatcher()
 
 class MessageRequest(BaseModel):
     chatId: Optional[str]
@@ -76,7 +78,7 @@ async def handleSend(message: MessageRequest = ..., userId: str = Query(...)):
         context = ''
         for hist in fetchedContext[:-1]:
             context += f"{hist['user']}: {hist['content']}\n"
-        response = workflow.processUserQuery(message.content, context)
+        response = elecdataWorkflow.processUserQuery(message.content, context)
         _ = chatHistory.addMessage(chatId, response, isUser=False)
         return {"status": "Message sent and processed", "chatId": chatId}
     except ChatHistoryError as e:
@@ -173,7 +175,7 @@ async def handleUpdateMessage(chatId: str = Path(...), messageId: str = Path(...
         context = ''
         for hist in fetchedContext[:-1]:
             context += f"{hist['user']}: {hist['content']}\n"
-        response = workflow.processUserQuery(newContent, context)
+        response = elecdataWorkflow.processUserQuery(newContent, context)
         chatHistory.addMessage(chatId, response, isUser=False)
         return {"status": "Message updated and new response generated"}
     except ChatHistoryError as e:
@@ -236,5 +238,44 @@ async def handleDeleteDocument(chatId: str = Path(...), docId: str = Path(...), 
         chatHistory = ChatHistory(userId=userId)
         chatHistory.deleteDocument(chatId, docId)
         return {"status": "Document deleted successfully"}
+    except ChatHistoryError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/messages/{messageId}/layers")
+async def identifyLayers(messageId: str = Path(...), chatId: str = Query(...), userId: str = Query(...)):
+    try:
+        chatHistory = ChatHistory(userId=userId)
+        
+        message = chatHistory.getMessage(chatId, messageId)
+        if not message:
+            raise HTTPException(status_code=404, detail="Message not found")
+        
+        layers = layersWorkflow.match(userQuery=message["content"])
+        identified_layers = layers['layers']
+        
+        if isinstance(identified_layers, str):
+            identified_layers = json.loads(identified_layers.replace("'", '"'))
+
+        chatHistory.addLayers(chatId, messageId, identified_layers)
+        
+        return {
+            "status": "Layers identified and saved",
+            "messageId": messageId,
+            "layersCount": len(identified_layers)
+        }
+    except ChatHistoryError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing layers: {str(e)}")
+
+@app.get("/api/messages/{messageId}/layers")
+async def getLayers(messageId: str = Path(...), chatId: str = Query(...), userId: str = Query(...)):
+    try:
+        chatHistory = ChatHistory(userId=userId)
+        
+        layers = chatHistory.getLayers(chatId, messageId)
+        
+        return {"layers": layers}
     except ChatHistoryError as e:
         raise HTTPException(status_code=500, detail=str(e))

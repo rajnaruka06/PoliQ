@@ -9,7 +9,6 @@ from .agentHelpers import (
     , NoDataFoundException
     , loadLLM
     , loadFromMongo
-    , cleanWhereConditions
     , get_relevant_documents
 )
 from .customAgents import SqlExpert, ResponseSummarizer, RouterAgent, ChatAgent, DatasetRegionMatcherAgent
@@ -43,7 +42,8 @@ class ElecDataWorkflow:
     """    
     def __init__(self):
         self.dbName = os.getenv("ELECDATA_DB_NAME")
-        self.llm = loadLLM()
+        # self.llm = loadLLM(llmName = 'gpt', model = 'gpt-4o')
+        self.llm = loadLLM(llmName = 'claude', model = 'claude-3-opus-20240229')
         self.routerAgent = RouterAgent(llm=self.llm)
         self.chatAgent = ChatAgent(llm=self.llm)
         self.sqlCoderAgent = SqlExpert(llm=self.llm)
@@ -73,7 +73,7 @@ class ElecDataWorkflow:
                 tableInfo=self.tableInfo,
                 chatHistory=chatHistory
             )
-            # logger.info(f"SQL Expert Output: {sqlQuery}")
+            logger.info(f"SQL Expert Output: {sqlQuery}")
             sqlQuery = cleanSqlQuery(sqlQuery)
             return sqlQuery
         except Exception as e:
@@ -110,28 +110,10 @@ class ElecDataWorkflow:
                 sqlQuery = self._generateQuery(userQuery, chatHistory)
                 if sqlQuery == "invalid user query - not related to the database.":
                     raise InvalidUserQueryException()
-                logger.info(f"Generated SQL Query: {sqlQuery}")
+                
+                logger.info(f"Identified SQL Query: {sqlQuery}")
 
-                ## Should be updated with better error handling.
-                try:
-                    whereColumns = self.sqlCoderAgent.extractWhereColumns(sqlQuery)
-                    whereColumns = cleanWhereConditions(whereColumns)
-                    logger.info(f"Extracted WHERE columns: {whereColumns}")
-                    context = ""
-                    for column in whereColumns:
-                        selectQuery = f"SELECT DISTINCT {column['column']} FROM {column['table']};"
-                        result = self.sqlQueryTool.executeQuery(selectQuery)
-                        result = result.to_string()
-                        context += f"{selectQuery}\n{result}\n\n"
-                    
-                    logger.info(f"Context: {context}")
-                    updatedQuery = self.sqlCoderAgent.updateWhereConditions(sqlQuery, userQuery, context)
-                    updatedQuery = cleanSqlQuery(updatedQuery)
-                    logger.info(f"Updated SQL Query: {updatedQuery}")
-                except:
-                    updatedQuery = sqlQuery
-
-                data = self._executeSqlQuery(updatedQuery)
+                data = self._executeSqlQuery(sqlQuery)
                 response = self.responseSummarizerAgent.generateSummaryWithReflection(response=data.to_string(), userQuery=userQuery)
                 response = cleanSummaryResponse(response)
             elif queryType.strip().upper() == "CHAT":
@@ -153,7 +135,7 @@ class ElecDataWorkflow:
 ## Returns Layers in the format of [RegionID, DatasetID, Level]
 class DatasetRegionMatcher:
     def __init__(self):
-        self.llm = loadLLM()
+        self.llm = loadLLM( llmName = 'gpt', model = 'gpt-4o')
         self.datasetsMetadata = loadFromMongo('metadata', 'Datasets')
         self.datasetsMetadata = json.loads(self.datasetsMetadata)
         self.regionsMetadata = loadFromMongo('metadata', 'Regions')
