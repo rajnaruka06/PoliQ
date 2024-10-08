@@ -25,6 +25,9 @@ import { useDeleteChat } from "../hooks/useDeleteChat";
 import { useArchiveChat } from "../hooks/useArchiveChat";
 import { useSearchChats } from "../hooks/useSearchChats";
 import { useUnarchiveChat } from "../hooks/useUnarchiveChat";
+import { useDeleteAllChats } from "../hooks/useDeleteAllChats";
+import { useArchiveAllChats } from "../hooks/useArchiveAllChats";
+
 import ConfirmationModal from "./ConfirmationModal"; // Import the modal
 
 interface ChatHistory {
@@ -78,6 +81,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         ChatHistory[]
     >([]);
 
+    const { deleteAllChats } = useDeleteAllChats(userId);
+    const { archiveAllChats } = useArchiveAllChats(userId);
+
     // Modal state
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
@@ -97,6 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
+    
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -334,13 +341,18 @@ const Sidebar: React.FC<SidebarProps> = ({
                         "Are you sure you want to delete all chats?"
                     );
                     setActionToConfirm(() => async () => {
-                        // Delete all chats logic
-                        await Promise.all(
-                            filteredChatHistory.map((chat) =>
-                                deleteChat(chat.chatId)
-                            )
-                        );
-                        setFilteredChatHistory([]); // Clear the chat history
+                        try {
+                        const chatIDs = filteredChatHistory.map((chat) => chat.chatId);
+                        await deleteAllChats(chatIDs);
+                          setFilteredChatHistory([]); // Clear the chat history
+                        if (refreshChatHistoryRef.current) {
+                            refreshChatHistoryRef.current();
+                        }
+                          setSelectedChatID(null); // Deselect any selected chat
+                          setMessages([]); // Clear messages in the chat area
+                        } catch (err) {
+                        console.error("Error deleting all chats:", err);
+                        }
                     });
                     setIsModalOpen(true);
                 }}
@@ -354,18 +366,24 @@ const Sidebar: React.FC<SidebarProps> = ({
                         "Are you sure you want to archive all chats?"
                     );
                     setActionToConfirm(() => async () => {
-                        // Archive all chats logic
-                        await Promise.all(
-                            filteredChatHistory.map((chat) =>
-                                archiveChat(chat.chatId)
-                            )
-                        );
+                        try {
+                        const chatIDs = filteredChatHistory.map((chat) => chat.chatId);
+                        await archiveAllChats(chatIDs);
                         setFilteredChatHistory((prevHistory) =>
                             prevHistory.map((chat) => ({
-                                ...chat,
-                                archived: true,
+                            ...chat,
+                            archived: true,
                             }))
-                        ); // Set all chats to archived
+                          ); // Set all chats to archived
+                        if (refreshChatHistoryRef.current) {
+                            refreshChatHistoryRef.current();
+                        }
+                          setSelectedChatID(null); // Deselect any selected chat
+                          setMessages([]); // Clear messages in the chat area
+                        } catch (err) {
+                        console.error("Error archiving all chats:", err);
+                          // Optionally, display an error message to the user
+                        }
                     });
                     setIsModalOpen(true);
                 }}
