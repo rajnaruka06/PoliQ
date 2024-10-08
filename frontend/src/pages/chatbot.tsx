@@ -346,7 +346,7 @@ const ChatBot: React.FC = () => {
                     selectedOption={selectedOption}
                 />
                 {/*Levels and Regions */}
-                <LevelRegions /> {/* Call the LevelRegions function here */}
+                <LevelRegions chatId={selectedChatID} userId={userId}/> {/* Call the LevelRegions function here */}
                 {/* Chat area */}
                 <div className="flex flex-col w-full">
                     {/* Help Overlay */}
