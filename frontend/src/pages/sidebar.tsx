@@ -103,7 +103,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
-    
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -164,13 +163,54 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     const formatDate = (dateString: string): string => {
-        const [day, month, year] = dateString.split("/");
-        const date = new Date(`${year}-${month}-${day}`);
-        return date.toLocaleDateString("en-GB", {
+        // console.log(`Original date string: ${dateString}`); // Log the original date string
+
+        let date: Date;
+
+        // Check if the date is already in ISO format (YYYY-MM-DD)
+        if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
+            date = new Date(dateString);
+        } else {
+            // Attempt to parse other formats
+            const parts = dateString.split(/[/.-]/);
+            if (parts.length === 3) {
+                // Assume DD/MM/YYYY or YYYY/MM/DD format
+                if (parts[0].length === 4) {
+                    // YYYY/MM/DD
+                    date = new Date(
+                        Number(parts[0]),
+                        Number(parts[1]) - 1,
+                        Number(parts[2])
+                    );
+                } else {
+                    // DD/MM/YYYY
+                    date = new Date(
+                        Number(parts[2]),
+                        Number(parts[1]) - 1,
+                        Number(parts[0])
+                    );
+                }
+            } else {
+                console.error(`Invalid date format: ${dateString}`);
+                return "Invalid Date";
+            }
+        }
+
+        // Check if the date is valid
+        if (isNaN(date.getTime())) {
+            console.error(`Invalid date: ${dateString}`);
+            return "Invalid Date";
+        }
+
+        // Format the date
+        const formattedDate = date.toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "long",
             year: "numeric",
         });
+
+        // console.log(`Formatted date: ${formattedDate}`);
+        return formattedDate;
     };
 
     const handlePinChat = async (chatID: string, isPinned: boolean) => {
@@ -342,16 +382,18 @@ const Sidebar: React.FC<SidebarProps> = ({
                     );
                     setActionToConfirm(() => async () => {
                         try {
-                        const chatIDs = filteredChatHistory.map((chat) => chat.chatId);
-                        await deleteAllChats(chatIDs);
-                          setFilteredChatHistory([]); // Clear the chat history
-                        if (refreshChatHistoryRef.current) {
-                            refreshChatHistoryRef.current();
-                        }
-                          setSelectedChatID(null); // Deselect any selected chat
-                          setMessages([]); // Clear messages in the chat area
+                            const chatIDs = filteredChatHistory.map(
+                                (chat) => chat.chatId
+                            );
+                            await deleteAllChats(chatIDs);
+                            setFilteredChatHistory([]); // Clear the chat history
+                            if (refreshChatHistoryRef.current) {
+                                refreshChatHistoryRef.current();
+                            }
+                            setSelectedChatID(null); // Deselect any selected chat
+                            setMessages([]); // Clear messages in the chat area
                         } catch (err) {
-                        console.error("Error deleting all chats:", err);
+                            console.error("Error deleting all chats:", err);
                         }
                     });
                     setIsModalOpen(true);
@@ -367,22 +409,24 @@ const Sidebar: React.FC<SidebarProps> = ({
                     );
                     setActionToConfirm(() => async () => {
                         try {
-                        const chatIDs = filteredChatHistory.map((chat) => chat.chatId);
-                        await archiveAllChats(chatIDs);
-                        setFilteredChatHistory((prevHistory) =>
-                            prevHistory.map((chat) => ({
-                            ...chat,
-                            archived: true,
-                            }))
-                          ); // Set all chats to archived
-                        if (refreshChatHistoryRef.current) {
-                            refreshChatHistoryRef.current();
-                        }
-                          setSelectedChatID(null); // Deselect any selected chat
-                          setMessages([]); // Clear messages in the chat area
+                            const chatIDs = filteredChatHistory.map(
+                                (chat) => chat.chatId
+                            );
+                            await archiveAllChats(chatIDs);
+                            setFilteredChatHistory((prevHistory) =>
+                                prevHistory.map((chat) => ({
+                                    ...chat,
+                                    archived: true,
+                                }))
+                            ); // Set all chats to archived
+                            if (refreshChatHistoryRef.current) {
+                                refreshChatHistoryRef.current();
+                            }
+                            setSelectedChatID(null); // Deselect any selected chat
+                            setMessages([]); // Clear messages in the chat area
                         } catch (err) {
-                        console.error("Error archiving all chats:", err);
-                          // Optionally, display an error message to the user
+                            console.error("Error archiving all chats:", err);
+                            // Optionally, display an error message to the user
                         }
                     });
                     setIsModalOpen(true);
